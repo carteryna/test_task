@@ -1,0 +1,19 @@
+{
+  "splits": [
+    "train",
+    "val"
+  ],
+  "n_images": 185,
+  "n_reviewed": 185,
+  "n_deleted_auto": 9,
+  "n_deleted_manual": 457,
+  "n_added_manual": 754,
+  "n_boxes_raw": 1919,
+  "n_boxes_clean": 2207,
+  "auto_only": false,
+  "heuristics": {
+    "min_dim": 0.005,
+    "max_dim": 0.35,
+    "max_aspect": 6.0
+  }
+}

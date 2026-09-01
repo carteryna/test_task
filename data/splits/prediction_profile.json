@@ -1,0 +1,89 @@
+{
+  "n_boxes": 1919,
+  "source": "data/labels/raw/boxes.csv",
+  "tiers": {
+    "tiny": {
+      "count": 307,
+      "pct": 16.0,
+      "mean_conf": 0.2636,
+      "median_conf": 0.2392,
+      "mean_width_px": 18.98,
+      "mean_height_px": 10.88,
+      "median_area_px": 176.6
+    },
+    "small": {
+      "count": 426,
+      "pct": 22.2,
+      "mean_conf": 0.352,
+      "median_conf": 0.3339,
+      "mean_width_px": 43.19,
+      "mean_height_px": 31.58,
+      "median_area_px": 1301.9
+    },
+    "medium_large": {
+      "count": 1186,
+      "pct": 61.8,
+      "mean_conf": 0.3432,
+      "median_conf": 0.2887,
+      "mean_width_px": 130.92,
+      "mean_height_px": 107.41,
+      "median_area_px": 8438.9
+    }
+  },
+  "per_clip": {
+    "A": {
+      "count": 315,
+      "mean_width_px": 21.07,
+      "median_width_px": 17.6,
+      "mean_height_px": 11.09,
+      "median_height_px": 10.2,
+      "tiny_pct": 94.92,
+      "small_pct": 5.08,
+      "medium_large_pct": 0.0,
+      "median_conf": 0.237
+    },
+    "B": {
+      "count": 184,
+      "mean_width_px": 79.06,
+      "median_width_px": 46.65,
+      "mean_height_px": 48.96,
+      "median_height_px": 37.4,
+      "tiny_pct": 4.35,
+      "small_pct": 48.91,
+      "medium_large_pct": 46.74,
+      "median_conf": 0.2479
+    },
+    "C": {
+      "count": 763,
+      "mean_width_px": 87.61,
+      "median_width_px": 59.1,
+      "mean_height_px": 107.6,
+      "median_height_px": 63.5,
+      "tiny_pct": 0.0,
+      "small_pct": 30.8,
+      "medium_large_pct": 69.2,
+      "median_conf": 0.4475
+    },
+    "D": {
+      "count": 657,
+      "mean_width_px": 139.22,
+      "median_width_px": 112.4,
+      "mean_height_px": 75.47,
+      "median_height_px": 65.7,
+      "tiny_pct": 0.0,
+      "small_pct": 12.94,
+      "medium_large_pct": 87.06,
+      "median_conf": 0.2174
+    }
+  },
+  "tiny_conf_bins": {
+    "<0.10": 0,
+    "0.10-0.15": 0,
+    "0.15-0.25": 164,
+    ">=0.25": 143
+  },
+  "decision": {
+    "id": "scenario_A_healthy_far_band",
+    "rationale": "Tiny boxes are a solid share of predictions. Keep conf=0.15; do not lower the global threshold. Prefer cleanup / size-aware reject of large low-conf."
+  }
+}

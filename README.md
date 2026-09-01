@@ -38,19 +38,52 @@ Teacher run (train+val only; 153 eval frames skipped):
 
 Clip C is dense and mostly vehicles. Clip B is sparse and has a few junk boxes on buildings/trees — cleanup targets. Previews: `results/auto_label/{A,B,C,D}.jpg`. Summary JSON: `data/splits/label_summary.json`.
 
-Cleanup is a short OpenCV pass: delete obvious false positives, leave misses unless they are cheap to add. Log `n_reviewed / n_deleted / n_added`. Eval GT gets more of that pass, and only after the students and `conf` are frozen.
+To validate teacher model recall on small objects without guessing, I profiled all 1,919 generated bounding boxes by area tier (`src/profile_predictions.py`, native-pixel xyxy from `data/labels/raw/boxes.csv` — not a 1280×720 assumption). Tiny candidates (&lt; 600 px²) accounted for 16.0% of all labels with a median confidence of 0.239, confirming healthy far-band coverage at `conf=0.15` and eliminating the need for lower confidence re-runs. Full table: `data/splits/prediction_profile.json`.
+
+| Tier | Area (px²) | Count | Share | Median conf |
+|------|------------|------:|------:|------------:|
+| Tiny | &lt; 600 | 307 | 16.0% | 0.239 |
+| Small | 600–2000 | 426 | 22.2% | 0.334 |
+| Medium/large | &gt; 2000 | 1186 | 61.8% | 0.289 |
+
+Most tiny boxes sit in clip A. Remaining FPs go to cleanup, not another teacher pass.
+
+Cleanup (`src/cleanup_labels.py`) on train/val only. Heuristic filter first, then a full OpenCV pass. Raw stays in `data/labels/raw`; edits live in `data/labels/clean`.
+
+What I changed by hand:
+
+- **Clip A (high / nadir-ish):** kept most YOLO-World boxes; added sparse far-band anchors; ignored sub-10 px blobs.
+- **Clip B (occlusions):** dropped boxes with &gt;50% occlusion; for lighter occlusion, drew the full estimated footprint.
+- **Clip C (articulated / clutter):** merged cab+trailer into one box; traffic cones overlapping a vehicle stayed inside the box.
+- **Clip D — motorcycles out:** every two-wheeler deleted. Distance later uses the **short** box side as width (~1.8–2.5 m for cars/trucks). A 0.8 m bike would project into the wrong band under that prior.
+
+Log (`data/splits/cleanup_log.json`): auto-deleted **9**, manually deleted **457**, manually added **754**. Clean set: **185** frames, **2207** boxes (**1919 → 2207**).
+
+```bash
+python src/dataset_statistics.py --config configs/data.yaml
+```
+
+| Stat | Value |
+|------|------:|
+| Frames | 185 |
+| Boxes | 2207 |
+| Boxes/frame (mean / min / max) | 11.93 / 2 / 34 |
+| Mean box (px) | 96.4 × 77.7 |
+| Aspect median (max/min) | 1.47 |
+
+Aspect mix: ~29% squarish (&lt;1.2), ~50% car-like (1.2–2.0), ~18% van/SUV (2–3.5), ~3% truck-long (≥3.5). Per-clip and full JSON: `data/splits/dataset_statistics.json`. Eval GT cleanup is later, after the students freeze.
 
 ## Distance Estimation Model
 
-Range is inferred from each GT box, not from telemetry. Pinhole, object length `L_ref` subtending `s_px` on image height `H`:
+Range is inferred from each GT box, not from telemetry. Pinhole, reference width `W_ref` subtending `s_px` on image height `H`:
 
 ```
-range_m ≈ (L_ref * H) / (2 * s_px * tan(FOV_v / 2))
+range_m ≈ (W_ref * H) / (2 * s_px * tan(FOV_v / 2))
 ```
 
 Assumptions I am using unless I change them and say so:
 
-- `L_ref = 4.5 m` (passenger car). `s_px = max(box_w, box_h)`.
+- `W_ref = 2.0 m` (highway vehicle width). `s_px = min(box_w, box_h)` — short side, so cars and long trucks share one prior. Motorcycles were removed in cleanup for this reason.
 - Vertical FOV `70°`. The Pexels cameras are unknown.
 - This is nadir-ish scale. Clips A/B/D are oblique; the number is a proxy, not a survey.
 
@@ -81,6 +114,10 @@ Python 3.10–3.12. Videos in `train_val_data/`.
 python3.12 -m venv .venv && source .venv/bin/activate && pip install -r requirements.txt
 python src/extract_frames.py --config configs/data.yaml
 python src/auto_label.py --config configs/data.yaml
+python src/profile_predictions.py
+python src/cleanup_labels.py --config configs/data.yaml --auto-only
+python src/cleanup_labels.py --config configs/data.yaml
+python src/dataset_statistics.py --config configs/data.yaml
 # later: python src/train.py && python src/eval.py
 ```
 

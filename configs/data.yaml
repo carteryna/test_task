@@ -40,6 +40,17 @@ teacher:
   summary_path: data/splits/label_summary.json
   preview_dir: results/auto_label
 
+# Heuristic + interactive cleanup. Operates on train/val only; writes data/labels/clean.
+cleanup:
+  raw_dir: data/labels/raw
+  clean_dir: data/labels/clean
+  backup_dir: data/labels/raw_backup
+  log_path: data/splits/cleanup_log.json
+  min_dim: 0.005   # drop boxes < 0.5% of frame (normalized)
+  max_dim: 0.35    # drop huge boxes
+  max_aspect: 6.0  # stricter than teacher; kills poles/lines
+  display_max_side: 1280
+
 clips:
   train:
     - id: A

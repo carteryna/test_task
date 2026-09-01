@@ -1,0 +1,66 @@
+{
+  "labels_dir": "data/labels/clean",
+  "splits": [
+    "train",
+    "val"
+  ],
+  "n_frames": 185,
+  "n_boxes": 2207,
+  "boxes_per_frame": {
+    "mean": 11.9297,
+    "min": 2,
+    "max": 34,
+    "median": 11
+  },
+  "normalized": {
+    "width_mean": 0.026409,
+    "width_min": 0.004687,
+    "width_max": 0.220312,
+    "height_mean": 0.03748,
+    "height_min": 0.00716,
+    "height_max": 0.55
+  },
+  "pixels": {
+    "width_mean": 96.4,
+    "width_min": 9.0,
+    "width_max": 846.0,
+    "height_mean": 77.69,
+    "height_min": 8.04,
+    "height_max": 1188.0
+  },
+  "aspect_ratio": {
+    "mean": 1.6717,
+    "median": 1.4712,
+    "min": 1.0,
+    "max": 9.1556,
+    "bins": {
+      "<1.2 (squarish)": 643,
+      "1.2\u20132.0 (car-like)": 1109,
+      "2.0\u20133.5 (van/SUV)": 389,
+      "3.5\u20136.0 (truck-like)": 60,
+      ">=6.0 (very long)": 6
+    }
+  },
+  "per_clip": {
+    "A": {
+      "frames": 39,
+      "boxes": 498,
+      "mean_boxes_per_frame": 12.7692
+    },
+    "B": {
+      "frames": 63,
+      "boxes": 245,
+      "mean_boxes_per_frame": 3.8889
+    },
+    "C": {
+      "frames": 34,
+      "boxes": 738,
+      "mean_boxes_per_frame": 21.7059
+    },
+    "D": {
+      "frames": 49,
+      "boxes": 726,
+      "mean_boxes_per_frame": 14.8163
+    }
+  }
+}
