@@ -17,20 +17,24 @@ split:
   strategy: last_fraction_per_clip
   val_fraction: 0.20  # last 20% of EACH train clip, by time
 
+# Single-class detector. Motorcycles are out of the ontology (cleanup + teacher).
 class_name: vehicle
+class_id: 0
 
 # Teacher runs on train.txt + val.txt only. Eval labeling is a later script.
 teacher:
   name: yolo_world
   weights: weights/yolov8s-worldv2.pt
   fallback_weights: yolo11s.pt
-  coco_vehicle_ids: [2, 3, 5, 7]  # car, motorcycle, bus, truck
+  # COCO: 2=car, 5=bus, 7=truck. ID 3 (motorcycle) removed — width prior is ~2.0 m.
+  coco_vehicle_ids: [2, 5, 7]
+  # Open-vocab prompts; motorcycle / bike omitted on purpose.
   prompts:
     - car
     - truck
     - bus
     - van
-    - vehicle
+    - automobile
   conf: 0.15  # low on purpose: keep far/faint boxes; cleanup deletes FPs. No SAHI (CPU).
   iou: 0.5
   imgsz: 1280
@@ -39,6 +43,12 @@ teacher:
   labels_dir: data/labels/raw
   summary_path: data/splits/label_summary.json
   preview_dir: results/auto_label
+
+# Phase 3 distance bands: short side ≈ physical width (cars and long trucks share one prior).
+distance:
+  w_ref_m: 2.0
+  size_side: min  # min(box_w, box_h)
+  exclude_classes_note: "Motorcycles excluded to preserve the 2.0m physical width prior"
 
 # Heuristic + interactive cleanup. Operates on train/val only; writes data/labels/clean.
 cleanup:
