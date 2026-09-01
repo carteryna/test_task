@@ -1,0 +1,38 @@
+{
+  "backend": "yolo_world",
+  "weights": "weights/yolov8s-worldv2.pt",
+  "device": "cpu",
+  "imgsz": 1280,
+  "conf": 0.15,
+  "splits": [
+    "train",
+    "val"
+  ],
+  "n_images": 185,
+  "n_boxes": 1919,
+  "n_empty": 4,
+  "n_eval_skipped": 153,
+  "per_clip": {
+    "A": {
+      "images": 39,
+      "boxes": 315,
+      "empty": 0
+    },
+    "B": {
+      "images": 63,
+      "boxes": 184,
+      "empty": 3
+    },
+    "C": {
+      "images": 34,
+      "boxes": 763,
+      "empty": 1
+    },
+    "D": {
+      "images": 49,
+      "boxes": 657,
+      "empty": 0
+    }
+  },
+  "tracking": "skipped \u2014 2 fps is too sparse for ByteTrack on highway traffic"
+}

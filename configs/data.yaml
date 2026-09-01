@@ -19,6 +19,27 @@ split:
 
 class_name: vehicle
 
+# Teacher runs on train.txt + val.txt only. Eval labeling is a later script.
+teacher:
+  name: yolo_world
+  weights: weights/yolov8s-worldv2.pt
+  fallback_weights: yolo11s.pt
+  coco_vehicle_ids: [2, 3, 5, 7]  # car, motorcycle, bus, truck
+  prompts:
+    - car
+    - truck
+    - bus
+    - van
+    - vehicle
+  conf: 0.15  # low on purpose: keep far/faint boxes; cleanup deletes FPs. No SAHI (CPU).
+  iou: 0.5
+  imgsz: 1280
+  min_side_px: 8
+  max_aspect: 8.0
+  labels_dir: data/labels/raw
+  summary_path: data/splits/label_summary.json
+  preview_dir: results/auto_label
+
 clips:
   train:
     - id: A
