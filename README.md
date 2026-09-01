@@ -75,21 +75,60 @@ Aspect mix: ~29% squarish (&lt;1.2), ~50% car-like (1.2–2.0), ~18% van/SUV (2�
 
 ## Distance Estimation Model
 
-Range is inferred from each GT box, not from telemetry. Pinhole, reference width `W_ref` subtending `s_px` on image height `H`:
+Range is inferred from each GT box, not from telemetry (`src/estimate_distance.py`). Short side is width; focal length in pixels from vertical FOV:
 
 ```
-range_m ≈ (W_ref * H) / (2 * s_px * tan(FOV_v / 2))
+f_px = H / (2 * tan(FOV_v / 2))
+distance_m = f_px * W_ref / s_px
+s_px = min(box_w, box_h)   # pixels
 ```
 
-Assumptions I am using unless I change them and say so:
+(Same model as `(W_ref * H) / (2 * s_px * tan(FOV_v/2))`.)
 
-- `W_ref = 2.0 m` (highway vehicle width). `s_px = min(box_w, box_h)` — short side, so cars and long trucks share one prior. Motorcycles were removed in cleanup for this reason.
-- Vertical FOV `70°`. The Pexels cameras are unknown.
-- This is nadir-ish scale. Clips A/B/D are oblique; the number is a proxy, not a survey.
+Assumptions in `configs/data.yaml` → `distance:`:
 
-Bands: 0–200 m and 200–400 m. Boxes past 400 m or with a failed estimate stay in a third bucket in the log; I am not dropping them to dress the table. If eval has almost no GT in one band I will add a second held-out clip and record it here.
+- `W_ref = 2.0 m`. Motorcycles removed so that prior holds.
+- `FOV_v = 40°` — synthetic prior, not EXIF (see below).
+- Nadir-ish scale; oblique clips are approximate.
 
-I will also publish a 3-row FOV sensitivity (40° / 70° / 90°) so band assignment is visible as an assumption, not a measurement.
+### Synthetic FOV prior (40°)
+
+A first pass at 70° vertical FOV mapped **100%** of the 2207 train/val boxes into 0–200 m (max 199.5 m). That is far-band collapse: a student trained on those tags has no 200–400 m GT and will treat range as a single bin.
+
+I locked `fov_v_deg: 40.0` in `configs/data.yaml`. This is a prior, not a camera calibration. Highway drone monitoring often uses a narrower vertical FOV or a telephoto so the aircraft can stay high; 40° is that assumption written into config so a re-run cannot silently revert to 70°.
+
+Same boxes, same `W_ref`: **1756** near / **451** far (**20.4%**). Those 451 targets are the far-band supervised signal. Without them there is nothing for the student to correlate with small pixel scale, and the eval table’s 200–400 m columns would be scoring a model that never saw that band in training.
+
+Clean train/val (2207 boxes) at FOV **40°**. Distance min / median / mean / max: **7.0 / 112.0 / 135.7 / 383.7 m**. Short-side `s_px`: **8.0 / 52.9 / 65.2 / 846.0**.
+
+| Band | Count | Share | Dist median | `s_px` median (min) |
+|------|------:|------:|------------:|--------------------:|
+| 0–200 m | 1756 | 79.6% | 93.7 m | 63.4 (14.9) |
+| 200–400 m | 451 | 20.4% | 276.4 m | 10.9 (8.0) |
+| >400 m / failed | 0 | 0% | — | — |
+
+Far boxes are 10.9 px on the short side at native resolution. After 1280 letterbox on 4K that is a few pixels; that is the far-band recall problem, not a labeling bug.
+
+Per clip (far-band signal is not uniform — **335 / 451** far boxes are clip A):
+
+| Clip | Near | Far | Far share | `f_px` (H, 40°) |
+|------|-----:|----:|----------:|----------------:|
+| A 1080p | 163 | 335 | 67.3% | 1484 |
+| B 4K | 200 | 45 | 18.4% | 2967 |
+| C 4K | 669 | 69 | 9.3% | 2967 |
+| D 4K | 724 | 2 | 0.3% | 2967 |
+
+Train vs val (time-split, not band-stratified): train **1368 / 372** near/far (1740), val **388 / 79** (467). Far share 21.4% train / 16.9% val.
+
+FOV sensitivity (same boxes, alternate FOV):
+
+| FOV_v | 0–200 m | 200–400 m |
+|------:|--------:|----------:|
+| 40° (locked) | 1756 | 451 |
+| 70° | 2207 | 0 |
+| 90° | 2207 | 0 |
+
+CSV + JSON: `data/splits/distance_boxes.csv`, `data/splits/distance_bands.json`.
 
 ## Evaluation & Metrics
 
@@ -106,6 +145,28 @@ False alarms / min is `FP × 60 / N_frames` as specified (per 60 frames, not fps
 
 mAP@0.5 across both bands if the eval script already has it. Overlay stills and a short eval demo go in `results/` after freeze. Weights will be a link, not a git blob.
 
+## Student training
+
+`configs/train.yaml` + `src/train.py`: build `data/yolo/` from train/val splits and `data/labels/clean` (symlinks; eval refused), then fine-tune from COCO with **`freeze=10`**, `imgsz=1280`, `batch=4`. Dataset scan: **147 train / 38 val** images, **1740 / 467** boxes, **0** empty frames. YOLOv8n is wired but not trained on this CPU.
+
+Smoke on Intel i7-9750H CPU: **YOLO11n × 3 epochs**, 2.59M params, freeze of the first 10 layers applied, ~13.4 min wall (`0.224 h`). Val-only Ultralytics metrics (not eval, not a frozen student):
+
+| Epoch | box | cls | P | R | mAP50 | mAP50-95 |
+|------:|----:|----:|--:|--:|------:|---------:|
+| 1 | 1.54 | 3.02 | 0.002 | 0.045 | 0.016 | 0.007 |
+| 2 | 1.56 | 2.18 | 0.052 | 0.013 | 0.002 | 0.000 |
+| 3 (best) | 1.54 | 1.92 | 0.775 | 0.276 | 0.449 | 0.217 |
+
+Fused `best.pt` val: P **0.776**, R **0.276**, mAP50 **0.447**, mAP50-95 **0.217**. CPU infer ~354 ms/image at 1280. Epoch 2 mAP collapsed then recovered — expected with a frozen backbone, mosaic still on, and cls still coming down. Recall is the weak number; three epochs are not enough for far-band 10 px boxes. Snapshot: `data/splits/train_smoke.json` (`runs/` is gitignored).
+
+```bash
+python src/estimate_distance.py --config configs/data.yaml
+python src/train.py --config configs/train.yaml --prepare-only
+python src/train.py --config configs/train.yaml --models yolo11n --epochs 3   # CPU smoke
+python src/train_statistics.py
+# GPU / longer: python src/train.py --config configs/train.yaml
+```
+
 ## Quickstart
 
 Python 3.10–3.12. Videos in `train_val_data/`.
@@ -118,7 +179,10 @@ python src/profile_predictions.py
 python src/cleanup_labels.py --config configs/data.yaml --auto-only
 python src/cleanup_labels.py --config configs/data.yaml
 python src/dataset_statistics.py --config configs/data.yaml
-# later: python src/train.py && python src/eval.py
+python src/estimate_distance.py --config configs/data.yaml
+python src/train.py --config configs/train.yaml
+python src/train_statistics.py
+# later: python src/eval.py
 ```
 
 ## Failure Modes & Trade-offs

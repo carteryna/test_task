@@ -45,10 +45,16 @@ teacher:
   preview_dir: results/auto_label
 
 # Phase 3 distance bands: short side ≈ physical width (cars and long trucks share one prior).
+# Dist = f_px * W_ref / s_px with f_px = H / (2 * tan(FOV_v/2))  (equiv. form of the FOV pinhole model).
 distance:
   w_ref_m: 2.0
-  size_side: min  # min(box_w, box_h)
+  size_side: min  # min(box_w, box_h) in pixels
+  fov_v_deg: 40.0  # narrower FOV / zoom-like highway view; populates 200–400 m band
+  near_max_m: 200.0
+  far_max_m: 400.0
   exclude_classes_note: "Motorcycles excluded to preserve the 2.0m physical width prior"
+  report_path: data/splits/distance_bands.json
+  boxes_csv: data/splits/distance_boxes.csv
 
 # Heuristic + interactive cleanup. Operates on train/val only; writes data/labels/clean.
 cleanup:

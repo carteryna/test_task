@@ -1,0 +1,164 @@
+{
+  "n_boxes": 2207,
+  "n_frames": 185,
+  "w_ref_m": 2.0,
+  "fov_v_deg": 40.0,
+  "size_side": "min",
+  "formula": "distance_m = f_px * W_ref / s_px; f_px = H / (2*tan(FOV_v/2))",
+  "bands": {
+    "near_0_200": 1756,
+    "far_200_400": 451,
+    "beyond_400": 0,
+    "failed": 0
+  },
+  "distance_m": {
+    "n": 2207,
+    "min": 7.01,
+    "p10": 47.22,
+    "p25": 70.42,
+    "median": 112.01,
+    "p75": 179.88,
+    "p90": 278.03,
+    "mean": 135.73,
+    "max": 383.73
+  },
+  "s_px": {
+    "n": 2207,
+    "min": 8.04,
+    "p10": 10.88,
+    "p25": 25.96,
+    "median": 52.94,
+    "p75": 84.27,
+    "p90": 125.68,
+    "mean": 65.22,
+    "max": 846.0
+  },
+  "per_band": {
+    "near_0_200": {
+      "count": 1756,
+      "share": 0.7957,
+      "distance_m": {
+        "n": 1756,
+        "min": 7.01,
+        "p10": 43.07,
+        "p25": 63.81,
+        "median": 93.66,
+        "p75": 138.15,
+        "p90": 171.32,
+        "mean": 100.63,
+        "max": 199.76
+      },
+      "s_px": {
+        "n": 1756,
+        "min": 14.95,
+        "p10": 30.17,
+        "p25": 42.0,
+        "median": 63.36,
+        "p75": 93.0,
+        "p90": 137.81,
+        "mean": 78.25,
+        "max": 846.0
+      }
+    },
+    "far_200_400": {
+      "count": 451,
+      "share": 0.2043,
+      "distance_m": {
+        "n": 451,
+        "min": 200.34,
+        "p10": 217.16,
+        "p25": 231.95,
+        "median": 276.43,
+        "p75": 303.62,
+        "p90": 329.73,
+        "mean": 272.39,
+        "max": 383.73
+      },
+      "s_px": {
+        "n": 451,
+        "min": 8.04,
+        "p10": 9.03,
+        "p25": 9.82,
+        "median": 10.93,
+        "p75": 17.85,
+        "p90": 26.8,
+        "mean": 14.47,
+        "max": 29.62
+      }
+    },
+    "beyond_400": {
+      "count": 0,
+      "share": 0.0,
+      "distance_m": null,
+      "s_px": null
+    },
+    "failed": {
+      "count": 0,
+      "share": 0.0,
+      "distance_m": null,
+      "s_px": null
+    }
+  },
+  "per_split": {
+    "train": {
+      "far_200_400": 372,
+      "near_0_200": 1368
+    },
+    "val": {
+      "far_200_400": 79,
+      "near_0_200": 388
+    }
+  },
+  "per_clip": {
+    "A": {
+      "near_0_200": 163,
+      "far_200_400": 335,
+      "beyond_400": 0,
+      "failed": 0,
+      "n_boxes": 498,
+      "far_share": 0.6727,
+      "f_px": 1483.64
+    },
+    "B": {
+      "near_0_200": 200,
+      "far_200_400": 45,
+      "beyond_400": 0,
+      "failed": 0,
+      "n_boxes": 245,
+      "far_share": 0.1837,
+      "f_px": 2967.28
+    },
+    "C": {
+      "near_0_200": 669,
+      "far_200_400": 69,
+      "beyond_400": 0,
+      "failed": 0,
+      "n_boxes": 738,
+      "far_share": 0.0935,
+      "f_px": 2967.28
+    },
+    "D": {
+      "near_0_200": 724,
+      "far_200_400": 2,
+      "beyond_400": 0,
+      "failed": 0,
+      "n_boxes": 726,
+      "far_share": 0.0028,
+      "f_px": 2967.28
+    }
+  },
+  "fov_sensitivity": {
+    "40.0": {
+      "far_200_400": 451,
+      "near_0_200": 1756
+    },
+    "70.0": {
+      "near_0_200": 2207
+    },
+    "90.0": {
+      "near_0_200": 2207
+    }
+  },
+  "exclude_classes_note": "Motorcycles excluded to preserve the 2.0m physical width prior",
+  "boxes_csv": "data/splits/distance_boxes.csv"
+}

@@ -1,0 +1,32 @@
+# Student training on cleaned train/val labels only. Eval clip is never used here.
+
+data_config: configs/data.yaml
+
+dataset:
+  root: data/yolo
+  # Symlink frames + clean labels into Ultralytics layout under root.
+
+models:
+  - name: yolov8n
+    weights: yolov8n.pt
+  - name: yolo11n
+    weights: yolo11n.pt
+
+# Freeze backbone (Ultralytics freeze=N freezes first N layers); head trains.
+train:
+  imgsz: 1280          # keep 1280 for far-band tiny boxes (640 is faster but weaker at range)
+  epochs: 50
+  batch: 4             # CPU-friendly; raise on GPU
+  freeze: 10           # preserve early COCO spatial features
+  device: cpu          # overridden to mps/cuda when safe
+  workers: 0
+  patience: 15
+  seed: 0
+  amp: true            # mixed precision when the device supports it
+  project: runs/train
+  exist_ok: true
+  # Default Ultralytics aug (mosaic, perspective, scale) left on.
+
+# Confidence / NMS for later eval are chosen on val only (not eval clip).
+selection:
+  metric: fitness      # Ultralytics best.pt selection on val

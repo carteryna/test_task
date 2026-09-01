@@ -1,7 +1,9 @@
 train_val_data/*.mp4
 
 data/frames/
-data/labels/
+data/labels/raw/
+data/labels/raw_backup/
+data/yolo/
 runs/
 weights/
 *.pt
