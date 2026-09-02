@@ -20,10 +20,15 @@
     "eval"
   ],
   "labels_dir": "data/labels/eval",
-  "n_images": 153,
-  "n_boxes": 227,
+  "n_images": 214,
+  "n_boxes": 438,
   "n_empty": 39,
   "per_clip": {
+    "F": {
+      "images": 61,
+      "boxes": 211,
+      "empty": 0
+    },
     "E": {
       "images": 153,
       "boxes": 227,
@@ -32,5 +37,8 @@
   },
   "role": "eval_proxy_gt",
   "student_frozen": true,
-  "motorcycle_ids_excluded": true
+  "motorcycle_ids_excluded": true,
+  "labeled_clips": [
+    "F"
+  ]
 }

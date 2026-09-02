@@ -144,12 +144,13 @@ def main() -> int:
     by_clip: dict[str, dict[str, int]] = defaultdict(lambda: defaultdict(int))
     box_rows: list[dict] = []
     distances: list[float] = []
+    eval_ids = {c["id"] for c in cfg["clips"]["eval"]}
 
     for rel in image_rels:
         clip = Path(rel).parent.name
-        if clip == "E" and not args.allow_eval:
+        if clip in eval_ids and not args.allow_eval:
             raise RuntimeError(f"Eval path in distance tagging: {rel}")
-        if args.allow_eval and clip != "E":
+        if args.allow_eval and clip not in eval_ids:
             raise RuntimeError(f"Non-eval path in eval distance audit: {rel}")
         meta = manifest.get(rel)
         if meta is None:
@@ -330,7 +331,7 @@ def main() -> int:
     far = band_counts.get("far_200_400", 0)
     if role == "eval":
         if far == 0:
-            print("AUDIT FAILED: Clip E lacks far-band targets. Add another clip.")
+            print("AUDIT FAILED: hold-out eval lacks far-band targets. Add another clip.")
             return 1
         print(f"OK: eval distance audit passed (near={near}, far={far})")
         return 0

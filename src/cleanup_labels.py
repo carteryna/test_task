@@ -66,6 +66,37 @@ def assert_eval_only(
         raise RuntimeError(f"Eval cleanup path not in an eval clip folder: {missing_clip[:5]}")
 
 
+def filter_image_rels(image_rels: list[str], clip_ids: set[str] | None) -> list[str]:
+    if clip_ids is None:
+        return image_rels
+    filtered = [p for p in image_rels if Path(p).parent.name in clip_ids]
+    if not filtered:
+        raise RuntimeError(f"No images left after --clips {sorted(clip_ids)}")
+    return filtered
+
+
+def ensure_eval_raw_clips(
+    image_rels: list[str],
+    clean_dir: Path,
+    raw_dir: Path,
+) -> bool:
+    """Copy missing clip folders from eval/ into eval_raw/. Returns True if any copied."""
+    copied = False
+    clip_ids = sorted({Path(p).parent.name for p in image_rels})
+    for clip_id in clip_ids:
+        src = clean_dir / clip_id
+        dst = raw_dir / clip_id
+        if dst.exists():
+            continue
+        if not src.exists():
+            raise RuntimeError(f"Missing eval labels for clip {clip_id} at {src}")
+        raw_dir.mkdir(parents=True, exist_ok=True)
+        shutil.copytree(src, dst)
+        print(f"Backed up eval teacher labels to {dst.relative_to(REPO_ROOT)}")
+        copied = True
+    return copied
+
+
 def label_for(image_rel: str, labels_root: Path) -> Path:
     rel = Path(image_rel)
     return labels_root / rel.parent.name / f"{rel.stem}.txt"
@@ -329,6 +360,12 @@ def main() -> int:
         action="store_true",
         help="Rebuild cleaned labels from the raw/teacher dump.",
     )
+    parser.add_argument(
+        "--clips",
+        nargs="+",
+        default=None,
+        help="Only clean these clip ids. Other clip folders under labels_dir are left untouched.",
+    )
     args = parser.parse_args()
     cfg_path = args.config if args.config.is_absolute() else REPO_ROOT / args.config
     cfg = load_config(cfg_path)
@@ -342,11 +379,23 @@ def main() -> int:
     max_aspect = float(cleanup["max_aspect"])
     display_max_side = int(cleanup["display_max_side"])
 
+    clip_ids = set(args.clips) if args.clips else None
+    if clip_ids is not None:
+        known = {c["id"] for c in cfg["clips"]["train"]} | eval_clip_ids
+        unknown = clip_ids - known
+        if unknown:
+            raise RuntimeError(f"Unknown clip ids in --clips: {sorted(unknown)}")
+
     if args.allow_eval:
         splits = args.splits or ["eval"]
         if splits != ["eval"]:
             raise RuntimeError("--allow-eval only accepts --splits eval")
+        if clip_ids is not None:
+            extra = clip_ids - eval_clip_ids
+            if extra:
+                raise RuntimeError(f"--allow-eval --clips must be eval ids; got {sorted(extra)}")
         image_rels = list(dict.fromkeys(read_split_list(splits_dir / "eval.txt")))
+        image_rels = filter_image_rels(image_rels, clip_ids)
         assert_eval_only(image_rels, eval_paths, eval_clip_ids)
 
         eval_cfg = cfg["eval_gt"]
@@ -355,22 +404,27 @@ def main() -> int:
         log_path = REPO_ROOT / eval_cfg["log_path"]
         role = "eval"
 
-        # First pass: freeze teacher dump under eval_raw/, then filter into eval/.
-        first_backup = not raw_dir.exists()
-        if first_backup:
+        # Freeze teacher dump under eval_raw/ (whole tree once, or missing clips only).
+        if not raw_dir.exists():
             if not clean_dir.exists():
                 raise RuntimeError(f"Missing eval proxy labels at {clean_dir}")
             shutil.copytree(clean_dir, raw_dir)
             print(f"Backed up eval teacher labels to {raw_dir.relative_to(REPO_ROOT)}")
+            first_backup = True
+        else:
+            first_backup = ensure_eval_raw_clips(image_rels, clean_dir, raw_dir)
         need_build = args.force_auto or first_backup
     else:
         splits = args.splits or ["train", "val"]
         if "eval" in splits:
             raise RuntimeError("Refusing to clean eval here. Use --allow-eval --splits eval.")
+        if clip_ids is not None and clip_ids & eval_clip_ids:
+            raise RuntimeError("Refusing to clean eval clip ids without --allow-eval.")
         image_rels = []
         for split in splits:
             image_rels.extend(read_split_list(splits_dir / f"{split}.txt"))
         image_rels = list(dict.fromkeys(image_rels))
+        image_rels = filter_image_rels(image_rels, clip_ids)
         assert_train_pool_only(image_rels, eval_paths, eval_clip_ids)
 
         raw_dir = REPO_ROOT / cleanup["raw_dir"]
@@ -387,7 +441,7 @@ def main() -> int:
     n_before = count_boxes(raw_dir, image_rels)
     deleted_auto = 0
     if need_build:
-        if clean_dir.exists() and args.force_auto and role == "train_val":
+        if clean_dir.exists() and args.force_auto and role == "train_val" and clip_ids is None:
             shutil.rmtree(clean_dir)
         deleted_auto = build_clean_from_raw(
             image_rels, raw_dir, clean_dir, min_dim, max_dim, max_aspect
@@ -405,9 +459,11 @@ def main() -> int:
         )
 
     n_after = count_boxes(clean_dir, image_rels)
+    run_clip_ids = sorted({Path(p).parent.name for p in image_rels})
     log = {
         "role": role,
         "splits": splits,
+        "labeled_clips": run_clip_ids,
         "n_images": len(image_rels),
         "n_reviewed": reviewed if not args.auto_only else 0,
         "n_deleted_auto": deleted_auto if need_build else None,
@@ -423,20 +479,74 @@ def main() -> int:
             "max_dim": max_dim,
             "max_aspect": max_aspect,
         },
+        "per_clip": {
+            clip_id: {
+                "n_images": sum(1 for p in image_rels if Path(p).parent.name == clip_id),
+                "n_boxes_raw": count_boxes(
+                    raw_dir, [p for p in image_rels if Path(p).parent.name == clip_id]
+                ),
+                "n_boxes_clean": count_boxes(
+                    clean_dir, [p for p in image_rels if Path(p).parent.name == clip_id]
+                ),
+            }
+            for clip_id in run_clip_ids
+        },
     }
     log_path.parent.mkdir(parents=True, exist_ok=True)
-    if log_path.exists() and not need_build:
+    if log_path.exists():
         prev = json.loads(log_path.read_text())
-        if prev.get("n_deleted_auto") is not None and log["n_deleted_auto"] is None:
-            log["n_deleted_auto"] = prev["n_deleted_auto"]
-        if args.auto_only:
-            log["n_deleted_manual"] = prev.get("n_deleted_manual", 0)
-            log["n_added_manual"] = prev.get("n_added_manual", 0)
-            log["n_reviewed"] = prev.get("n_reviewed", 0)
+        # Keep prior clip stats when this run only touched a subset.
+        prev_per = prev.get("per_clip") or {}
+        if not prev_per and prev.get("role") == "eval" and set(run_clip_ids) != set(
+            prev.get("labeled_clips") or []
+        ):
+            # Legacy single-clip E log (no per_clip field).
+            legacy_clips = prev.get("labeled_clips") or ["E"]
+            if len(legacy_clips) == 1 and legacy_clips[0] not in run_clip_ids:
+                prev_per = {
+                    legacy_clips[0]: {
+                        "n_images": prev.get("n_images"),
+                        "n_boxes_raw": prev.get("n_boxes_raw"),
+                        "n_boxes_clean": prev.get("n_boxes_clean"),
+                        "n_deleted_auto": prev.get("n_deleted_auto"),
+                        "n_deleted_manual": prev.get("n_deleted_manual"),
+                        "n_added_manual": prev.get("n_added_manual"),
+                        "n_reviewed": prev.get("n_reviewed"),
+                    }
+                }
+        merged_per = dict(prev_per)
+        for clip_id in run_clip_ids:
+            entry = {
+                **merged_per.get(clip_id, {}),
+                **log["per_clip"][clip_id],
+            }
+            if need_build and len(run_clip_ids) == 1:
+                entry["n_deleted_auto"] = deleted_auto
+            if not args.auto_only and len(run_clip_ids) == 1:
+                entry["n_deleted_manual"] = deleted_manual
+                entry["n_added_manual"] = added_manual
+                entry["n_reviewed"] = reviewed
+            elif args.auto_only and clip_id in merged_per:
+                # Preserve prior manual counts for this clip across --auto-only re-runs.
+                for key in ("n_deleted_manual", "n_added_manual", "n_reviewed"):
+                    if key in merged_per[clip_id] and key not in entry:
+                        entry[key] = merged_per[clip_id][key]
+            merged_per[clip_id] = entry
+        log["per_clip"] = merged_per
+        # Top-level counts describe THIS run only (the clips just processed).
+        if args.auto_only and not need_build:
+            prev_run = prev.get("labeled_clips") or []
+            if prev_run == run_clip_ids:
+                if prev.get("n_deleted_auto") is not None and log["n_deleted_auto"] is None:
+                    log["n_deleted_auto"] = prev["n_deleted_auto"]
+                log["n_deleted_manual"] = prev.get("n_deleted_manual", 0)
+                log["n_added_manual"] = prev.get("n_added_manual", 0)
+                log["n_reviewed"] = prev.get("n_reviewed", 0)
     log_path.write_text(json.dumps(log, indent=2) + "\n")
 
     print(
-        f"Cleanup log: reviewed={log['n_reviewed']} auto-deleted={log['n_deleted_auto']} "
+        f"Cleanup log: clips={run_clip_ids} reviewed={log['n_reviewed']} "
+        f"auto-deleted={log['n_deleted_auto']} "
         f"manually-deleted={log['n_deleted_manual']} manually-added={log['n_added_manual']} "
         f"boxes {n_before} -> {n_after}"
     )

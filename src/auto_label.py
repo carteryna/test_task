@@ -10,6 +10,7 @@ from __future__ import annotations
 import argparse
 import csv
 import json
+import shutil
 import sys
 from collections import defaultdict
 from pathlib import Path
@@ -213,6 +214,36 @@ def draw_preview(image_bgr: np.ndarray, boxes: np.ndarray, scores: np.ndarray, o
     cv2.imwrite(str(out_path), vis, [int(cv2.IMWRITE_JPEG_QUALITY), 85])
 
 
+def filter_image_rels(image_rels: list[str], clip_ids: set[str] | None) -> list[str]:
+    if clip_ids is None:
+        return image_rels
+    filtered = [p for p in image_rels if Path(p).parent.name in clip_ids]
+    if not filtered:
+        raise RuntimeError(f"No images left after --clips {sorted(clip_ids)}")
+    return filtered
+
+
+def merge_boxes_csv(path: Path, new_rows: list[dict], replace_clip_ids: set[str] | None) -> list[dict]:
+    kept: list[dict] = []
+    if replace_clip_ids is not None and path.exists():
+        with path.open() as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                if row.get("clip_id") not in replace_clip_ids:
+                    kept.append(row)
+    return kept + new_rows
+
+
+def merge_per_clip_summary(path: Path, new_per_clip: dict, replace_clip_ids: set[str] | None) -> dict:
+    merged = dict(new_per_clip)
+    if replace_clip_ids is not None and path.exists():
+        old = json.loads(path.read_text())
+        for clip_id, stats in old.get("per_clip", {}).items():
+            if clip_id not in replace_clip_ids:
+                merged[clip_id] = stats
+    return merged
+
+
 def run_teacher_on_images(
     *,
     image_rels: list[str],
@@ -222,6 +253,8 @@ def run_teacher_on_images(
     summary_path: Path,
     splits: list[str],
     extra_summary: dict,
+    replace_clip_ids: set[str] | None = None,
+    backup_dir: Path | None = None,
 ) -> dict:
     device = pick_device()
     model, backend, weights_used = load_teacher(teacher_cfg, device)
@@ -232,8 +265,8 @@ def run_teacher_on_images(
     per_clip = defaultdict(lambda: {"images": 0, "boxes": 0, "empty": 0})
     best_preview: dict[str, tuple[int, str, np.ndarray, np.ndarray, np.ndarray]] = {}
     all_box_rows: list[dict] = []
-
-    print(f"Labeling {len(image_rels)} images from splits={splits}")
+    clip_note = f" clips={sorted(replace_clip_ids)}" if replace_clip_ids is not None else ""
+    print(f"Labeling {len(image_rels)} images from splits={splits}{clip_note}")
 
     for i, rel in enumerate(image_rels, start=1):
         img_path = REPO_ROOT / rel
@@ -302,14 +335,16 @@ def run_teacher_on_images(
         _, _rel, image, boxes, scores = payload
         draw_preview(image, boxes, scores, preview_dir / f"{clip_id}.jpg")
 
+    csv_rows = merge_boxes_csv(boxes_csv_path, all_box_rows, replace_clip_ids)
     with boxes_csv_path.open("w", newline="") as f:
         writer = csv.DictWriter(f, fieldnames=["path", "clip_id", "conf", "x1", "y1", "x2", "y2"])
         writer.writeheader()
-        writer.writerows(all_box_rows)
+        writer.writerows(csv_rows)
 
-    n_images = sum(v["images"] for v in per_clip.values())
-    n_boxes = sum(v["boxes"] for v in per_clip.values())
-    n_empty = sum(v["empty"] for v in per_clip.values())
+    per_clip_merged = merge_per_clip_summary(summary_path, dict(per_clip), replace_clip_ids)
+    n_images = sum(v["images"] for v in per_clip_merged.values())
+    n_boxes = sum(v["boxes"] for v in per_clip_merged.values())
+    n_empty = sum(v["empty"] for v in per_clip_merged.values())
     summary = {
         "backend": backend,
         "weights": weights_used,
@@ -323,19 +358,39 @@ def run_teacher_on_images(
         "n_images": n_images,
         "n_boxes": n_boxes,
         "n_empty": n_empty,
-        "per_clip": dict(per_clip),
+        "per_clip": per_clip_merged,
         **extra_summary,
     }
+    if replace_clip_ids is not None:
+        summary["labeled_clips"] = sorted(replace_clip_ids)
     summary_path.parent.mkdir(parents=True, exist_ok=True)
     summary_path.write_text(json.dumps(summary, indent=2) + "\n")
 
-    print("Boxes by clip")
+    print("Boxes by clip (this run)")
     for clip_id in sorted(per_clip):
         s = per_clip[clip_id]
         print(f"  {clip_id}: images={s['images']} boxes={s['boxes']} empty={s['empty']}")
-    print(f"  TOTAL: images={n_images} boxes={n_boxes} empty={n_empty}")
+    print(f"  TOTAL (merged): images={n_images} boxes={n_boxes} empty={n_empty}")
     print(f"Wrote {labels_dir.relative_to(REPO_ROOT)}")
     print(f"Wrote {summary_path.relative_to(REPO_ROOT)}")
+
+    if backup_dir is not None:
+        backup_dir.mkdir(parents=True, exist_ok=True)
+        for clip_id in sorted(per_clip):
+            src = labels_dir / clip_id
+            dst = backup_dir / clip_id
+            if not src.exists():
+                continue
+            if dst.exists():
+                shutil.rmtree(dst)
+            shutil.copytree(src, dst)
+            print(f"Teacher dump copied to {dst.relative_to(REPO_ROOT)}")
+        backup_csv = backup_dir / "boxes.csv"
+        backup_rows = merge_boxes_csv(backup_csv, all_box_rows, replace_clip_ids or set(per_clip))
+        with backup_csv.open("w", newline="") as f:
+            writer = csv.DictWriter(f, fieldnames=["path", "clip_id", "conf", "x1", "y1", "x2", "y2"])
+            writer.writeheader()
+            writer.writerows(backup_rows)
     return summary
 
 
@@ -353,6 +408,12 @@ def main() -> int:
         action="store_true",
         help="Label the hold-out split after the student is frozen. Writes eval_gt.labels_dir.",
     )
+    parser.add_argument(
+        "--clips",
+        nargs="+",
+        default=None,
+        help="Only label these clip ids. Other clip folders under labels_dir are left untouched.",
+    )
     args = parser.parse_args()
     cfg_path = args.config if args.config.is_absolute() else REPO_ROOT / args.config
     cfg = load_config(cfg_path)
@@ -362,11 +423,23 @@ def main() -> int:
     eval_clip_ids = {c["id"] for c in cfg["clips"]["eval"]}
     teacher_cfg = cfg["teacher"]
 
+    clip_ids = set(args.clips) if args.clips else None
+    if clip_ids is not None:
+        known = {c["id"] for c in cfg["clips"]["train"]} | eval_clip_ids
+        unknown = clip_ids - known
+        if unknown:
+            raise RuntimeError(f"Unknown clip ids in --clips: {sorted(unknown)}")
+
     if args.allow_eval:
         splits = args.splits or ["eval"]
         if splits != ["eval"]:
             raise RuntimeError("--allow-eval only accepts --splits eval")
+        if clip_ids is not None:
+            extra = clip_ids - eval_clip_ids
+            if extra:
+                raise RuntimeError(f"--allow-eval --clips must be eval ids; got {sorted(extra)}")
         image_rels = list(dict.fromkeys(read_split_list(splits_dir / "eval.txt")))
+        image_rels = filter_image_rels(image_rels, clip_ids)
         assert_eval_only(image_rels, eval_paths, eval_clip_ids)
         eval_cfg = cfg["eval_gt"]
         run_teacher_on_images(
@@ -381,6 +454,8 @@ def main() -> int:
                 "student_frozen": True,
                 "motorcycle_ids_excluded": 3 not in teacher_cfg["coco_vehicle_ids"],
             },
+            replace_clip_ids=clip_ids,
+            backup_dir=REPO_ROOT / eval_cfg["backup_dir"],
         )
         print("OK: eval proxy GT written; train/val labels untouched")
         return 0
@@ -388,11 +463,14 @@ def main() -> int:
     splits = args.splits or ["train", "val"]
     if "eval" in splits:
         raise RuntimeError("Refusing to auto-label eval. Use --allow-eval --splits eval after freeze.")
+    if clip_ids is not None and clip_ids & eval_clip_ids:
+        raise RuntimeError("Refusing to auto-label eval clip ids without --allow-eval.")
 
     image_rels: list[str] = []
     for split in splits:
         image_rels.extend(read_split_list(splits_dir / f"{split}.txt"))
     image_rels = list(dict.fromkeys(image_rels))
+    image_rels = filter_image_rels(image_rels, clip_ids)
     assert_train_pool_only(image_rels, eval_paths, eval_clip_ids)
 
     run_teacher_on_images(
@@ -403,6 +481,7 @@ def main() -> int:
         summary_path=REPO_ROOT / teacher_cfg["summary_path"],
         splits=splits,
         extra_summary={"n_eval_skipped": len(eval_paths)},
+        replace_clip_ids=clip_ids,
     )
     print(f"OK: eval not labeled ({len(eval_paths)} frames skipped)")
     return 0

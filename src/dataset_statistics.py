@@ -133,9 +133,10 @@ def main() -> int:
     by_clip_frames: dict[str, int] = defaultdict(int)
     aspect_hist: dict[str, int] = defaultdict(int)
 
+    eval_ids = {c["id"] for c in cfg["clips"]["eval"]}
     for rel in image_rels:
         clip = Path(rel).parent.name
-        if clip == "E" and not args.allow_eval:
+        if clip in eval_ids and not args.allow_eval:
             raise RuntimeError(f"Eval path in statistics: {rel}")
         txt = labels_dir / clip / f"{Path(rel).stem}.txt"
         boxes = load_boxes(txt)

@@ -64,7 +64,8 @@ def prepare_yolo_dataset(
         lbl_dir.mkdir(parents=True, exist_ok=True)
         for rel in read_split_list(splits_dir / f"{split}.txt"):
             clip = Path(rel).parent.name
-            if clip == "E" or "/E/" in rel:
+            eval_ids = {c["id"] for c in data_cfg["clips"]["eval"]}
+            if clip in eval_ids:
                 raise RuntimeError(f"Eval path in {split}: {rel}")
             src_img = REPO_ROOT / rel
             stem = Path(rel).stem

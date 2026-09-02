@@ -175,6 +175,13 @@ def print_summary(rows: list[dict]) -> None:
     print("OK: eval not in train/val")
 
 
+def load_manifest_rows(path: Path) -> list[dict]:
+    if not path.exists():
+        return []
+    with path.open() as f:
+        return list(csv.DictReader(f))
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
@@ -182,6 +189,12 @@ def main() -> int:
         type=Path,
         default=REPO_ROOT / "configs" / "data.yaml",
         help="Path to data.yaml",
+    )
+    parser.add_argument(
+        "--clips",
+        nargs="+",
+        default=None,
+        help="Only re-extract these clip ids; keep other rows from existing manifest.csv",
     )
     args = parser.parse_args()
     cfg_path = args.config if args.config.is_absolute() else REPO_ROOT / args.config
@@ -198,8 +211,33 @@ def main() -> int:
     if split_cfg.get("strategy") != "last_fraction_per_clip":
         raise RuntimeError(f"Unsupported split strategy: {split_cfg.get('strategy')}")
 
+    only = set(args.clips) if args.clips else None
+    if only is not None:
+        known = {c["id"] for c in cfg["clips"]["train"]} | {c["id"] for c in cfg["clips"]["eval"]}
+        unknown = only - known
+        if unknown:
+            raise RuntimeError(f"Unknown clip ids in --clips: {sorted(unknown)}")
+
     rows: list[dict] = []
+    if only is not None:
+        prev = load_manifest_rows(splits_dir / "manifest.csv")
+        if not prev:
+            raise RuntimeError("manifest.csv missing; run a full extract before --clips")
+        for row in prev:
+            if row["clip_id"] not in only:
+                # Restore numeric fields from CSV strings.
+                row["t_sec"] = float(row["t_sec"])
+                row["source_frame_index"] = int(row["source_frame_index"])
+                row["source_fps"] = float(row["source_fps"])
+                row["sample_fps"] = float(row["sample_fps"])
+                row["width"] = int(row["width"])
+                row["height"] = int(row["height"])
+                rows.append(row)
+        print(f"Keeping {len(rows)} existing manifest rows for clips outside {sorted(only)}")
+
     for clip in cfg["clips"]["train"]:
+        if only is not None and clip["id"] not in only:
+            continue
         video_path = videos_dir / clip["file"]
         if not video_path.exists():
             raise FileNotFoundError(video_path)
@@ -216,9 +254,10 @@ def main() -> int:
             row["role"] = "train_pool"
         rows.extend(clip_rows)
 
-    eval_clip_ids: set[str] = set()
+    eval_clip_ids: set[str] = {c["id"] for c in cfg["clips"]["eval"]}
     for clip in cfg["clips"]["eval"]:
-        eval_clip_ids.add(clip["id"])
+        if only is not None and clip["id"] not in only:
+            continue
         video_path = videos_dir / clip["file"]
         if not video_path.exists():
             raise FileNotFoundError(video_path)

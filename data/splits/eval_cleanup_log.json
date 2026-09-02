@@ -3,13 +3,16 @@
   "splits": [
     "eval"
   ],
-  "n_images": 153,
-  "n_reviewed": 153,
+  "labeled_clips": [
+    "F"
+  ],
+  "n_images": 61,
+  "n_reviewed": 61,
   "n_deleted_auto": 0,
-  "n_deleted_manual": 12,
-  "n_added_manual": 164,
-  "n_boxes_raw": 227,
-  "n_boxes_clean": 379,
+  "n_deleted_manual": 54,
+  "n_added_manual": 447,
+  "n_boxes_raw": 211,
+  "n_boxes_clean": 604,
   "auto_only": false,
   "labels_dir": "data/labels/eval",
   "raw_dir": "data/labels/eval_raw",
@@ -17,5 +20,25 @@
     "min_dim": 0.005,
     "max_dim": 0.35,
     "max_aspect": 6.0
+  },
+  "per_clip": {
+    "E": {
+      "n_images": 153,
+      "n_boxes_raw": 227,
+      "n_boxes_clean": 379,
+      "n_deleted_auto": 0,
+      "n_deleted_manual": 12,
+      "n_added_manual": 164,
+      "n_reviewed": 153
+    },
+    "F": {
+      "n_images": 61,
+      "n_boxes_raw": 211,
+      "n_boxes_clean": 604,
+      "n_deleted_auto": 0,
+      "n_deleted_manual": 54,
+      "n_added_manual": 447,
+      "n_reviewed": 61
+    }
   }
 }
