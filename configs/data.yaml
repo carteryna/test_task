@@ -44,6 +44,17 @@ teacher:
   summary_path: data/splits/label_summary.json
   preview_dir: results/auto_label
 
+# Hold-out proxy GT. Same teacher, separate directory. Only after the student is frozen.
+eval_gt:
+  labels_dir: data/labels/eval
+  backup_dir: data/labels/eval_raw   # teacher dump; heuristic+QA write back to labels_dir
+  summary_path: data/splits/eval_label_summary.json
+  preview_dir: results/auto_label_eval
+  log_path: data/splits/eval_cleanup_log.json
+  stats_path: data/splits/eval_dataset_statistics.json
+  distance_report_path: data/splits/eval_distance_bands.json
+  distance_boxes_csv: data/splits/eval_distance_boxes.csv
+
 # Phase 3 distance bands: short side ≈ physical width (cars and long trucks share one prior).
 # Dist = f_px * W_ref / s_px with f_px = H / (2 * tan(FOV_v/2))  (equiv. form of the FOV pinhole model).
 distance:

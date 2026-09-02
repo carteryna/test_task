@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
-"""Heuristic filter + OpenCV cleanup on train/val labels.
+"""Heuristic filter + OpenCV cleanup on YOLO labels.
 
-Raw teacher labels stay in data/labels/raw (backed up once). Cleaned labels
-are written to data/labels/clean. Eval paths are refused.
+Default: train/val raw -> clean. Eval is refused.
+After freeze: --allow-eval backs up data/labels/eval -> eval_raw, then QA
+writes cleaned labels back to data/labels/eval/.
 
 Interactive keys:
   left-click       delete box under cursor
@@ -49,6 +50,20 @@ def assert_train_pool_only(
         for clip_id in eval_clip_ids:
             if clip_id in parts:
                 raise RuntimeError(f"Eval clip folder in cleanup path: {p}")
+
+
+def assert_eval_only(
+    image_paths: list[str],
+    eval_paths: list[str],
+    eval_clip_ids: set[str],
+) -> None:
+    eval_set = set(eval_paths)
+    extra = [p for p in image_paths if p not in eval_set]
+    if extra:
+        raise RuntimeError(f"Non-eval paths passed to eval cleanup: {extra[:5]}")
+    missing_clip = [p for p in image_paths if Path(p).parent.name not in eval_clip_ids]
+    if missing_clip:
+        raise RuntimeError(f"Eval cleanup path not in an eval clip folder: {missing_clip[:5]}")
 
 
 def label_for(image_rel: str, labels_root: Path) -> Path:
@@ -293,52 +308,86 @@ def _edits_from_history(
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--config", type=Path, default=REPO_ROOT / "configs" / "data.yaml")
-    parser.add_argument("--splits", nargs="+", default=["train", "val"])
+    parser.add_argument(
+        "--splits",
+        nargs="+",
+        default=None,
+        help="Split lists. Default: train val. With --allow-eval: eval.",
+    )
+    parser.add_argument(
+        "--allow-eval",
+        action="store_true",
+        help="QA hold-out proxy GT after freeze. Writes back to eval_gt.labels_dir.",
+    )
     parser.add_argument(
         "--auto-only",
         action="store_true",
-        help="Apply heuristic filter into clean/ and exit (no GUI).",
+        help="Apply heuristic filter and exit (no GUI).",
     )
     parser.add_argument(
         "--force-auto",
         action="store_true",
-        help="Rebuild clean/ from raw even if clean/ already exists.",
+        help="Rebuild cleaned labels from the raw/teacher dump.",
     )
     args = parser.parse_args()
     cfg_path = args.config if args.config.is_absolute() else REPO_ROOT / args.config
     cfg = load_config(cfg_path)
 
-    if "eval" in args.splits:
-        raise RuntimeError("Refusing to clean eval labels here. Eval GT is a later step.")
-
     splits_dir = REPO_ROOT / cfg["paths"]["splits_dir"]
     eval_paths = read_split_list(splits_dir / "eval.txt")
     eval_clip_ids = {c["id"] for c in cfg["clips"]["eval"]}
-
-    image_rels: list[str] = []
-    for split in args.splits:
-        image_rels.extend(read_split_list(splits_dir / f"{split}.txt"))
-    image_rels = list(dict.fromkeys(image_rels))
-    assert_train_pool_only(image_rels, eval_paths, eval_clip_ids)
-
     cleanup = cfg["cleanup"]
-    raw_dir = REPO_ROOT / cleanup["raw_dir"]
-    clean_dir = REPO_ROOT / cleanup["clean_dir"]
-    backup_dir = REPO_ROOT / cleanup["backup_dir"]
     min_dim = float(cleanup["min_dim"])
     max_dim = float(cleanup["max_dim"])
     max_aspect = float(cleanup["max_aspect"])
     display_max_side = int(cleanup["display_max_side"])
 
-    if not backup_dir.exists():
-        shutil.copytree(raw_dir, backup_dir)
-        print(f"Backed up raw labels to {backup_dir.relative_to(REPO_ROOT)}")
+    if args.allow_eval:
+        splits = args.splits or ["eval"]
+        if splits != ["eval"]:
+            raise RuntimeError("--allow-eval only accepts --splits eval")
+        image_rels = list(dict.fromkeys(read_split_list(splits_dir / "eval.txt")))
+        assert_eval_only(image_rels, eval_paths, eval_clip_ids)
+
+        eval_cfg = cfg["eval_gt"]
+        clean_dir = REPO_ROOT / eval_cfg["labels_dir"]
+        raw_dir = REPO_ROOT / eval_cfg["backup_dir"]
+        log_path = REPO_ROOT / eval_cfg["log_path"]
+        role = "eval"
+
+        # First pass: freeze teacher dump under eval_raw/, then filter into eval/.
+        first_backup = not raw_dir.exists()
+        if first_backup:
+            if not clean_dir.exists():
+                raise RuntimeError(f"Missing eval proxy labels at {clean_dir}")
+            shutil.copytree(clean_dir, raw_dir)
+            print(f"Backed up eval teacher labels to {raw_dir.relative_to(REPO_ROOT)}")
+        need_build = args.force_auto or first_backup
+    else:
+        splits = args.splits or ["train", "val"]
+        if "eval" in splits:
+            raise RuntimeError("Refusing to clean eval here. Use --allow-eval --splits eval.")
+        image_rels = []
+        for split in splits:
+            image_rels.extend(read_split_list(splits_dir / f"{split}.txt"))
+        image_rels = list(dict.fromkeys(image_rels))
+        assert_train_pool_only(image_rels, eval_paths, eval_clip_ids)
+
+        raw_dir = REPO_ROOT / cleanup["raw_dir"]
+        clean_dir = REPO_ROOT / cleanup["clean_dir"]
+        backup_dir = REPO_ROOT / cleanup["backup_dir"]
+        log_path = REPO_ROOT / cleanup["log_path"]
+        role = "train_val"
+
+        if not backup_dir.exists():
+            shutil.copytree(raw_dir, backup_dir)
+            print(f"Backed up raw labels to {backup_dir.relative_to(REPO_ROOT)}")
+        need_build = args.force_auto or not clean_dir.exists()
 
     n_before = count_boxes(raw_dir, image_rels)
     deleted_auto = 0
-    need_build = args.force_auto or not clean_dir.exists()
     if need_build:
-        if clean_dir.exists() and args.force_auto:
+        if clean_dir.exists() and args.force_auto and role == "train_val":
             shutil.rmtree(clean_dir)
         deleted_auto = build_clean_from_raw(
             image_rels, raw_dir, clean_dir, min_dim, max_dim, max_aspect
@@ -357,7 +406,8 @@ def main() -> int:
 
     n_after = count_boxes(clean_dir, image_rels)
     log = {
-        "splits": args.splits,
+        "role": role,
+        "splits": splits,
         "n_images": len(image_rels),
         "n_reviewed": reviewed if not args.auto_only else 0,
         "n_deleted_auto": deleted_auto if need_build else None,
@@ -366,20 +416,20 @@ def main() -> int:
         "n_boxes_raw": n_before,
         "n_boxes_clean": n_after,
         "auto_only": args.auto_only,
+        "labels_dir": str(clean_dir.relative_to(REPO_ROOT)),
+        "raw_dir": str(raw_dir.relative_to(REPO_ROOT)),
         "heuristics": {
             "min_dim": min_dim,
             "max_dim": max_dim,
             "max_aspect": max_aspect,
         },
     }
-    log_path = REPO_ROOT / cleanup["log_path"]
     log_path.parent.mkdir(parents=True, exist_ok=True)
     if log_path.exists() and not need_build:
         prev = json.loads(log_path.read_text())
         if prev.get("n_deleted_auto") is not None and log["n_deleted_auto"] is None:
             log["n_deleted_auto"] = prev["n_deleted_auto"]
         if args.auto_only:
-            # Keep prior manual stats when re-running auto-only.
             log["n_deleted_manual"] = prev.get("n_deleted_manual", 0)
             log["n_added_manual"] = prev.get("n_added_manual", 0)
             log["n_reviewed"] = prev.get("n_reviewed", 0)
@@ -391,7 +441,10 @@ def main() -> int:
         f"boxes {n_before} -> {n_after}"
     )
     print(f"Wrote {log_path.relative_to(REPO_ROOT)}")
-    print("OK: eval not cleaned")
+    if role == "eval":
+        print("OK: eval proxy GT cleaned in place; train/val labels untouched")
+    else:
+        print("OK: eval not cleaned")
     return 0
 
 

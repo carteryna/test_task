@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
-"""Pseudo-label train/val frames with a general detector. Eval is refused."""
+"""Pseudo-label frames with a general detector.
+
+Default: train/val only; eval is refused.
+After the student is frozen: --allow-eval --splits eval writes data/labels/eval/.
+"""
 
 from __future__ import annotations
 
@@ -40,6 +44,20 @@ def assert_train_pool_only(
         for clip_id in eval_clip_ids:
             if clip_id in parts:
                 raise RuntimeError(f"Eval clip folder in auto-label path: {p}")
+
+
+def assert_eval_only(
+    image_paths: list[str],
+    eval_paths: list[str],
+    eval_clip_ids: set[str],
+) -> None:
+    eval_set = set(eval_paths)
+    extra = [p for p in image_paths if p not in eval_set]
+    if extra:
+        raise RuntimeError(f"Non-eval paths passed to eval auto-label: {extra[:5]}")
+    missing_clip = [p for p in image_paths if Path(p).parent.name not in eval_clip_ids]
+    if missing_clip:
+        raise RuntimeError(f"Eval auto-label path not in an eval clip folder: {missing_clip[:5]}")
 
 
 def iou_xyxy(a: np.ndarray, b: np.ndarray) -> float:
@@ -195,39 +213,19 @@ def draw_preview(image_bgr: np.ndarray, boxes: np.ndarray, scores: np.ndarray, o
     cv2.imwrite(str(out_path), vis, [int(cv2.IMWRITE_JPEG_QUALITY), 85])
 
 
-def main() -> int:
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--config", type=Path, default=REPO_ROOT / "configs" / "data.yaml")
-    parser.add_argument(
-        "--splits",
-        nargs="+",
-        default=["train", "val"],
-        help="Which split lists to label. Default: train val. eval is rejected.",
-    )
-    args = parser.parse_args()
-    cfg_path = args.config if args.config.is_absolute() else REPO_ROOT / args.config
-    cfg = load_config(cfg_path)
-
-    if "eval" in args.splits:
-        raise RuntimeError("Refusing to auto-label eval. That happens after the student is frozen.")
-
-    splits_dir = REPO_ROOT / cfg["paths"]["splits_dir"]
-    eval_paths = read_split_list(splits_dir / "eval.txt")
-    eval_clip_ids = {c["id"] for c in cfg["clips"]["eval"]}
-
-    image_rels: list[str] = []
-    for split in args.splits:
-        image_rels.extend(read_split_list(splits_dir / f"{split}.txt"))
-    image_rels = list(dict.fromkeys(image_rels))
-    assert_train_pool_only(image_rels, eval_paths, eval_clip_ids)
-
-    teacher_cfg = cfg["teacher"]
+def run_teacher_on_images(
+    *,
+    image_rels: list[str],
+    teacher_cfg: dict,
+    labels_dir: Path,
+    preview_dir: Path,
+    summary_path: Path,
+    splits: list[str],
+    extra_summary: dict,
+) -> dict:
     device = pick_device()
     model, backend, weights_used = load_teacher(teacher_cfg, device)
     coco_ids = set(int(i) for i in teacher_cfg["coco_vehicle_ids"])
-
-    labels_dir = REPO_ROOT / teacher_cfg["labels_dir"]
-    preview_dir = REPO_ROOT / teacher_cfg["preview_dir"]
     boxes_csv_path = labels_dir / "boxes.csv"
     labels_dir.mkdir(parents=True, exist_ok=True)
 
@@ -235,7 +233,7 @@ def main() -> int:
     best_preview: dict[str, tuple[int, str, np.ndarray, np.ndarray, np.ndarray]] = {}
     all_box_rows: list[dict] = []
 
-    print(f"Labeling {len(image_rels)} images from splits={args.splits}; skipping {len(eval_paths)} eval frames")
+    print(f"Labeling {len(image_rels)} images from splits={splits}")
 
     for i, rel in enumerate(image_rels, start=1):
         img_path = REPO_ROOT / rel
@@ -272,8 +270,7 @@ def main() -> int:
             img_w=w,
             img_h=h,
         )
-        out_lbl = label_path_for(rel, labels_dir)
-        write_yolo_label(out_lbl, boxes, w, h)
+        write_yolo_label(label_path_for(rel, labels_dir), boxes, w, h)
 
         clip_id = Path(rel).parent.name
         per_clip[clip_id]["images"] += 1
@@ -319,15 +316,16 @@ def main() -> int:
         "device": device,
         "imgsz": teacher_cfg["imgsz"],
         "conf": teacher_cfg["conf"],
-        "splits": args.splits,
+        "coco_vehicle_ids": list(teacher_cfg["coco_vehicle_ids"]),
+        "prompts": list(teacher_cfg["prompts"]),
+        "splits": splits,
+        "labels_dir": str(labels_dir.relative_to(REPO_ROOT)),
         "n_images": n_images,
         "n_boxes": n_boxes,
         "n_empty": n_empty,
-        "n_eval_skipped": len(eval_paths),
         "per_clip": dict(per_clip),
-        "tracking": "skipped — 2 fps is too sparse for ByteTrack on highway traffic",
+        **extra_summary,
     }
-    summary_path = REPO_ROOT / teacher_cfg["summary_path"]
     summary_path.parent.mkdir(parents=True, exist_ok=True)
     summary_path.write_text(json.dumps(summary, indent=2) + "\n")
 
@@ -336,6 +334,76 @@ def main() -> int:
         s = per_clip[clip_id]
         print(f"  {clip_id}: images={s['images']} boxes={s['boxes']} empty={s['empty']}")
     print(f"  TOTAL: images={n_images} boxes={n_boxes} empty={n_empty}")
+    print(f"Wrote {labels_dir.relative_to(REPO_ROOT)}")
+    print(f"Wrote {summary_path.relative_to(REPO_ROOT)}")
+    return summary
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--config", type=Path, default=REPO_ROOT / "configs" / "data.yaml")
+    parser.add_argument(
+        "--splits",
+        nargs="+",
+        default=None,
+        help="Split lists to label. Default: train val. With --allow-eval: eval.",
+    )
+    parser.add_argument(
+        "--allow-eval",
+        action="store_true",
+        help="Label the hold-out split after the student is frozen. Writes eval_gt.labels_dir.",
+    )
+    args = parser.parse_args()
+    cfg_path = args.config if args.config.is_absolute() else REPO_ROOT / args.config
+    cfg = load_config(cfg_path)
+
+    splits_dir = REPO_ROOT / cfg["paths"]["splits_dir"]
+    eval_paths = read_split_list(splits_dir / "eval.txt")
+    eval_clip_ids = {c["id"] for c in cfg["clips"]["eval"]}
+    teacher_cfg = cfg["teacher"]
+
+    if args.allow_eval:
+        splits = args.splits or ["eval"]
+        if splits != ["eval"]:
+            raise RuntimeError("--allow-eval only accepts --splits eval")
+        image_rels = list(dict.fromkeys(read_split_list(splits_dir / "eval.txt")))
+        assert_eval_only(image_rels, eval_paths, eval_clip_ids)
+        eval_cfg = cfg["eval_gt"]
+        run_teacher_on_images(
+            image_rels=image_rels,
+            teacher_cfg=teacher_cfg,
+            labels_dir=REPO_ROOT / eval_cfg["labels_dir"],
+            preview_dir=REPO_ROOT / eval_cfg["preview_dir"],
+            summary_path=REPO_ROOT / eval_cfg["summary_path"],
+            splits=splits,
+            extra_summary={
+                "role": "eval_proxy_gt",
+                "student_frozen": True,
+                "motorcycle_ids_excluded": 3 not in teacher_cfg["coco_vehicle_ids"],
+            },
+        )
+        print("OK: eval proxy GT written; train/val labels untouched")
+        return 0
+
+    splits = args.splits or ["train", "val"]
+    if "eval" in splits:
+        raise RuntimeError("Refusing to auto-label eval. Use --allow-eval --splits eval after freeze.")
+
+    image_rels: list[str] = []
+    for split in splits:
+        image_rels.extend(read_split_list(splits_dir / f"{split}.txt"))
+    image_rels = list(dict.fromkeys(image_rels))
+    assert_train_pool_only(image_rels, eval_paths, eval_clip_ids)
+
+    run_teacher_on_images(
+        image_rels=image_rels,
+        teacher_cfg=teacher_cfg,
+        labels_dir=REPO_ROOT / teacher_cfg["labels_dir"],
+        preview_dir=REPO_ROOT / teacher_cfg["preview_dir"],
+        summary_path=REPO_ROOT / teacher_cfg["summary_path"],
+        splits=splits,
+        extra_summary={"n_eval_skipped": len(eval_paths)},
+    )
     print(f"OK: eval not labeled ({len(eval_paths)} frames skipped)")
     return 0
 

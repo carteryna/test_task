@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
-"""Pinhole distance bands for cleaned train/val boxes (class 0 = vehicle).
+"""Pinhole distance bands for cleaned YOLO boxes (class 0 = vehicle).
 
 s_px = min(box_w, box_h) in pixels (short side ≈ physical width).
 f_px = H / (2 * tan(FOV_v / 2))
 distance_m = f_px * W_ref / s_px
 
 Bands: near [0, 200), far [200, 400), beyond/failed separately.
-Eval clip is refused.
+Default: train/val only. After freeze: --allow-eval audits Clip E;
+an empty far band fails the audit hard.
 """
 
 from __future__ import annotations
@@ -95,13 +96,15 @@ def summarize(xs: list[float]) -> dict | None:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--config", type=Path, default=REPO_ROOT / "configs" / "data.yaml")
-    parser.add_argument("--splits", nargs="+", default=["train", "val"])
+    parser.add_argument("--splits", nargs="+", default=None)
+    parser.add_argument(
+        "--allow-eval",
+        action="store_true",
+        help="Audit cleaned hold-out GT under eval_gt.labels_dir (hard-fail if far band empty).",
+    )
     args = parser.parse_args()
     cfg_path = args.config if args.config.is_absolute() else REPO_ROOT / args.config
     cfg = load_config(cfg_path)
-
-    if "eval" in args.splits:
-        raise RuntimeError("Refusing distance tagging on eval here.")
 
     dist_cfg = cfg["distance"]
     w_ref = float(dist_cfg["w_ref_m"])
@@ -113,11 +116,27 @@ def main() -> int:
         raise RuntimeError(f"Only size_side=min is supported (got {size_side})")
 
     splits_dir = REPO_ROOT / cfg["paths"]["splits_dir"]
-    labels_dir = REPO_ROOT / cfg["cleanup"]["clean_dir"]
     manifest = load_manifest(splits_dir / "manifest.csv")
 
+    if args.allow_eval:
+        splits = args.splits or ["eval"]
+        if splits != ["eval"]:
+            raise RuntimeError("--allow-eval only accepts --splits eval")
+        labels_dir = REPO_ROOT / cfg["eval_gt"]["labels_dir"]
+        report_path = REPO_ROOT / cfg["eval_gt"]["distance_report_path"]
+        csv_path = REPO_ROOT / cfg["eval_gt"]["distance_boxes_csv"]
+        role = "eval"
+    else:
+        splits = args.splits or ["train", "val"]
+        if "eval" in splits:
+            raise RuntimeError("Refusing distance tagging on eval here. Use --allow-eval.")
+        labels_dir = REPO_ROOT / cfg["cleanup"]["clean_dir"]
+        report_path = REPO_ROOT / dist_cfg["report_path"]
+        csv_path = REPO_ROOT / dist_cfg["boxes_csv"]
+        role = "train_val"
+
     image_rels: list[str] = []
-    for split in args.splits:
+    for split in splits:
         image_rels.extend(read_split_list(splits_dir / f"{split}.txt"))
     image_rels = list(dict.fromkeys(image_rels))
 
@@ -128,8 +147,10 @@ def main() -> int:
 
     for rel in image_rels:
         clip = Path(rel).parent.name
-        if clip == "E":
+        if clip == "E" and not args.allow_eval:
             raise RuntimeError(f"Eval path in distance tagging: {rel}")
+        if args.allow_eval and clip != "E":
+            raise RuntimeError(f"Non-eval path in eval distance audit: {rel}")
         meta = manifest.get(rel)
         if meta is None:
             raise RuntimeError(f"Missing manifest row for {rel}")
@@ -232,12 +253,13 @@ def main() -> int:
             f"{100.0 * row['far_share']:6.1f}% {row['f_px']:8.1f}"
         )
 
-    print()
-    print(f"{'split':<8} {'near':>7} {'far':>7} {'total':>7}")
-    for split in ("train", "val"):
-        near_s = by_split[split].get("near_0_200", 0)
-        far_s = by_split[split].get("far_200_400", 0)
-        print(f"{split:<8} {near_s:7d} {far_s:7d} {near_s + far_s:7d}")
+    if role == "train_val":
+        print()
+        print(f"{'split':<8} {'near':>7} {'far':>7} {'total':>7}")
+        for split in ("train", "val"):
+            near_s = by_split[split].get("near_0_200", 0)
+            far_s = by_split[split].get("far_200_400", 0)
+            print(f"{split:<8} {near_s:7d} {far_s:7d} {near_s + far_s:7d}")
 
     print()
     print(f"{'band':<14} {'s_px med':>9} {'s_px min':>9} {'dist med':>9}")
@@ -270,7 +292,6 @@ def main() -> int:
             f"{counts.get('far_200_400', 0):7d} {counts.get('beyond_400', 0):8d}"
         )
 
-    csv_path = REPO_ROOT / dist_cfg["boxes_csv"]
     csv_path.parent.mkdir(parents=True, exist_ok=True)
     with csv_path.open("w", newline="") as f:
         writer = csv.DictWriter(
@@ -284,6 +305,7 @@ def main() -> int:
         writer.writerows(box_rows)
 
     report = {
+        "role": role,
         "n_boxes": n,
         "n_frames": len(image_rels),
         "w_ref_m": w_ref,
@@ -298,14 +320,20 @@ def main() -> int:
         "per_clip": per_clip_out,
         "fov_sensitivity": fov_sensitivity,
         "exclude_classes_note": dist_cfg.get("exclude_classes_note", ""),
+        "labels_dir": str(labels_dir.relative_to(REPO_ROOT)),
         "boxes_csv": str(csv_path.relative_to(REPO_ROOT)),
     }
-    report_path = REPO_ROOT / dist_cfg["report_path"]
     report_path.write_text(json.dumps(report, indent=2) + "\n")
     print(f"\nWrote {csv_path.relative_to(REPO_ROOT)}")
     print(f"Wrote {report_path.relative_to(REPO_ROOT)}")
     near = band_counts.get("near_0_200", 0)
     far = band_counts.get("far_200_400", 0)
+    if role == "eval":
+        if far == 0:
+            print("AUDIT FAILED: Clip E lacks far-band targets. Add another clip.")
+            return 1
+        print(f"OK: eval distance audit passed (near={near}, far={far})")
+        return 0
     if near == 0 or far == 0:
         print("WARNING: one training band is empty — check FOV / W_ref or add held-out eval coverage later.")
     else:

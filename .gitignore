@@ -3,6 +3,7 @@ train_val_data/*.mp4
 data/frames/
 data/labels/raw/
 data/labels/raw_backup/
+data/labels/eval_raw/
 data/yolo/
 runs/
 weights/

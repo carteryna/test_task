@@ -24,7 +24,7 @@ I am not training on VisDrone, AU-AIR, or UAVDT. Pseudo-labels come from a gener
 | D `3405804` | urban intersection, 4K | 39 | 10 | — |
 | E `13722965` | city highway, portrait | — | — | 153 |
 
-Teacher: YOLO-World `yolov8s-worldv2`, prompts `car, truck, bus, van, automobile`, merged to class `0`. Motorcycle / bike prompts omitted. Fallback COCO ids are `[2, 5, 7]` (car/bus/truck) — **not** id 3. That matches cleanup and the `distance:` block in `configs/data.yaml` (`w_ref_m: 2.0`, `size_side: min`). Clip C is nadir; a COCO-only YOLO often misses that view. Full-frame `imgsz=1280`, `conf=0.15`, CPU (MPS is present but `torchvision.nms` has no MPS kernel on this torch). I did not slice frames. On this machine a 4K image at 20% overlap is about six 640 tiles; 185 frames would have been hours. Low conf is cheaper: keep faint far boxes, delete extras in cleanup. I skipped ByteTrack — labels are 2 fps, and a highway car moves too far in 0.5 s for IoU tracks to mean much. Post-process: class-agnostic NMS, min side 8 px, max aspect 8. `src/auto_label.py` reads `train.txt`+`val.txt` only and refuses `--splits eval`.
+Teacher: YOLO-World `yolov8s-worldv2`, prompts `car, truck, bus, van, automobile`, merged to class `0`. Motorcycle / bike prompts omitted. Fallback COCO ids are `[2, 5, 7]` (car/bus/truck) — **not** id 3. That matches cleanup and the `distance:` block in `configs/data.yaml` (`w_ref_m: 2.0`, `size_side: min`). Clip C is nadir; a COCO-only YOLO often misses that view. Full-frame `imgsz=1280`, `conf=0.15`, CPU (MPS is present but `torchvision.nms` has no MPS kernel on this torch). I did not slice frames. On this machine a 4K image at 20% overlap is about six 640 tiles; 185 frames would have been hours. Low conf is cheaper: keep faint far boxes, delete extras in cleanup. I skipped ByteTrack — labels are 2 fps, and a highway car moves too far in 0.5 s for IoU tracks to mean much. Post-process: class-agnostic NMS, min side 8 px, max aspect 8. `src/auto_label.py` reads `train.txt`+`val.txt` by default and refuses `--splits eval`. Hold-out proxy GT is a later, explicit pass: `--allow-eval` writes `data/labels/eval/` only after the student is frozen. Same teacher, same motorcycle filter (COCO id 3 never in `coco_vehicle_ids`).
 
 Teacher run (train+val only; 153 eval frames skipped):
 
@@ -37,6 +37,28 @@ Teacher run (train+val only; 153 eval frames skipped):
 | **Total** | **185** | **1919** | **4** |
 
 Clip C is dense and mostly vehicles. Clip B is sparse and has a few junk boxes on buildings/trees — cleanup targets. Previews: `results/auto_label/{A,B,C,D}.jpg`. Summary JSON: `data/splits/label_summary.json`.
+
+Eval proxy GT after freeze (`--allow-eval`, same teacher, `data/labels/eval/`): **153** frames, **227** boxes, **39** empty (1.48 / frame vs 11.9 on train). Portrait highway is a thinner scene; the teacher missed a lot of vehicles. Preview: `results/auto_label_eval/E.jpg`. Summary: `data/splits/eval_label_summary.json`.
+
+Eval cleanup (same OpenCV tool): teacher dump frozen under `data/labels/eval_raw/`; edits write back to `data/labels/eval/`. Heuristic auto-filter deleted **0**. Manual pass on all **153** frames: merge cab+trailer, drop infrastructure FPs, add misses; pedestrians/umbrellas stay unlabeled.
+
+Log (`data/splits/eval_cleanup_log.json`): auto-deleted **0**, manually deleted **12**, manually added **164**. Clean eval set: **153** frames, **379** boxes (**227 → 379**), **0** empty.
+
+```bash
+python src/cleanup_labels.py --allow-eval --splits eval --auto-only
+python src/cleanup_labels.py --allow-eval --splits eval
+python src/dataset_statistics.py --allow-eval
+```
+
+| Stat (eval cleaned) | Value |
+|------|------:|
+| Frames | 153 |
+| Boxes | 379 |
+| Boxes/frame (mean / min / max) | 2.48 / 1 / 5 |
+| Mean box (px) | 188.4 × 362.9 |
+| Aspect median (max/min) | 1.16 |
+
+Nadir-ish portrait: ~61% squarish (&lt;1.2), ~37% car-like (1.2–2.0). JSON: `data/splits/eval_dataset_statistics.json`.
 
 To validate teacher model recall on small objects without guessing, I profiled all 1,919 generated bounding boxes by area tier (`src/profile_predictions.py`, native-pixel xyxy from `data/labels/raw/boxes.csv` — not a 1280×720 assumption). Tiny candidates (&lt; 600 px²) accounted for 16.0% of all labels with a median confidence of 0.239, confirming healthy far-band coverage at `conf=0.15` and eliminating the need for lower confidence re-runs. Full table: `data/splits/prediction_profile.json`.
 
@@ -71,7 +93,7 @@ python src/dataset_statistics.py --config configs/data.yaml
 | Mean box (px) | 96.4 × 77.7 |
 | Aspect median (max/min) | 1.47 |
 
-Aspect mix: ~29% squarish (&lt;1.2), ~50% car-like (1.2–2.0), ~18% van/SUV (2–3.5), ~3% truck-long (≥3.5). Per-clip and full JSON: `data/splits/dataset_statistics.json`. Eval GT cleanup is later, after the students freeze.
+Aspect mix: ~29% squarish (&lt;1.2), ~50% car-like (1.2–2.0), ~18% van/SUV (2–3.5), ~3% truck-long (≥3.5). Per-clip and full JSON: `data/splits/dataset_statistics.json`.
 
 ## Distance Estimation Model
 
@@ -130,6 +152,22 @@ FOV sensitivity (same boxes, alternate FOV):
 
 CSV + JSON: `data/splits/distance_boxes.csv`, `data/splits/distance_bands.json`.
 
+### Eval distance audit (Clip E)
+
+Same priors on cleaned eval GT (`--allow-eval`). Portrait H=3840 → `f_px` ≈ **5275** at 40°. Audit hard-fails if the far band is empty.
+
+| Band | Count | Share | Dist median | `s_px` median |
+|------|------:|------:|------------:|--------------:|
+| 0–200 m | 378 | 99.7% | 56.1 m | 188.2 |
+| 200–400 m | 1 | 0.3% | 200.3 m | 52.7 |
+| >400 m / failed | 0 | 0% | — | — |
+
+Audit **passed** (far ≠ 0), but far-band GT is effectively a single box. Band metrics on 200–400 m will be noise-dominated; near-band is the real eval signal. JSON: `data/splits/eval_distance_bands.json`.
+
+```bash
+python src/estimate_distance.py --allow-eval
+```
+
 ## Evaluation & Metrics
 
 IoU ≥ 0.5, greedy one-pred-per-GT. `conf` and NMS come from the train-only val split, then freeze. Eval is scored once.
@@ -177,6 +215,7 @@ python src/train.py --config configs/train.yaml --prepare-only
 python src/train.py --config configs/train.yaml --models yolo11n --epochs 3    # loader / freeze smoke
 python src/train.py --config configs/train.yaml --models yolo11n --epochs 10   # CPU val trajectory
 python src/train_statistics.py
+# after freeze: python src/auto_label.py --allow-eval --splits eval
 # GPU / 50 epochs: python src/train.py --config configs/train.yaml
 ```
 
@@ -195,7 +234,12 @@ python src/dataset_statistics.py --config configs/data.yaml
 python src/estimate_distance.py --config configs/data.yaml
 python src/train.py --config configs/train.yaml
 python src/train_statistics.py
-# later: python src/eval.py
+python src/auto_label.py --allow-eval --splits eval   # after freeze; writes data/labels/eval/
+python src/cleanup_labels.py --allow-eval --splits eval --auto-only
+python src/cleanup_labels.py --allow-eval --splits eval
+python src/dataset_statistics.py --allow-eval
+python src/estimate_distance.py --allow-eval
+# later: python src/evaluate_custom.py
 ```
 
 ## Failure Modes & Trade-offs

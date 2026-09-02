@@ -71,35 +71,55 @@ def pct(n: int, total: int) -> float:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--config", type=Path, default=REPO_ROOT / "configs" / "data.yaml")
-    parser.add_argument("--splits", nargs="+", default=["train", "val"])
+    parser.add_argument("--splits", nargs="+", default=None)
+    parser.add_argument(
+        "--allow-eval",
+        action="store_true",
+        help="Summarize cleaned hold-out labels under eval_gt.labels_dir.",
+    )
     parser.add_argument(
         "--labels-dir",
         type=Path,
         default=None,
-        help="Defaults to cleanup.clean_dir from config",
+        help="Defaults to cleanup.clean_dir (or eval_gt.labels_dir with --allow-eval)",
     )
     parser.add_argument(
         "--out",
         type=Path,
-        default=REPO_ROOT / "data" / "splits" / "dataset_statistics.json",
+        default=None,
     )
     args = parser.parse_args()
     cfg_path = args.config if args.config.is_absolute() else REPO_ROOT / args.config
     cfg = load_config(cfg_path)
 
-    if "eval" in args.splits:
-        raise RuntimeError("Refusing to summarize eval labels here.")
+    if args.allow_eval:
+        splits = args.splits or ["eval"]
+        if splits != ["eval"]:
+            raise RuntimeError("--allow-eval only accepts --splits eval")
+        labels_dir = (
+            REPO_ROOT / args.labels_dir
+            if args.labels_dir
+            else REPO_ROOT / cfg["eval_gt"]["labels_dir"]
+        )
+        out_default = REPO_ROOT / cfg["eval_gt"].get(
+            "stats_path", "data/splits/eval_dataset_statistics.json"
+        )
+    else:
+        splits = args.splits or ["train", "val"]
+        if "eval" in splits:
+            raise RuntimeError("Refusing to summarize eval here. Use --allow-eval.")
+        labels_dir = (
+            REPO_ROOT / args.labels_dir
+            if args.labels_dir
+            else REPO_ROOT / cfg["cleanup"]["clean_dir"]
+        )
+        out_default = REPO_ROOT / "data" / "splits" / "dataset_statistics.json"
 
     splits_dir = REPO_ROOT / cfg["paths"]["splits_dir"]
-    labels_dir = (
-        REPO_ROOT / args.labels_dir
-        if args.labels_dir
-        else REPO_ROOT / cfg["cleanup"]["clean_dir"]
-    )
     sizes = load_manifest_sizes(splits_dir / "manifest.csv")
 
     image_rels: list[str] = []
-    for split in args.splits:
+    for split in splits:
         image_rels.extend(read_split_list(splits_dir / f"{split}.txt"))
     image_rels = list(dict.fromkeys(image_rels))
 
@@ -115,7 +135,7 @@ def main() -> int:
 
     for rel in image_rels:
         clip = Path(rel).parent.name
-        if clip == "E":
+        if clip == "E" and not args.allow_eval:
             raise RuntimeError(f"Eval path in statistics: {rel}")
         txt = labels_dir / clip / f"{Path(rel).stem}.txt"
         boxes = load_boxes(txt)
@@ -139,7 +159,7 @@ def main() -> int:
         raise RuntimeError("No frames found")
 
     print(f"Labels: {labels_dir.relative_to(REPO_ROOT)}")
-    print(f"Splits: {args.splits}")
+    print(f"Splits: {splits}")
     print(f"Frames: {n_frames}")
     print(f"Boxes:  {n_boxes}  (class 0 = vehicle)")
     print(
@@ -188,7 +208,7 @@ def main() -> int:
 
     out = {
         "labels_dir": str(labels_dir.relative_to(REPO_ROOT)),
-        "splits": args.splits,
+        "splits": splits,
         "n_frames": n_frames,
         "n_boxes": n_boxes,
         "boxes_per_frame": {
@@ -229,7 +249,10 @@ def main() -> int:
             for clip in sorted(by_clip_frames)
         },
     }
-    out_path = args.out if args.out.is_absolute() else REPO_ROOT / args.out
+    if args.out is None:
+        out_path = out_default
+    else:
+        out_path = args.out if args.out.is_absolute() else REPO_ROOT / args.out
     out_path.parent.mkdir(parents=True, exist_ok=True)
     out_path.write_text(json.dumps(out, indent=2) + "\n")
     print(f"\nWrote {out_path.relative_to(REPO_ROOT)}")

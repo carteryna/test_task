@@ -1,0 +1,50 @@
+{
+  "labels_dir": "data/labels/eval",
+  "splits": [
+    "eval"
+  ],
+  "n_frames": 153,
+  "n_boxes": 379,
+  "boxes_per_frame": {
+    "mean": 2.4771,
+    "min": 1,
+    "max": 5,
+    "median": 2
+  },
+  "normalized": {
+    "width_mean": 0.087216,
+    "width_min": 0.036295,
+    "width_max": 0.144444,
+    "height_mean": 0.09451,
+    "height_min": 0.013719,
+    "height_max": 0.15
+  },
+  "pixels": {
+    "width_mean": 188.39,
+    "width_min": 78.4,
+    "width_max": 312.0,
+    "height_mean": 362.92,
+    "height_min": 52.68,
+    "height_max": 576.0
+  },
+  "aspect_ratio": {
+    "mean": 1.2113,
+    "median": 1.1613,
+    "min": 1.0,
+    "max": 4.1892,
+    "bins": {
+      "<1.2 (squarish)": 231,
+      "1.2\u20132.0 (car-like)": 140,
+      "2.0\u20133.5 (van/SUV)": 7,
+      "3.5\u20136.0 (truck-like)": 1,
+      ">=6.0 (very long)": 0
+    }
+  },
+  "per_clip": {
+    "E": {
+      "frames": 153,
+      "boxes": 379,
+      "mean_boxes_per_frame": 2.4771
+    }
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "role": "eval",
+  "splits": [
+    "eval"
+  ],
+  "n_images": 153,
+  "n_reviewed": 153,
+  "n_deleted_auto": 0,
+  "n_deleted_manual": 12,
+  "n_added_manual": 164,
+  "n_boxes_raw": 227,
+  "n_boxes_clean": 379,
+  "auto_only": false,
+  "labels_dir": "data/labels/eval",
+  "raw_dir": "data/labels/eval_raw",
+  "heuristics": {
+    "min_dim": 0.005,
+    "max_dim": 0.35,
+    "max_aspect": 6.0
+  }
+}

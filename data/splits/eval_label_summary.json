@@ -1,0 +1,36 @@
+{
+  "backend": "yolo_world",
+  "weights": "weights/yolov8s-worldv2.pt",
+  "device": "cpu",
+  "imgsz": 1280,
+  "conf": 0.15,
+  "coco_vehicle_ids": [
+    2,
+    5,
+    7
+  ],
+  "prompts": [
+    "car",
+    "truck",
+    "bus",
+    "van",
+    "automobile"
+  ],
+  "splits": [
+    "eval"
+  ],
+  "labels_dir": "data/labels/eval",
+  "n_images": 153,
+  "n_boxes": 227,
+  "n_empty": 39,
+  "per_clip": {
+    "E": {
+      "images": 153,
+      "boxes": 227,
+      "empty": 39
+    }
+  },
+  "role": "eval_proxy_gt",
+  "student_frozen": true,
+  "motorcycle_ids_excluded": true
+}
