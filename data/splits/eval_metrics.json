@@ -1,0 +1,220 @@
+{
+  "role": "holdout_eval",
+  "weights": "runs/train/yolo11n/weights/best.pt",
+  "imgsz": 1280,
+  "device": "cpu",
+  "conf": 0.2,
+  "nms_iou": 0.5,
+  "iou_match": 0.5,
+  "thresholds_path": "data/splits/eval_thresholds.json",
+  "thresholds_source": {
+    "chosen_conf": 0.2,
+    "val_selection_score": 0.6492,
+    "eval_used_for_selection": false
+  },
+  "n_frames": 214,
+  "bands": {
+    "near_0_200": {
+      "tp": 544,
+      "fp": 355,
+      "fn": 360,
+      "n_gt": 904,
+      "detection_rate": 0.6018,
+      "precision": 0.6051,
+      "f1": 0.6034,
+      "false_alarms_per_min": 99.5327,
+      "time_to_first_s": 0.0,
+      "time_to_first_per_clip_s": {
+        "E": 0.0,
+        "F": 0.0
+      }
+    },
+    "far_200_400": {
+      "tp": 5,
+      "fp": 24,
+      "fn": 74,
+      "n_gt": 79,
+      "detection_rate": 0.0633,
+      "precision": 0.1724,
+      "f1": 0.0926,
+      "false_alarms_per_min": 6.729,
+      "time_to_first_s": 0.4,
+      "time_to_first_per_clip_s": {
+        "E": 3.4,
+        "F": 0.4
+      }
+    }
+  },
+  "selection_score": 0.348,
+  "per_clip": {
+    "E": {
+      "n_frames": 153,
+      "bands": {
+        "near_0_200": {
+          "tp": 377,
+          "fp": 84,
+          "fn": 1,
+          "n_gt": 378,
+          "detection_rate": 0.9974,
+          "precision": 0.8178,
+          "f1": 0.8987,
+          "false_alarms_per_min": 32.9412,
+          "time_to_first_s": 0.0,
+          "time_to_first_per_clip_s": {
+            "E": 0.0
+          }
+        },
+        "far_200_400": {
+          "tp": 1,
+          "fp": 2,
+          "fn": 0,
+          "n_gt": 1,
+          "detection_rate": 1.0,
+          "precision": 0.3333,
+          "f1": 0.5,
+          "false_alarms_per_min": 0.7843,
+          "time_to_first_s": 3.4,
+          "time_to_first_per_clip_s": {
+            "E": 3.4
+          }
+        }
+      }
+    },
+    "F": {
+      "n_frames": 61,
+      "bands": {
+        "near_0_200": {
+          "tp": 167,
+          "fp": 271,
+          "fn": 359,
+          "n_gt": 526,
+          "detection_rate": 0.3175,
+          "precision": 0.3813,
+          "f1": 0.3465,
+          "false_alarms_per_min": 266.5574,
+          "time_to_first_s": 0.0,
+          "time_to_first_per_clip_s": {
+            "F": 0.0
+          }
+        },
+        "far_200_400": {
+          "tp": 4,
+          "fp": 22,
+          "fn": 74,
+          "n_gt": 78,
+          "detection_rate": 0.0513,
+          "precision": 0.1538,
+          "f1": 0.0769,
+          "false_alarms_per_min": 21.6393,
+          "time_to_first_s": 0.4,
+          "time_to_first_per_clip_s": {
+            "F": 0.4
+          }
+        }
+      }
+    }
+  },
+  "overlays": [
+    "results/eval_overlays/E_000876.jpg",
+    "results/eval_overlays/E_000888.jpg",
+    "results/eval_overlays/E_000048.jpg",
+    "results/eval_overlays/E_000054.jpg",
+    "results/eval_overlays/F_000100.jpg",
+    "results/eval_overlays/F_000240.jpg",
+    "results/eval_overlays/F_000130.jpg",
+    "results/eval_overlays/F_000180.jpg"
+  ],
+  "examples": [
+    {
+      "clip_id": "E",
+      "tag": "success",
+      "frame": "data/frames/E/000144.jpg",
+      "t_sec": 4.8,
+      "conf": 0.2,
+      "tp": 5,
+      "fp": 0,
+      "fn": 0,
+      "far_gt": 0,
+      "far_tp": 0,
+      "side_by_side": "outputs/examples/E_000144_success_side_by_side.jpg",
+      "combined": "outputs/examples/E_000144_success_combined.jpg"
+    },
+    {
+      "clip_id": "E",
+      "tag": "far",
+      "frame": "data/frames/E/000102.jpg",
+      "t_sec": 3.4,
+      "conf": 0.2,
+      "tp": 3,
+      "fp": 1,
+      "fn": 0,
+      "far_gt": 1,
+      "far_tp": 1,
+      "side_by_side": "outputs/examples/E_000102_far_side_by_side.jpg",
+      "combined": "outputs/examples/E_000102_far_combined.jpg"
+    },
+    {
+      "clip_id": "E",
+      "tag": "hard",
+      "frame": "data/frames/E/000876.jpg",
+      "t_sec": 29.2,
+      "conf": 0.2,
+      "tp": 3,
+      "fp": 3,
+      "fn": 0,
+      "far_gt": 0,
+      "far_tp": 0,
+      "side_by_side": "outputs/examples/E_000876_hard_side_by_side.jpg",
+      "combined": "outputs/examples/E_000876_hard_combined.jpg"
+    },
+    {
+      "clip_id": "F",
+      "tag": "success",
+      "frame": "data/frames/F/000165.jpg",
+      "t_sec": 6.6,
+      "conf": 0.2,
+      "tp": 6,
+      "fp": 3,
+      "fn": 6,
+      "far_gt": 0,
+      "far_tp": 0,
+      "side_by_side": "outputs/examples/F_000165_success_side_by_side.jpg",
+      "combined": "outputs/examples/F_000165_success_combined.jpg"
+    },
+    {
+      "clip_id": "F",
+      "tag": "far",
+      "frame": "data/frames/F/000300.jpg",
+      "t_sec": 12.0,
+      "conf": 0.2,
+      "tp": 4,
+      "fp": 1,
+      "fn": 5,
+      "far_gt": 3,
+      "far_tp": 1,
+      "side_by_side": "outputs/examples/F_000300_far_side_by_side.jpg",
+      "combined": "outputs/examples/F_000300_far_combined.jpg"
+    },
+    {
+      "clip_id": "F",
+      "tag": "hard",
+      "frame": "data/frames/F/000100.jpg",
+      "t_sec": 4.0,
+      "conf": 0.2,
+      "tp": 1,
+      "fp": 12,
+      "fn": 8,
+      "far_gt": 0,
+      "far_tp": 0,
+      "side_by_side": "outputs/examples/F_000100_hard_side_by_side.jpg",
+      "combined": "outputs/examples/F_000100_hard_combined.jpg"
+    }
+  ],
+  "examples_dir": "outputs/examples",
+  "distance_priors": {
+    "w_ref_m": 2.0,
+    "fov_v_deg": 40.0,
+    "size_side": "min"
+  },
+  "note": "IoU>=0.5 greedy match; TP/FN by GT band; FP by predicted-box band; FA/min = FP*60/N_frames; TTFD = min in-clip t_sec with a TP (per band)."
+}

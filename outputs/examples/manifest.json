@@ -1,0 +1,95 @@
+{
+  "role": "submission_examples",
+  "conf": 0.2,
+  "n_examples": 6,
+  "legend": {
+    "side_by_side": "Left = GT (green). Right = student preds (blue) + conf.",
+    "combined": "GT matched green, GT miss yellow, pred TP blue, pred FP red."
+  },
+  "examples": [
+    {
+      "clip_id": "E",
+      "tag": "success",
+      "frame": "data/frames/E/000144.jpg",
+      "t_sec": 4.8,
+      "conf": 0.2,
+      "tp": 5,
+      "fp": 0,
+      "fn": 0,
+      "far_gt": 0,
+      "far_tp": 0,
+      "side_by_side": "outputs/examples/E_000144_success_side_by_side.jpg",
+      "combined": "outputs/examples/E_000144_success_combined.jpg"
+    },
+    {
+      "clip_id": "E",
+      "tag": "far",
+      "frame": "data/frames/E/000102.jpg",
+      "t_sec": 3.4,
+      "conf": 0.2,
+      "tp": 3,
+      "fp": 1,
+      "fn": 0,
+      "far_gt": 1,
+      "far_tp": 1,
+      "side_by_side": "outputs/examples/E_000102_far_side_by_side.jpg",
+      "combined": "outputs/examples/E_000102_far_combined.jpg"
+    },
+    {
+      "clip_id": "E",
+      "tag": "hard",
+      "frame": "data/frames/E/000876.jpg",
+      "t_sec": 29.2,
+      "conf": 0.2,
+      "tp": 3,
+      "fp": 3,
+      "fn": 0,
+      "far_gt": 0,
+      "far_tp": 0,
+      "side_by_side": "outputs/examples/E_000876_hard_side_by_side.jpg",
+      "combined": "outputs/examples/E_000876_hard_combined.jpg"
+    },
+    {
+      "clip_id": "F",
+      "tag": "success",
+      "frame": "data/frames/F/000165.jpg",
+      "t_sec": 6.6,
+      "conf": 0.2,
+      "tp": 6,
+      "fp": 3,
+      "fn": 6,
+      "far_gt": 0,
+      "far_tp": 0,
+      "side_by_side": "outputs/examples/F_000165_success_side_by_side.jpg",
+      "combined": "outputs/examples/F_000165_success_combined.jpg"
+    },
+    {
+      "clip_id": "F",
+      "tag": "far",
+      "frame": "data/frames/F/000300.jpg",
+      "t_sec": 12.0,
+      "conf": 0.2,
+      "tp": 4,
+      "fp": 1,
+      "fn": 5,
+      "far_gt": 3,
+      "far_tp": 1,
+      "side_by_side": "outputs/examples/F_000300_far_side_by_side.jpg",
+      "combined": "outputs/examples/F_000300_far_combined.jpg"
+    },
+    {
+      "clip_id": "F",
+      "tag": "hard",
+      "frame": "data/frames/F/000100.jpg",
+      "t_sec": 4.0,
+      "conf": 0.2,
+      "tp": 1,
+      "fp": 12,
+      "fn": 8,
+      "far_gt": 0,
+      "far_tp": 0,
+      "side_by_side": "outputs/examples/F_000100_hard_side_by_side.jpg",
+      "combined": "outputs/examples/F_000100_hard_combined.jpg"
+    }
+  ]
+}

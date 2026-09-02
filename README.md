@@ -191,24 +191,45 @@ python src/estimate_distance.py --allow-eval
 
 ## Evaluation & Metrics
 
-IoU ≥ 0.5, greedy one-pred-per-GT. `conf` and NMS come from the train-only val split, then freeze. Eval is scored once.
+`src/evaluate_custom.py`: predict once at `conf≥0.01`, sweep `conf` on **val only** (mean of near/far F1), freeze thresholds, then score hold-out **once**. IoU ≥ 0.5, greedy one-pred-per-GT. TP/FN by GT distance band; unmatched preds are FP in the pred box’s band (same `W_ref` / FOV prior). False alarms / min is `FP × 60 / N_frames` (per 60 frames, not fps-corrected). Time to first detection is the earliest in-clip `t_sec` with a TP in that band (`n/a` if none); with E+F the headline number is the min across clips.
 
-False alarms / min is `FP × 60 / N_frames` as specified (per 60 frames, not fps-corrected). Time to first detection is seconds from eval start until the first TP in that band (`n/a` if none).
+Val sweep chose **`conf=0.20`**, `nms_iou=0.5` (val mean-band F1 **0.649**). Eval unused for selection. YOLOv8n not trained on this CPU — its columns stay empty.
+
+Hold-out (YOLO11n `best.pt`, 214 frames, conf=0.20):
 
 | Metric | YOLOv8n 0–200 m | YOLO11n 0–200 m | YOLOv8n 200–400 m | YOLO11n 200–400 m |
-|--------|-----------------|-----------------|-------------------|-------------------|
-| Detection rate TP / (TP + FN) | — | — | — | — |
-| Precision TP / (TP + FP) | — | — | — | — |
-| False alarms / min FP × 60 / N_frames | — | — | — | — |
-| Time to first detection (s) | — | — | — | — |
+|--------|-----------------|----------------:|-------------------|------------------:|
+| Detection rate TP / (TP + FN) | — | 0.602 | — | 0.063 |
+| Precision TP / (TP + FP) | — | 0.605 | — | 0.172 |
+| False alarms / min FP × 60 / N_frames | — | 99.5 | — | 6.7 |
+| Time to first detection (s) | — | 0.0 | — | 0.4 |
 
-mAP@0.5 across both bands if the eval script already has it. Overlay stills and a short eval demo go in `results/` after freeze. Weights will be a link, not a git blob.
+| Clip | Near Det / Prec | Far Det / Prec | Notes |
+|------|----------------:|---------------:|-------|
+| E | 0.997 / 0.818 | 1.0 / 0.333 (n_gt=1) | portrait; near almost saturated |
+| F | 0.318 / 0.381 | 0.051 / 0.154 | high aerial; far and small cars dominate misses/FPs |
+
+Far-band hold-out recall is the weak number (**5 / 79** TP). That matches the train story: 10 px boxes after 1280 letterbox, plus F’s altitude/domain shift vs A–D. Near-band is carried by E; F pulls overall near Det down and FA/min up. JSON: `data/splits/eval_thresholds.json`, `data/splits/eval_metrics.json`.
+
+### Example predictions (eval)
+
+Curated stills for the repo review live under **`outputs/examples/`** (3 frames × clips E and F). Each frame has:
+
+- `*_side_by_side.jpg` — left **GT** (green), right **student preds** (blue + conf)
+- `*_combined.jpg` — match view: GT matched green, GT miss yellow, pred TP blue, pred FP red
+
+Tags: `success` (clean TPs), `far` (best far-band coverage on that clip), `hard` (error-heavy). Index: `outputs/examples/manifest.json`. Debug dumps (error-sorted) stay in `results/eval_overlays/`.
+
+```bash
+python src/evaluate_custom.py --tune-val --score-eval
+python src/evaluate_custom.py --export-examples   # re-score + rewrite outputs/examples/
+```
 
 ## Student training
 
 `configs/train.yaml` + `src/train.py`: build `data/yolo/` from train/val splits and `data/labels/clean` (symlinks; eval refused), then fine-tune from COCO with **`freeze=10`**, `imgsz=1280`, `batch=4`. Dataset scan: **147 train / 38 val** images, **1740 / 467** boxes, **0** empty frames. YOLOv8n is wired but not trained on this CPU.
 
-Three epochs proved the loader, 1280 letterbox, and freeze path. They are not enough for the head to lock onto the **451** far-band boxes (median short side 10.9 px). Overall val recall after that smoke was **0.276** — Ultralytics all-band, not a far-band score (band metrics wait for `eval.py`). Ten epochs is the CPU budget that still leaves a visible gradient trajectory without the 50-epoch GPU recipe. `runs/` is gitignored; numbers live in `data/splits/train_smoke.json`.
+Three epochs proved the loader, 1280 letterbox, and freeze path. They are not enough for the head to lock onto the **451** far-band boxes (median short side 10.9 px). Overall val recall after that smoke was **0.276** — Ultralytics all-band, not a far-band score (band metrics are in `evaluate_custom.py`). Ten epochs is the CPU budget that still leaves a visible gradient trajectory without the 50-epoch GPU recipe. `runs/` is gitignored; numbers live in `data/splits/train_smoke.json`.
 
 Smoke (3 epochs, ~13.4 min). `runs/train/yolo11n_e3/weights/best.pt`.
 
@@ -261,8 +282,24 @@ python src/cleanup_labels.py --allow-eval --splits eval --auto-only
 python src/cleanup_labels.py --allow-eval --splits eval
 python src/dataset_statistics.py --allow-eval
 python src/estimate_distance.py --allow-eval
-# later: python src/evaluate_custom.py
+python src/evaluate_custom.py --tune-val --score-eval
+# regenerates outputs/examples/ (GT|pred side-by-side + combined)
+python src/evaluate_custom.py --export-examples
 ```
+
+## Submission checklist
+
+What the brief asks for, mapped to this repo:
+
+| Ask | Where |
+|-----|--------|
+| Runnable code | `src/`, `configs/`, `requirements.txt`, Quickstart above |
+| Strategy + key decisions | README sections above |
+| Metrics table | Evaluation & Metrics |
+| Example predictions with GT overlaid | `outputs/examples/*_side_by_side.jpg` and `*_combined.jpg` |
+| Trained weights or a link | `runs/train/yolo11n/weights/best.pt` is gitignored (`*.pt`); upload to Drive/S3/HF and put the URL in the README or repo description |
+
+Ship a **public** GitHub repo, or private with reviewer access. Do **not** commit raw videos, `data/frames/`, or `.pt` blobs if the host is picky about size — keep cleaned eval labels (`data/labels/eval/`), splits/metrics JSON, and `outputs/examples/`.
 
 ## Failure Modes & Trade-offs
 
@@ -270,6 +307,6 @@ python src/estimate_distance.py --allow-eval
 
 Distance from box size will mis-bin trucks, occluded cars, and oblique views. Far-band recall will likely be the weak number: 4K boxes become a few pixels after 1280 letterbox.
 
-Train is landscape 1080p/4K; eval is portrait. That domain gap is real. Teacher boxes on B include a few non-vehicles at `conf=0.15`; that noise goes into the students unless cleanup removes it.
+Train is landscape 1080p/4K; hold-out mixes E (portrait, near) and F (higher altitude, far). F is where Det and FA/min break. Teacher boxes on B include a few non-vehicles at `conf=0.15`; that noise goes into the students unless cleanup removes it.
 
 I am not claiming a Pi-ready detector. YOLO11n at 1280 is a training choice; onboard would be a smaller input, INT8, and a tracker, on a board I did not run here.

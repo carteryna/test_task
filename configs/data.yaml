@@ -55,6 +55,25 @@ eval_gt:
   distance_report_path: data/splits/eval_distance_bands.json
   distance_boxes_csv: data/splits/eval_distance_boxes.csv
 
+# Band metrics: conf/NMS chosen on val only, then one hold-out pass (eval never used for selection).
+evaluation:
+  weights: runs/train/yolo11n/weights/best.pt
+  imgsz: 1280
+  iou_match: 0.5
+  nms_iou: 0.5
+  # Predict once at predict_conf_floor; sweep conf_grid offline on val.
+  predict_conf_floor: 0.01
+  conf_grid: [0.15, 0.20, 0.25, 0.30, 0.35, 0.40, 0.45, 0.50]
+  # Selection: mean of near/far F1 on val (far weight kept even if sparse).
+  selection: mean_band_f1
+  thresholds_path: data/splits/eval_thresholds.json
+  metrics_path: data/splits/eval_metrics.json
+  overlay_dir: results/eval_overlays
+  overlay_max_per_clip: 4
+  # Submission stills: side-by-side GT | preds + combined legend under outputs/examples/.
+  examples_dir: outputs/examples
+  examples_per_clip: 3
+
 # Phase 3 distance bands: short side ≈ physical width (cars and long trucks share one prior).
 # Dist = f_px * W_ref / s_px with f_px = H / (2 * tan(FOV_v/2))  (equiv. form of the FOV pinhole model).
 distance:

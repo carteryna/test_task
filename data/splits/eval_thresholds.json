@@ -1,0 +1,371 @@
+{
+  "role": "val_threshold_selection",
+  "weights": "runs/train/yolo11n/weights/best.pt",
+  "imgsz": 1280,
+  "device": "cpu",
+  "iou_match": 0.5,
+  "nms_iou": 0.5,
+  "predict_conf_floor": 0.01,
+  "conf_grid": [
+    0.15,
+    0.2,
+    0.25,
+    0.3,
+    0.35,
+    0.4,
+    0.45,
+    0.5
+  ],
+  "selection": "mean_band_f1",
+  "chosen_conf": 0.2,
+  "chosen_nms_iou": 0.5,
+  "val_selection_score": 0.6492,
+  "val_bands_at_chosen": {
+    "near_0_200": {
+      "tp": 245,
+      "fp": 100,
+      "fn": 143,
+      "n_gt": 388,
+      "detection_rate": 0.6314,
+      "precision": 0.7101,
+      "f1": 0.6685,
+      "false_alarms_per_min": 157.8947,
+      "time_to_first_s": 13.514,
+      "time_to_first_per_clip_s": {
+        "A": 15.515,
+        "B": 25.0,
+        "C": 13.514,
+        "D": 19.52
+      }
+    },
+    "far_200_400": {
+      "tp": 57,
+      "fp": 45,
+      "fn": 22,
+      "n_gt": 79,
+      "detection_rate": 0.7215,
+      "precision": 0.5588,
+      "f1": 0.6298,
+      "false_alarms_per_min": 71.0526,
+      "time_to_first_s": 13.514,
+      "time_to_first_per_clip_s": {
+        "A": 15.515,
+        "B": 29.0,
+        "C": 13.514
+      }
+    }
+  },
+  "sweep": [
+    {
+      "conf": 0.15,
+      "selection_score": 0.6437,
+      "bands": {
+        "near_0_200": {
+          "tp": 259,
+          "fp": 132,
+          "fn": 129,
+          "n_gt": 388,
+          "detection_rate": 0.6675,
+          "precision": 0.6624,
+          "f1": 0.665,
+          "false_alarms_per_min": 208.4211,
+          "time_to_first_s": 13.514,
+          "time_to_first_per_clip_s": {
+            "A": 15.515,
+            "B": 25.0,
+            "C": 13.514,
+            "D": 19.52
+          }
+        },
+        "far_200_400": {
+          "tp": 61,
+          "fp": 56,
+          "fn": 18,
+          "n_gt": 79,
+          "detection_rate": 0.7722,
+          "precision": 0.5214,
+          "f1": 0.6224,
+          "false_alarms_per_min": 88.4211,
+          "time_to_first_s": 13.514,
+          "time_to_first_per_clip_s": {
+            "A": 15.515,
+            "B": 29.0,
+            "C": 13.514
+          }
+        }
+      }
+    },
+    {
+      "conf": 0.2,
+      "selection_score": 0.6492,
+      "bands": {
+        "near_0_200": {
+          "tp": 245,
+          "fp": 100,
+          "fn": 143,
+          "n_gt": 388,
+          "detection_rate": 0.6314,
+          "precision": 0.7101,
+          "f1": 0.6685,
+          "false_alarms_per_min": 157.8947,
+          "time_to_first_s": 13.514,
+          "time_to_first_per_clip_s": {
+            "A": 15.515,
+            "B": 25.0,
+            "C": 13.514,
+            "D": 19.52
+          }
+        },
+        "far_200_400": {
+          "tp": 57,
+          "fp": 45,
+          "fn": 22,
+          "n_gt": 79,
+          "detection_rate": 0.7215,
+          "precision": 0.5588,
+          "f1": 0.6298,
+          "false_alarms_per_min": 71.0526,
+          "time_to_first_s": 13.514,
+          "time_to_first_per_clip_s": {
+            "A": 15.515,
+            "B": 29.0,
+            "C": 13.514
+          }
+        }
+      }
+    },
+    {
+      "conf": 0.25,
+      "selection_score": 0.6489,
+      "bands": {
+        "near_0_200": {
+          "tp": 237,
+          "fp": 81,
+          "fn": 151,
+          "n_gt": 388,
+          "detection_rate": 0.6108,
+          "precision": 0.7453,
+          "f1": 0.6714,
+          "false_alarms_per_min": 127.8947,
+          "time_to_first_s": 13.514,
+          "time_to_first_per_clip_s": {
+            "A": 15.515,
+            "B": 25.0,
+            "C": 13.514,
+            "D": 19.52
+          }
+        },
+        "far_200_400": {
+          "tp": 52,
+          "fp": 35,
+          "fn": 27,
+          "n_gt": 79,
+          "detection_rate": 0.6582,
+          "precision": 0.5977,
+          "f1": 0.6265,
+          "false_alarms_per_min": 55.2632,
+          "time_to_first_s": 13.514,
+          "time_to_first_per_clip_s": {
+            "A": 15.515,
+            "B": 29.0,
+            "C": 13.514
+          }
+        }
+      }
+    },
+    {
+      "conf": 0.3,
+      "selection_score": 0.6449,
+      "bands": {
+        "near_0_200": {
+          "tp": 218,
+          "fp": 66,
+          "fn": 170,
+          "n_gt": 388,
+          "detection_rate": 0.5619,
+          "precision": 0.7676,
+          "f1": 0.6488,
+          "false_alarms_per_min": 104.2105,
+          "time_to_first_s": 13.514,
+          "time_to_first_per_clip_s": {
+            "A": 15.515,
+            "B": 25.0,
+            "C": 13.514,
+            "D": 19.52
+          }
+        },
+        "far_200_400": {
+          "tp": 50,
+          "fp": 27,
+          "fn": 29,
+          "n_gt": 79,
+          "detection_rate": 0.6329,
+          "precision": 0.6494,
+          "f1": 0.641,
+          "false_alarms_per_min": 42.6316,
+          "time_to_first_s": 13.514,
+          "time_to_first_per_clip_s": {
+            "A": 15.515,
+            "B": 29.0,
+            "C": 13.514
+          }
+        }
+      }
+    },
+    {
+      "conf": 0.35,
+      "selection_score": 0.6345,
+      "bands": {
+        "near_0_200": {
+          "tp": 201,
+          "fp": 54,
+          "fn": 187,
+          "n_gt": 388,
+          "detection_rate": 0.518,
+          "precision": 0.7882,
+          "f1": 0.6252,
+          "false_alarms_per_min": 85.2632,
+          "time_to_first_s": 13.514,
+          "time_to_first_per_clip_s": {
+            "A": 16.016,
+            "B": 25.0,
+            "C": 13.514,
+            "D": 19.52
+          }
+        },
+        "far_200_400": {
+          "tp": 47,
+          "fp": 20,
+          "fn": 32,
+          "n_gt": 79,
+          "detection_rate": 0.5949,
+          "precision": 0.7015,
+          "f1": 0.6438,
+          "false_alarms_per_min": 31.5789,
+          "time_to_first_s": 13.514,
+          "time_to_first_per_clip_s": {
+            "A": 15.515,
+            "C": 13.514
+          }
+        }
+      }
+    },
+    {
+      "conf": 0.4,
+      "selection_score": 0.624,
+      "bands": {
+        "near_0_200": {
+          "tp": 191,
+          "fp": 47,
+          "fn": 197,
+          "n_gt": 388,
+          "detection_rate": 0.4923,
+          "precision": 0.8025,
+          "f1": 0.6102,
+          "false_alarms_per_min": 74.2105,
+          "time_to_first_s": 13.514,
+          "time_to_first_per_clip_s": {
+            "A": 16.517,
+            "B": 25.0,
+            "C": 13.514,
+            "D": 19.52
+          }
+        },
+        "far_200_400": {
+          "tp": 44,
+          "fp": 15,
+          "fn": 35,
+          "n_gt": 79,
+          "detection_rate": 0.557,
+          "precision": 0.7458,
+          "f1": 0.6377,
+          "false_alarms_per_min": 23.6842,
+          "time_to_first_s": 13.514,
+          "time_to_first_per_clip_s": {
+            "A": 15.515,
+            "C": 13.514
+          }
+        }
+      }
+    },
+    {
+      "conf": 0.45,
+      "selection_score": 0.5796,
+      "bands": {
+        "near_0_200": {
+          "tp": 185,
+          "fp": 40,
+          "fn": 203,
+          "n_gt": 388,
+          "detection_rate": 0.4768,
+          "precision": 0.8222,
+          "f1": 0.6036,
+          "false_alarms_per_min": 63.1579,
+          "time_to_first_s": 13.514,
+          "time_to_first_per_clip_s": {
+            "A": 16.517,
+            "B": 25.0,
+            "C": 13.514,
+            "D": 19.52
+          }
+        },
+        "far_200_400": {
+          "tp": 35,
+          "fp": 12,
+          "fn": 44,
+          "n_gt": 79,
+          "detection_rate": 0.443,
+          "precision": 0.7447,
+          "f1": 0.5556,
+          "false_alarms_per_min": 18.9474,
+          "time_to_first_s": 13.514,
+          "time_to_first_per_clip_s": {
+            "A": 15.515,
+            "C": 13.514
+          }
+        }
+      }
+    },
+    {
+      "conf": 0.5,
+      "selection_score": 0.5317,
+      "bands": {
+        "near_0_200": {
+          "tp": 174,
+          "fp": 29,
+          "fn": 214,
+          "n_gt": 388,
+          "detection_rate": 0.4485,
+          "precision": 0.8571,
+          "f1": 0.5888,
+          "false_alarms_per_min": 45.7895,
+          "time_to_first_s": 13.514,
+          "time_to_first_per_clip_s": {
+            "A": 16.517,
+            "B": 25.0,
+            "C": 13.514,
+            "D": 19.52
+          }
+        },
+        "far_200_400": {
+          "tp": 28,
+          "fp": 11,
+          "fn": 51,
+          "n_gt": 79,
+          "detection_rate": 0.3544,
+          "precision": 0.7179,
+          "f1": 0.4746,
+          "false_alarms_per_min": 17.3684,
+          "time_to_first_s": 13.514,
+          "time_to_first_per_clip_s": {
+            "A": 15.515,
+            "C": 13.514
+          }
+        }
+      }
+    }
+  ],
+  "n_val_frames": 38,
+  "eval_used": false,
+  "note": "Thresholds frozen on val only; hold-out unused for selection."
+}
