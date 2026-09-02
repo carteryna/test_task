@@ -4,7 +4,10 @@ data_config: configs/data.yaml
 
 dataset:
   root: data/yolo
-  # Symlink frames + clean labels into Ultralytics layout under root.
+  # Symlink frames + labels into Ultralytics layout under root.
+  # Default is the human-cleaned teacher labels; the DINO+SAM factory writes
+  # data/labels/auto_generated (see --labels-dir / --run-suffix).
+  labels_dir: data/labels/clean
 
 models:
   - name: yolov8n

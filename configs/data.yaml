@@ -99,6 +99,60 @@ diagnostics:
     relaxed_move_frac: 0.01      # of image width
     relaxed_min_frames: 8
 
+# Zero-human data factory: Grounding DINO boxes -> SAM masks -> tight boxes -> rules.
+# Offline engine only (minutes per 4K frame on CPU); the Pi 5 still ships YOLO11n.
+auto_label_dino_sam:
+  labels_dir: data/labels/auto_generated
+  summary_path: data/splits/auto_label_dino_sam.json
+  preview_dir: results/auto_label_dino_sam
+  cache_dir: runs/cache/dino_sam   # gitignored; lets rules be re-tuned without re-inference
+  preview_per_clip: 2
+  dino:
+    model_id: IDEA-Research/grounding-dino-tiny
+    prompt: "vehicle."      # HF grounding expects lowercase, period-terminated
+    # Probe on A/C/D: 0.25 -> 44-71% recall vs cleaned labels, 0.15 -> 89-100%.
+    # Kept deliberately low; SAM guards + schema + kinematics do the rejecting.
+    box_threshold: 0.15
+    text_threshold: 0.20
+    batch_size: 2
+  # DINO letterboxes to ~800 px, so far vehicles in a 4K frame vanish. Tile, then merge.
+  tiling:
+    rows: 2
+    cols: 2
+    overlap: 0.15           # fraction of tile side
+    full_frame_pass: true   # recovers objects straddling tile seams
+    merge_iou: 0.55         # class-agnostic NMS across tile + full-frame boxes
+  sam:
+    model_id: facebook/sam-vit-base
+    box_pad_frac: 0.25      # mask search window around the DINO prompt box
+    min_area_frac: 0.05     # refined/prompt area guards: below or above => keep DINO box
+    max_area_frac: 3.0
+    min_iou: 0.25           # refined vs prompt IoU floor
+    boxes_per_chunk: 16
+    contour_eps_frac: 0.01  # polygon simplification for previews
+  schema:
+    min_side_px: 8
+    max_dim_frac: 0.35
+    max_aspect: 6.0
+    motorcycle_aspect: 3.0      # taxonomy Rule 2: elongated AND small => not in ontology
+    motorcycle_max_side_px: 28
+    merge_iou: 0.35             # articulated truck fragments (taxonomy Rule 3)
+    merge_containment: 0.60
+    merge_max_aspect: 6.0
+    merge_max_growth: 1.6       # union / larger part; blocks merging neighbouring cars
+    merge_min_aspect: 1.8       # trucks are elongated; square FP clusters stay split
+    merge_min_side_px: 24       # and large: no merging of far specks
+  # Taxonomy Rule 4 applied pre-training. Sampled at train_fps, so 12 frames ~ 6 s.
+  kinematics:
+    static_move_frac: 0.005   # centroid drift budget, fraction of image width
+    static_min_frames: 12
+    min_track_hits: 1         # >1 also purges single-frame flicker
+    tracker:
+      high_conf: 0.35
+      iou_high: 0.30
+      iou_low: 0.20
+      max_age: 2
+
 # Phase 3 distance bands: short side ≈ physical width (cars and long trucks share one prior).
 # Dist = f_px * W_ref / s_px with f_px = H / (2 * tan(FOV_v/2))  (equiv. form of the FOV pinhole model).
 distance:

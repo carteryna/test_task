@@ -1,0 +1,180 @@
+{
+  "pipeline": "grounding_dino -> sam -> tight_box -> schema+kinematics",
+  "dino_model": "IDEA-Research/grounding-dino-tiny",
+  "sam_model": "facebook/sam-vit-base",
+  "prompt": "vehicle.",
+  "device": "cpu",
+  "splits": [
+    "train",
+    "val"
+  ],
+  "n_images": 185,
+  "n_boxes_raw": 7016,
+  "n_boxes_final": 5886,
+  "n_sam_refined": 5450,
+  "sam_refine_rate": 0.9259,
+  "n_truck_merges": 796,
+  "agreement_vs_clean": {
+    "reference_dir": "data/labels/clean",
+    "iou_thr": 0.4,
+    "recall_vs_reference": 0.7802,
+    "extra_boxes": 4164,
+    "extra_per_frame": 22.51,
+    "median_matched_iou": 0.7992,
+    "median_area_ratio": 0.9549,
+    "per_clip": {
+      "A": {
+        "reference_boxes": 498,
+        "auto_boxes": 1471,
+        "matched": 397,
+        "recall_vs_reference": 0.7972,
+        "extra_boxes": 1074
+      },
+      "B": {
+        "reference_boxes": 245,
+        "auto_boxes": 921,
+        "matched": 211,
+        "recall_vs_reference": 0.8612,
+        "extra_boxes": 710
+      },
+      "C": {
+        "reference_boxes": 738,
+        "auto_boxes": 822,
+        "matched": 487,
+        "recall_vs_reference": 0.6599,
+        "extra_boxes": 335
+      },
+      "D": {
+        "reference_boxes": 726,
+        "auto_boxes": 2672,
+        "matched": 627,
+        "recall_vs_reference": 0.8636,
+        "extra_boxes": 2045
+      }
+    }
+  },
+  "drops_by_reason": {
+    "suspected_motorcycle": 192,
+    "min_side": 24,
+    "max_aspect": 12,
+    "max_dim": 32,
+    "static_track": 74
+  },
+  "track_stats": {
+    "A": {
+      "tracks": 1095,
+      "static_tracks": 5,
+      "short_tracks": 0,
+      "move_budget_px": 9.6,
+      "static_min_frames": 12
+    },
+    "B": {
+      "tracks": 446,
+      "static_tracks": 0,
+      "short_tracks": 0,
+      "move_budget_px": 19.2,
+      "static_min_frames": 12
+    },
+    "C": {
+      "tracks": 588,
+      "static_tracks": 0,
+      "short_tracks": 0,
+      "move_budget_px": 19.2,
+      "static_min_frames": 12
+    },
+    "D": {
+      "tracks": 1153,
+      "static_tracks": 0,
+      "short_tracks": 0,
+      "move_budget_px": 19.2,
+      "static_min_frames": 12
+    }
+  },
+  "per_clip": {
+    "A": {
+      "images": 39,
+      "boxes": 1471,
+      "empty": 0,
+      "sam_refined_boxes": 1462,
+      "raw_boxes": 1673
+    },
+    "B": {
+      "images": 63,
+      "boxes": 921,
+      "empty": 0,
+      "sam_refined_boxes": 872,
+      "raw_boxes": 1031
+    },
+    "C": {
+      "images": 34,
+      "boxes": 822,
+      "empty": 0,
+      "sam_refined_boxes": 731,
+      "raw_boxes": 1100
+    },
+    "D": {
+      "images": 49,
+      "boxes": 2672,
+      "empty": 0,
+      "sam_refined_boxes": 2385,
+      "raw_boxes": 3212
+    }
+  },
+  "timing": {
+    "n_cached": 185,
+    "n_computed": 0,
+    "inference_s": 0.0
+  },
+  "labels_dir": "data/labels/auto_generated",
+  "config": {
+    "dino": {
+      "model_id": "IDEA-Research/grounding-dino-tiny",
+      "prompt": "vehicle.",
+      "box_threshold": 0.15,
+      "text_threshold": 0.2,
+      "batch_size": 2
+    },
+    "tiling": {
+      "rows": 2,
+      "cols": 2,
+      "overlap": 0.15,
+      "full_frame_pass": true,
+      "merge_iou": 0.55
+    },
+    "sam": {
+      "model_id": "facebook/sam-vit-base",
+      "box_pad_frac": 0.25,
+      "min_area_frac": 0.05,
+      "max_area_frac": 3.0,
+      "min_iou": 0.25,
+      "boxes_per_chunk": 16,
+      "contour_eps_frac": 0.01
+    },
+    "schema": {
+      "min_side_px": 8,
+      "max_dim_frac": 0.35,
+      "max_aspect": 6.0,
+      "motorcycle_aspect": 3.0,
+      "motorcycle_max_side_px": 28,
+      "merge_iou": 0.35,
+      "merge_containment": 0.6,
+      "merge_max_aspect": 6.0,
+      "merge_max_growth": 1.6,
+      "merge_min_aspect": 1.8,
+      "merge_min_side_px": 24
+    },
+    "kinematics": {
+      "static_move_frac": 0.005,
+      "static_min_frames": 12,
+      "min_track_hits": 1,
+      "tracker": {
+        "high_conf": 0.35,
+        "iou_high": 0.3,
+        "iou_low": 0.2,
+        "max_age": 2
+      }
+    }
+  },
+  "eval_frames_skipped": 214,
+  "subsampled_run": false
+}

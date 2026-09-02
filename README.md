@@ -253,6 +253,58 @@ python src/error_analysis.py --clips E       # Clip E only
 python src/error_analysis.py --refresh       # ignore the prediction cache in runs/cache
 ```
 
+## Automated data factory (Grounding DINO → SAM)
+
+The taxonomy above says the label pipeline, not the head, is the bottleneck. `src/auto_label_dino_sam.py` replaces the teacher + human cleanup loop with an offline foundation-model factory: **Grounding DINO** (`"vehicle."`) → **SAM** masks → tight boxes → schema and kinematic rules → YOLO labels in `data/labels/auto_generated/`. Nothing here ships to the Pi; it is a data engine that runs once, offline.
+
+Both models are CPU-heavy (**84 s/frame**, 3.6 h for the 185 train/val frames), so stage 1 memoises per-frame boxes in `runs/cache/dino_sam` (gitignored). Stage 2 re-runs every rule over the cache in ~4 s, which is how the thresholds below were tuned.
+
+**Tiling is required, not an optimisation.** Grounding DINO letterboxes to ~800 px, so a 10 px vehicle in a 4K frame lands at ~3 px. Each frame is prompted as 2×2 overlapping tiles *plus* the full frame (the full pass recovers objects straddling seams), then class-agnostic NMS at 0.55 merges the five box sets.
+
+**SAM is the geometry fix.** 92.6% of final boxes come from a mask; the rest keep the DINO box when the mask fails an area or IoU guard (SAM bleeding into road or shadow). On boxes matched to the human-cleaned labels, median IoU is **0.799** and the median area ratio is **0.955** — DINO+SAM boxes are ~4.5% tighter on the same vehicle, which is what the 2.0 m width prior in the distance model wants.
+
+Three rules that were tuned, not assumed:
+
+| Decision | Evidence |
+|---|---|
+| `box_threshold` 0.25 → **0.15** | probe on A/C/D: recall vs cleaned labels 44–71% → 89–100% |
+| prompt stays `"vehicle."` | `car. truck. bus. van. vehicle.` gave 3× the boxes for **no** extra recall |
+| merging constrained to truck geometry | unconstrained overlap-merge fired 55× on 7 frames and **cost 8 pts of recall**; crops showed it was consolidating FP clusters on gantries and pylons, not trucks |
+
+Merging now needs the union elongated (aspect 1.8–6.0), one part ≥ 24 px, and union ≤ 1.6× the larger part — a fragment sits inside its parent, two neighbouring cars would balloon the union. That halved the merges and kept the real articulated trucks and buses.
+
+Full run: **7016 raw → 5886 final boxes** over 185 frames, **796** truck merges.
+
+| Drop rule | Boxes |
+|---|---:|
+| `suspected_motorcycle` (aspect ≥ 3.0 **and** short side ≤ 28 px) | 192 |
+| `static_track` (centroid drift < 0.5% of width over ≥ 12 frames) | 74 |
+| `max_dim` / `min_side` / `max_aspect` | 32 / 24 / 12 |
+
+Rule 4 finally fires here: 74 boxes on 5 static tracks, all in Clip A (the one near-hovering shot). B/C/D are translating drone footage where a static object still moves across the frame — the same ego-motion limit the hold-out taxonomy hit.
+
+Agreement with the human-cleaned teacher labels (IoU 0.4). This measures **divergence, not accuracy** — the reference is itself pseudo-GT, so "extra" mixes new FPs with vehicles the teacher missed:
+
+| Clip | Reference | Auto | Recall vs ref | Extra |
+|---|---:|---:|---:|---:|
+| A | 498 | 1471 | 0.797 | 1074 |
+| B | 245 | 921 | 0.861 | 710 |
+| C | 738 | 822 | **0.660** | 335 |
+| D | 726 | 2672 | 0.864 | 2045 |
+| **All** | 2207 | 5886 | **0.780** | 22.5/frame |
+
+Clip C is the honest failure: it is the only clip where the factory produces *fewer* boxes than the teacher, and the previews show why — isolated dark cars on open asphalt at mid range are missed by `grounding-dino-tiny`. The factory buys geometry and rule-enforced cleanliness; on this checkpoint it gives back recall on low-contrast mid-range vehicles. `grounding-dino-base` or a 3×3 tiling would likely close it at 2–4× the runtime, which I did not spend.
+
+These labels are **not** what the reported student was trained on — the metrics above come from `data/labels/clean`. Training on the factory output is a one-flag A/B (`--labels-dir`), left as the next iteration.
+
+```bash
+python src/auto_label_dino_sam.py                          # all train/val (A–D), ~3.6 h CPU
+python src/auto_label_dino_sam.py --clips C --limit 4      # smoke; eval clips are refused
+python src/auto_label_dino_sam.py --stage rules            # re-apply rules from cache (~4 s)
+python src/auto_label_dino_sam.py --refresh                # ignore the inference cache
+python src/train.py --labels-dir data/labels/auto_generated --run-suffix _dinosam
+```
+
 ## Student training
 
 `configs/train.yaml` + `src/train.py`: build `data/yolo/` from train/val splits and `data/labels/clean` (symlinks; eval refused), then fine-tune from COCO with **`freeze=10`**, `imgsz=1280`, `batch=4`. Dataset scan: **147 train / 38 val** images, **1740 / 467** boxes, **0** empty frames. YOLOv8n is wired but not trained on this CPU.
@@ -314,6 +366,7 @@ python src/evaluate_custom.py --tune-val --score-eval
 # regenerates outputs/examples/ (GT|pred side-by-side + combined)
 python src/evaluate_custom.py --export-examples
 python src/error_analysis.py
+python src/auto_label_dino_sam.py                              # DINO+SAM factory (~3.6 h CPU)
 ```
 
 ## Submission checklist
@@ -327,6 +380,7 @@ What the brief asks for, mapped to this repo:
 | Metrics table | Evaluation & Metrics |
 | Example predictions with GT overlaid | `outputs/examples/*_side_by_side.jpg` and `*_combined.jpg` |
 | Failure analysis | `data/splits/error_taxonomy.json`, `outputs/diagnostics/`, `data/hard_negatives/` |
+| Automated labeling pipeline | `src/auto_label_dino_sam.py`, `data/labels/auto_generated/`, `data/splits/auto_label_dino_sam.json`, `results/auto_label_dino_sam/` |
 | Trained weights or a link | `runs/train/yolo11n/weights/best.pt` is gitignored (`*.pt`); upload to Drive/S3/HF and put the URL in the README or repo description |
 
 Ship a **public** GitHub repo, or private with reviewer access. Do **not** commit raw videos, `data/frames/`, or `.pt` blobs if the host is picky about size — keep cleaned eval labels (`data/labels/eval/`), splits/metrics JSON, and `outputs/examples/`.
@@ -338,5 +392,7 @@ Ship a **public** GitHub repo, or private with reviewer access. Do **not** commi
 Distance from box size will mis-bin trucks, occluded cars, and oblique views. Far-band recall will likely be the weak number: 4K boxes become a few pixels after 1280 letterbox.
 
 Train is landscape 1080p/4K; hold-out mixes E (portrait, near) and F (higher altitude, far). F is where Det and FA/min break. Teacher boxes on B include a few non-vehicles at `conf=0.15`; that noise goes into the students unless cleanup removes it.
+
+The DINO+SAM factory trades recall for geometry on this checkpoint: tighter boxes and rule-enforced schema, but 66% agreement on Clip C's low-contrast mid-range cars. Its 22.5 extra boxes/frame are unaudited — part real vehicles the teacher missed, part new FPs — so swapping the student onto those labels needs the hold-out A/B before anyone believes it.
 
 I am not claiming a Pi-ready detector. YOLO11n at 1280 is a training choice; onboard would be a smaller input, INT8, and a tracker, on a board I did not run here.

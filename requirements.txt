@@ -3,3 +3,5 @@ PyYAML>=6.0
 pandas>=2.0.0
 ultralytics>=8.2.0
 numpy==1.26.4
+# Offline data factory only (Grounding DINO + SAM). Not needed to run the student.
+transformers>=4.40,<4.46

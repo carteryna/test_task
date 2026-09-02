@@ -47,10 +47,19 @@ def prepare_yolo_dataset(
     data_cfg: dict,
     train_cfg: dict,
     splits_dir: Path,
+    labels_dir: str | Path | None = None,
 ) -> Path:
-    """Symlink images + clean labels into data/yolo/{images,labels}/{train,val}."""
+    """Symlink images + labels into data/yolo/{images,labels}/{train,val}."""
     root = REPO_ROOT / train_cfg["dataset"]["root"]
-    labels_clean = REPO_ROOT / data_cfg["cleanup"]["clean_dir"]
+    labels_rel = (
+        labels_dir
+        or train_cfg["dataset"].get("labels_dir")
+        or data_cfg["cleanup"]["clean_dir"]
+    )
+    labels_clean = Path(labels_rel)
+    if not labels_clean.is_absolute():
+        labels_clean = REPO_ROOT / labels_clean
+    print(f"Labels: {labels_clean.relative_to(REPO_ROOT)}")
     class_name = data_cfg["class_name"]
     class_id = int(data_cfg.get("class_id", 0))
 
@@ -100,10 +109,16 @@ def prepare_yolo_dataset(
     return data_yaml
 
 
-def train_one(model_spec: dict, data_yaml: Path, train_hparams: dict, device: str) -> Path:
+def train_one(
+    model_spec: dict,
+    data_yaml: Path,
+    train_hparams: dict,
+    device: str,
+    run_suffix: str = "",
+) -> Path:
     from ultralytics import YOLO
 
-    name = model_spec["name"]
+    name = model_spec["name"] + run_suffix
     weights = model_spec["weights"]
     print(f"\n=== Training {name} from {weights} (freeze={train_hparams['freeze']}) device={device} ===")
     model = YOLO(weights)
@@ -139,6 +154,16 @@ def main() -> int:
     parser.add_argument("--prepare-only", action="store_true", help="Build dataset.yaml and exit")
     parser.add_argument("--device", default=None, help="Override train.device (cpu/0/mps)")
     parser.add_argument("--epochs", type=int, default=None, help="Override train.epochs (e.g. 3 for smoke)")
+    parser.add_argument(
+        "--labels-dir",
+        default=None,
+        help="Label source, e.g. data/labels/auto_generated (default: dataset.labels_dir)",
+    )
+    parser.add_argument(
+        "--run-suffix",
+        default="",
+        help="Appended to the run name, e.g. _dinosam, so runs do not overwrite each other",
+    )
     args = parser.parse_args()
 
     train_cfg_path = args.config if args.config.is_absolute() else REPO_ROOT / args.config
@@ -151,6 +176,7 @@ def main() -> int:
         data_cfg=data_cfg,
         train_cfg=train_cfg,
         splits_dir=splits_dir,
+        labels_dir=args.labels_dir,
     )
     if args.prepare_only:
         return 0
@@ -170,7 +196,7 @@ def main() -> int:
 
     best_paths = []
     for spec in models:
-        best_paths.append(train_one(spec, data_yaml, hparams, device))
+        best_paths.append(train_one(spec, data_yaml, hparams, device, args.run_suffix))
 
     print("\nTraining complete (val-only model selection; eval clip unused).")
     for p in best_paths:
