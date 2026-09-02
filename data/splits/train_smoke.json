@@ -12,6 +12,177 @@
       "run_dir": "runs/train/yolo11n",
       "hparams": {
         "model": "yolo11n.pt",
+        "epochs": 10,
+        "batch": 4,
+        "imgsz": 1280,
+        "freeze": 10,
+        "device": "cpu",
+        "seed": 0,
+        "patience": 15
+      },
+      "n_epochs_logged": 10,
+      "epochs": [
+        {
+          "epoch": 1,
+          "time_s": 248.1,
+          "train_box_loss": 1.4912,
+          "train_cls_loss": 3.5242,
+          "train_dfl_loss": 1.0365,
+          "precision": 0.0021,
+          "recall": 0.0514,
+          "map50": 0.0089,
+          "map50_95": 0.0029
+        },
+        {
+          "epoch": 2,
+          "time_s": 477.6,
+          "train_box_loss": 1.5488,
+          "train_cls_loss": 2.8233,
+          "train_dfl_loss": 1.025,
+          "precision": 0.0017,
+          "recall": 0.0407,
+          "map50": 0.0154,
+          "map50_95": 0.0094
+        },
+        {
+          "epoch": 3,
+          "time_s": 722.5,
+          "train_box_loss": 1.5402,
+          "train_cls_loss": 2.4758,
+          "train_dfl_loss": 1.059,
+          "precision": 0.9427,
+          "recall": 0.1058,
+          "map50": 0.3813,
+          "map50_95": 0.1813
+        },
+        {
+          "epoch": 4,
+          "time_s": 963.6,
+          "train_box_loss": 1.4884,
+          "train_cls_loss": 2.3429,
+          "train_dfl_loss": 1.0469,
+          "precision": 0.6633,
+          "recall": 0.5717,
+          "map50": 0.6287,
+          "map50_95": 0.2782
+        },
+        {
+          "epoch": 5,
+          "time_s": 1215.1,
+          "train_box_loss": 1.4964,
+          "train_cls_loss": 2.1057,
+          "train_dfl_loss": 1.0328,
+          "precision": 0.6687,
+          "recall": 0.5717,
+          "map50": 0.6125,
+          "map50_95": 0.2799
+        },
+        {
+          "epoch": 6,
+          "time_s": 1433.8,
+          "train_box_loss": 1.4349,
+          "train_cls_loss": 2.0356,
+          "train_dfl_loss": 1.0029,
+          "precision": 0.6934,
+          "recall": 0.6253,
+          "map50": 0.6747,
+          "map50_95": 0.3138
+        },
+        {
+          "epoch": 7,
+          "time_s": 1693.0,
+          "train_box_loss": 1.4731,
+          "train_cls_loss": 2.0545,
+          "train_dfl_loss": 0.9887,
+          "precision": 0.5681,
+          "recall": 0.6421,
+          "map50": 0.592,
+          "map50_95": 0.2913
+        },
+        {
+          "epoch": 8,
+          "time_s": 1935.4,
+          "train_box_loss": 1.3633,
+          "train_cls_loss": 1.8792,
+          "train_dfl_loss": 0.9909,
+          "precision": 0.5817,
+          "recall": 0.6403,
+          "map50": 0.6249,
+          "map50_95": 0.2996
+        },
+        {
+          "epoch": 9,
+          "time_s": 2164.0,
+          "train_box_loss": 1.3324,
+          "train_cls_loss": 1.8092,
+          "train_dfl_loss": 0.9836,
+          "precision": 0.6455,
+          "recall": 0.6595,
+          "map50": 0.6567,
+          "map50_95": 0.3217
+        },
+        {
+          "epoch": 10,
+          "time_s": 2398.0,
+          "train_box_loss": 1.3532,
+          "train_cls_loss": 1.8748,
+          "train_dfl_loss": 0.9758,
+          "precision": 0.6347,
+          "recall": 0.651,
+          "map50": 0.6506,
+          "map50_95": 0.3216
+        }
+      ],
+      "best_by_map50": {
+        "epoch": 6,
+        "time_s": 1433.8,
+        "train_box_loss": 1.4349,
+        "train_cls_loss": 2.0356,
+        "train_dfl_loss": 1.0029,
+        "precision": 0.6934,
+        "recall": 0.6253,
+        "map50": 0.6747,
+        "map50_95": 0.3138
+      },
+      "best_by_map50_95": {
+        "epoch": 9,
+        "time_s": 2164.0,
+        "train_box_loss": 1.3324,
+        "train_cls_loss": 1.8092,
+        "train_dfl_loss": 0.9836,
+        "precision": 0.6455,
+        "recall": 0.6595,
+        "map50": 0.6567,
+        "map50_95": 0.3217
+      },
+      "last": {
+        "epoch": 10,
+        "time_s": 2398.0,
+        "train_box_loss": 1.3532,
+        "train_cls_loss": 1.8748,
+        "train_dfl_loss": 0.9758,
+        "precision": 0.6347,
+        "recall": 0.651,
+        "map50": 0.6506,
+        "map50_95": 0.3216
+      },
+      "fused_best_pt": {
+        "precision": 0.646,
+        "recall": 0.66,
+        "map50": 0.657,
+        "map50_95": 0.321,
+        "source": "Ultralytics post-train val of weights/best.pt (fitness, epoch 9)",
+        "wall_hours": 0.666,
+        "n_val_images": 38,
+        "n_val_instances": 467
+      },
+      "best_weights": "runs/train/yolo11n/weights/best.pt",
+      "note": "Val-only Ultralytics metrics (not eval-clip). best.pt is Ultralytics fitness (mAP50-95-weighted), not argmax mAP50."
+    },
+    {
+      "run_dir": "runs/train/yolo11n_e3",
+      "hparams": {
+        "model": "yolo11n.pt",
         "epochs": 3,
         "batch": 4,
         "imgsz": 1280,
@@ -67,6 +238,17 @@
         "map50": 0.4488,
         "map50_95": 0.2175
       },
+      "best_by_map50_95": {
+        "epoch": 3,
+        "time_s": 807.1,
+        "train_box_loss": 1.542,
+        "train_cls_loss": 1.9236,
+        "train_dfl_loss": 1.0207,
+        "precision": 0.7753,
+        "recall": 0.2762,
+        "map50": 0.4488,
+        "map50_95": 0.2175
+      },
       "last": {
         "epoch": 3,
         "time_s": 807.1,
@@ -78,8 +260,8 @@
         "map50": 0.4488,
         "map50_95": 0.2175
       },
-      "best_weights": "runs/train/yolo11n/weights/best.pt",
-      "note": "Val-only Ultralytics metrics. Not eval-clip scores. Smoke runs are not frozen students."
+      "best_weights": "runs/train/yolo11n_e3/weights/best.pt",
+      "note": "Val-only Ultralytics metrics (not eval-clip). best.pt is Ultralytics fitness (mAP50-95-weighted), not argmax mAP50."
     }
   ]
 }

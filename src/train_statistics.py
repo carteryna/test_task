@@ -59,7 +59,8 @@ def parse_run(run_dir: Path) -> dict:
                 }
             )
 
-    best = max(epochs, key=lambda e: e["map50"]) if epochs else None
+    best_map50 = max(epochs, key=lambda e: e["map50"]) if epochs else None
+    best_map50_95 = max(epochs, key=lambda e: e["map50_95"]) if epochs else None
     last = epochs[-1] if epochs else None
     hparams: dict = {}
     if args_yaml.exists():
@@ -84,10 +85,14 @@ def parse_run(run_dir: Path) -> dict:
         "hparams": hparams,
         "n_epochs_logged": len(epochs),
         "epochs": epochs,
-        "best_by_map50": best,
+        "best_by_map50": best_map50,
+        "best_by_map50_95": best_map50_95,
         "last": last,
         "best_weights": str(weights.relative_to(REPO_ROOT)) if weights.exists() else None,
-        "note": "Val-only Ultralytics metrics. Not eval-clip scores. Smoke runs are not frozen students.",
+        "note": (
+            "Val-only Ultralytics metrics (not eval-clip). "
+            "best.pt is Ultralytics fitness (mAP50-95-weighted), not argmax mAP50."
+        ),
     }
 
 
@@ -141,10 +146,12 @@ def main() -> int:
     for run in runs:
         name = Path(run["run_dir"]).name
         best = run["best_by_map50"] or {}
+        fit = run["best_by_map50_95"] or {}
         print(
             f"  {name}: epochs={run['n_epochs_logged']}  "
-            f"best mAP50={best.get('map50')} P={best.get('precision')} "
-            f"R={best.get('recall')} (epoch {best.get('epoch')})"
+            f"peak mAP50={best.get('map50')} @ ep {best.get('epoch')}  "
+            f"best.pt~mAP50-95 P={fit.get('precision')} R={fit.get('recall')} "
+            f"mAP50={fit.get('map50')} (epoch {fit.get('epoch')})"
         )
     print(f"Wrote {out_path.relative_to(REPO_ROOT)}")
     return 0

@@ -149,7 +149,9 @@ mAP@0.5 across both bands if the eval script already has it. Overlay stills and 
 
 `configs/train.yaml` + `src/train.py`: build `data/yolo/` from train/val splits and `data/labels/clean` (symlinks; eval refused), then fine-tune from COCO with **`freeze=10`**, `imgsz=1280`, `batch=4`. Dataset scan: **147 train / 38 val** images, **1740 / 467** boxes, **0** empty frames. YOLOv8n is wired but not trained on this CPU.
 
-Smoke on Intel i7-9750H CPU: **YOLO11n × 3 epochs**, 2.59M params, freeze of the first 10 layers applied, ~13.4 min wall (`0.224 h`). Val-only Ultralytics metrics (not eval, not a frozen student):
+Three epochs proved the loader, 1280 letterbox, and freeze path. They are not enough for the head to lock onto the **451** far-band boxes (median short side 10.9 px). Overall val recall after that smoke was **0.276** — Ultralytics all-band, not a far-band score (band metrics wait for `eval.py`). Ten epochs is the CPU budget that still leaves a visible gradient trajectory without the 50-epoch GPU recipe. `runs/` is gitignored; numbers live in `data/splits/train_smoke.json`.
+
+Smoke (3 epochs, ~13.4 min). `runs/train/yolo11n_e3/weights/best.pt`.
 
 | Epoch | box | cls | P | R | mAP50 | mAP50-95 |
 |------:|----:|----:|--:|--:|------:|---------:|
@@ -157,14 +159,25 @@ Smoke on Intel i7-9750H CPU: **YOLO11n × 3 epochs**, 2.59M params, freeze of th
 | 2 | 1.56 | 2.18 | 0.052 | 0.013 | 0.002 | 0.000 |
 | 3 (best) | 1.54 | 1.92 | 0.775 | 0.276 | 0.449 | 0.217 |
 
-Fused `best.pt` val: P **0.776**, R **0.276**, mAP50 **0.447**, mAP50-95 **0.217**. CPU infer ~354 ms/image at 1280. Epoch 2 mAP collapsed then recovered — expected with a frozen backbone, mosaic still on, and cls still coming down. Recall is the weak number; three epochs are not enough for far-band 10 px boxes. Snapshot: `data/splits/train_smoke.json` (`runs/` is gitignored).
+CPU validation run (YOLO11n × 10 epochs, freeze=10, ~40 min / 0.666 h). Mosaic closed for the whole run (`close_mosaic=10`). Val-only; eval clip unused. `runs/train/yolo11n/weights/best.pt` is Ultralytics fitness (epoch 9), not argmax mAP50.
+
+| Epoch | P | R | mAP50 | mAP50-95 |
+|------:|--:|--:|------:|---------:|
+| 3 | 0.943 | 0.106 | 0.381 | 0.181 |
+| 4 | 0.663 | 0.572 | 0.629 | 0.278 |
+| 6 (peak mAP50) | 0.693 | 0.625 | 0.675 | 0.314 |
+| 9 (`best.pt`) | 0.646 | 0.660 | 0.657 | 0.322 |
+| 10 | 0.635 | 0.651 | 0.651 | 0.322 |
+
+Fused `best.pt` val (38 images, 467 instances): **P 0.646 · R 0.660 · mAP50 0.657**. Recall 0.276 → 0.660 vs the 3-epoch smoke. That is still all-band; far-band 10 px boxes remain the likely miss. Peak mAP50 was 0.675 at epoch 6; fitness kept epoch 9 for the extra mAP50-95. CPU infer ~288 ms/image at 1280.
 
 ```bash
 python src/estimate_distance.py --config configs/data.yaml
 python src/train.py --config configs/train.yaml --prepare-only
-python src/train.py --config configs/train.yaml --models yolo11n --epochs 3   # CPU smoke
+python src/train.py --config configs/train.yaml --models yolo11n --epochs 3    # loader / freeze smoke
+python src/train.py --config configs/train.yaml --models yolo11n --epochs 10   # CPU val trajectory
 python src/train_statistics.py
-# GPU / longer: python src/train.py --config configs/train.yaml
+# GPU / 50 epochs: python src/train.py --config configs/train.yaml
 ```
 
 ## Quickstart
