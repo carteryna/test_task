@@ -74,6 +74,31 @@ evaluation:
   examples_dir: outputs/examples
   examples_per_clip: 3
 
+# Error taxonomy on hold-out FPs/FNs. Diagnostic only: nothing here re-tunes the model.
+diagnostics:
+  report_path: data/splits/error_taxonomy.json
+  crops_dir: data/hard_negatives
+  visuals_dir: outputs/diagnostics
+  max_crops: 120
+  crop_pad_px: 12
+  # Lightweight ByteTrack-style IoU tracker (no extra deps; CPU-only stack).
+  tracker:
+    high_conf: 0.50      # first association stage
+    iou_high: 0.30
+    iou_low: 0.20        # second stage recovers weak boxes
+    max_age: 3           # sampled frames a track may coast
+  rules:
+    gt_omission_conf: 0.50       # Rule 1: confident FP with no GT
+    motorcycle_aspect: 3.0       # Rule 2: extreme aspect FP
+    fracture_min_parts: 2        # Rule 3: FPs inside one missed GT
+    fracture_containment: 0.60   # share of FP area inside the GT box
+    fracture_large_pct: 75       # GT must be >= this area percentile in its clip
+    static_move_px: 5.0          # Rule 4: centroid drift budget
+    static_min_frames: 30        # consecutive sampled frames
+    # Drone ego-motion makes the strict rule rare; relaxed pass only feeds mining.
+    relaxed_move_frac: 0.01      # of image width
+    relaxed_min_frames: 8
+
 # Phase 3 distance bands: short side ≈ physical width (cars and long trucks share one prior).
 # Dist = f_px * W_ref / s_px with f_px = H / (2 * tan(FOV_v/2))  (equiv. form of the FOV pinhole model).
 distance:

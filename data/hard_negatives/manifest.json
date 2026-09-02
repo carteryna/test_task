@@ -1,0 +1,93 @@
+{
+  "role": "hard_negative_mining",
+  "note": "Static-centroid FP crops for the next training round. 'strict' meets Rule 4; 'relaxed' is a mining-only fallback for drone ego-motion.",
+  "n_crops": 6,
+  "n_strict_tracks": 0,
+  "n_relaxed_tracks": 2,
+  "crops": [
+    {
+      "file": "data/hard_negatives/F_t0004_000000_relaxed.jpg",
+      "mode": "relaxed",
+      "clip_id": "F",
+      "track_id": 4,
+      "source_frame": "data/frames/F/000000.jpg",
+      "xyxy": [
+        2003.2,
+        425.5,
+        2056.2,
+        457.5
+      ],
+      "conf": 0.222
+    },
+    {
+      "file": "data/hard_negatives/F_t0004_000005_relaxed.jpg",
+      "mode": "relaxed",
+      "clip_id": "F",
+      "track_id": 4,
+      "source_frame": "data/frames/F/000005.jpg",
+      "xyxy": [
+        2002.3,
+        424.6,
+        2057.7,
+        455.6
+      ],
+      "conf": 0.289
+    },
+    {
+      "file": "data/hard_negatives/F_t0004_000010_relaxed.jpg",
+      "mode": "relaxed",
+      "clip_id": "F",
+      "track_id": 4,
+      "source_frame": "data/frames/F/000010.jpg",
+      "xyxy": [
+        2003.4,
+        424.5,
+        2057.6,
+        456.0
+      ],
+      "conf": 0.2258
+    },
+    {
+      "file": "data/hard_negatives/F_t0045_000080_relaxed.jpg",
+      "mode": "relaxed",
+      "clip_id": "F",
+      "track_id": 45,
+      "source_frame": "data/frames/F/000080.jpg",
+      "xyxy": [
+        1864.3,
+        509.3,
+        1906.9,
+        536.7
+      ],
+      "conf": 0.4708
+    },
+    {
+      "file": "data/hard_negatives/F_t0045_000085_relaxed.jpg",
+      "mode": "relaxed",
+      "clip_id": "F",
+      "track_id": 45,
+      "source_frame": "data/frames/F/000085.jpg",
+      "xyxy": [
+        1864.4,
+        504.7,
+        1908.0,
+        537.3
+      ],
+      "conf": 0.5593
+    },
+    {
+      "file": "data/hard_negatives/F_t0045_000090_relaxed.jpg",
+      "mode": "relaxed",
+      "clip_id": "F",
+      "track_id": 45,
+      "source_frame": "data/frames/F/000090.jpg",
+      "xyxy": [
+        1864.3,
+        506.4,
+        1903.9,
+        539.6
+      ],
+      "conf": 0.722
+    }
+  ]
+}

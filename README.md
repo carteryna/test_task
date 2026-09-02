@@ -225,6 +225,34 @@ python src/evaluate_custom.py --tune-val --score-eval
 python src/evaluate_custom.py --export-examples   # re-score + rewrite outputs/examples/
 ```
 
+## Error taxonomy & diagnostics
+
+`src/error_analysis.py` re-reads the frozen hold-out predictions (`conf=0.20` from `eval_thresholds.json`) and buckets every FP/FN into named failure modes, so the next iteration is data work instead of guesswork. Nothing here re-tunes the model.
+
+Tracking is a two-stage IoU tracker I wrote in-repo (ByteTrack's high-then-low association, `max_age=3` sampled frames). Full ByteTrack/DeepSORT would add an assignment-solver dependency and re-ID weights for 5 fps frames that a greedy IoU pass already links; the point is persistent IDs for Rule 4, not MOTA. Over 214 frames it produced **361** tracks.
+
+| FP rule | Count | % of 379 FP | Reading |
+|---------|------:|------:|---------|
+| `gt_omission` (conf > 0.50, no GT) | 93 | 24.5% | proxy-GT debt, not model error — 71 of them on F |
+| `suspected_motorcycle` (aspect > 3.0) | 4 | 1.1% | all on E; long thin boxes against the 2.0 m width prior |
+| `fractured_truck` (large FN split by ≥2 contained FPs) | 2 | 0.5% | one articulated vehicle on F |
+| `static_hallucination` (centroid < 5 px for > 30 frames) | 0 | 0.0% | see below |
+| unclassified | 280 | 73.9% | 257 near / 23 far, conf median **0.30**, p90 **0.45** |
+
+FN side: **1** of 434 misses is a `fractured_truck`; the rest stay unclassified, which is consistent with the band table — most misses are small far vehicles the head never fired on, not mislocalised ones.
+
+Rule 4 never fires strictly: both hold-out clips are moving drone shots, so a static object still translates across the frame. The longest strict run was **5** frames (track F/45). Rather than ship an empty mining list, a relaxed pass (drift < 1% of image width for ≥ 8 frames, tagged `relaxed` in the manifest) picked up **2** tracks → **6** crops in `data/hard_negatives/`. Strict Rule 4 becomes meaningful on a hovering or gimbal-locked clip; on translating footage it needs ego-motion compensation (homography per frame pair), which I did not build here.
+
+The honest headline is the residual bucket: three quarters of FPs are mid-confidence boxes on vehicle-like clutter, mostly near-band on F. That points at more F-like training data, not at another rule.
+
+Outputs: `data/splits/error_taxonomy.json` (counts, per-clip splits, per-instance rows, top static tracks), `data/hard_negatives/` (crops + `manifest.json`), `outputs/diagnostics/error_taxonomy_grid.jpg` plus one annotated still per rule.
+
+```bash
+python src/error_analysis.py                 # all eval clips
+python src/error_analysis.py --clips E       # Clip E only
+python src/error_analysis.py --refresh       # ignore the prediction cache in runs/cache
+```
+
 ## Student training
 
 `configs/train.yaml` + `src/train.py`: build `data/yolo/` from train/val splits and `data/labels/clean` (symlinks; eval refused), then fine-tune from COCO with **`freeze=10`**, `imgsz=1280`, `batch=4`. Dataset scan: **147 train / 38 val** images, **1740 / 467** boxes, **0** empty frames. YOLOv8n is wired but not trained on this CPU.
@@ -285,6 +313,7 @@ python src/estimate_distance.py --allow-eval
 python src/evaluate_custom.py --tune-val --score-eval
 # regenerates outputs/examples/ (GT|pred side-by-side + combined)
 python src/evaluate_custom.py --export-examples
+python src/error_analysis.py
 ```
 
 ## Submission checklist
@@ -297,6 +326,7 @@ What the brief asks for, mapped to this repo:
 | Strategy + key decisions | README sections above |
 | Metrics table | Evaluation & Metrics |
 | Example predictions with GT overlaid | `outputs/examples/*_side_by_side.jpg` and `*_combined.jpg` |
+| Failure analysis | `data/splits/error_taxonomy.json`, `outputs/diagnostics/`, `data/hard_negatives/` |
 | Trained weights or a link | `runs/train/yolo11n/weights/best.pt` is gitignored (`*.pt`); upload to Drive/S3/HF and put the URL in the README or repo description |
 
 Ship a **public** GitHub repo, or private with reviewer access. Do **not** commit raw videos, `data/frames/`, or `.pt` blobs if the host is picky about size — keep cleaned eval labels (`data/labels/eval/`), splits/metrics JSON, and `outputs/examples/`.
