@@ -22,6 +22,15 @@ def _float(v: str) -> float:
     return float(v.strip())
 
 
+def count_boxes_in_label_dir(label_dir: Path) -> int:
+    if not label_dir.exists():
+        return 0
+    n = 0
+    for path in label_dir.glob("*.txt"):
+        n += sum(1 for ln in path.read_text().splitlines() if ln.strip())
+    return n
+
+
 def count_boxes_from_distance_csv(csv_path: Path) -> dict:
     train_n = val_n = 0
     if not csv_path.exists():
@@ -126,15 +135,24 @@ def main() -> int:
     val_dir = yolo_root / "images" / "val"
     n_train = len(list(train_dir.glob("*.jpg"))) if train_dir.exists() else None
     n_val = len(list(val_dir.glob("*.jpg"))) if val_dir.exists() else None
-    box_counts = count_boxes_from_distance_csv(REPO_ROOT / "data" / "splits" / "distance_boxes.csv")
+    # Prefer the labels currently linked into data/yolo (may be clean or DINO+SAM).
+    train_boxes = count_boxes_in_label_dir(yolo_root / "labels" / "train")
+    val_boxes = count_boxes_in_label_dir(yolo_root / "labels" / "val")
+    if train_boxes == 0 and val_boxes == 0:
+        box_counts = count_boxes_from_distance_csv(
+            REPO_ROOT / "data" / "splits" / "distance_boxes.csv"
+        )
+        train_boxes = box_counts["train_boxes"]
+        val_boxes = box_counts["val_boxes"]
     payload = {
         "dataset": {
             "yolo_root": "data/yolo",
             "train_images": n_train,
             "val_images": n_val,
-            "train_boxes": box_counts["train_boxes"],
-            "val_boxes": box_counts["val_boxes"],
+            "train_boxes": train_boxes,
+            "val_boxes": val_boxes,
             "eval_used": False,
+            "note": "Box counts reflect the labels currently symlinked into data/yolo.",
         },
         "runs": runs,
     }

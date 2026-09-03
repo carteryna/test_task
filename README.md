@@ -295,7 +295,7 @@ Agreement with the human-cleaned teacher labels (IoU 0.4). This measures **diver
 
 Clip C is the honest failure: it is the only clip where the factory produces *fewer* boxes than the teacher, and the previews show why — isolated dark cars on open asphalt at mid range are missed by `grounding-dino-tiny`. The factory buys geometry and rule-enforced cleanliness; on this checkpoint it gives back recall on low-contrast mid-range vehicles. `grounding-dino-base` or a 3×3 tiling would likely close it at 2–4× the runtime, which I did not spend.
 
-These labels are **not** what the reported student was trained on — the metrics above come from `data/labels/clean`. Training on the factory output is a one-flag A/B (`--labels-dir`), left as the next iteration.
+The reported hold-out band metrics above still come from the clean-label student (`runs/train/yolo11n`). A student trained on these factory labels is at `runs/train/yolo11n_dinosam` (val mAP50 0.579 on denser labels); the hold-out A/B is the next comparison.
 
 ```bash
 python src/auto_label_dino_sam.py                          # all train/val (A–D), ~3.6 h CPU
@@ -365,14 +365,41 @@ CPU validation run (YOLO11n × 10 epochs, freeze=10, ~40 min / 0.666 h). Mosaic 
 
 Fused `best.pt` val (38 images, 467 instances): **P 0.646 · R 0.660 · mAP50 0.657**. Recall 0.276 → 0.660 vs the 3-epoch smoke. That is still all-band; far-band 10 px boxes remain the likely miss. Peak mAP50 was 0.675 at epoch 6; fitness kept epoch 9 for the extra mAP50-95. CPU infer ~288 ms/image at 1280.
 
+### Student on DINO+SAM labels (A/B)
+
+Same recipe (`freeze=10`, `imgsz=1280`, CPU), but labels from `data/labels/auto_generated` via `--labels-dir` / `--run-suffix _dinosam`. Eval still unused. The val set is denser — **1190** instances vs **467** on the clean teacher labels — so Ultralytics mAP is **not** an apples-to-apples A/B; a fair comparison needs the frozen hold-out band metrics (`evaluate_custom.py`).
+
+Smoke (3 epochs, ~11 min / 0.180 h). `runs/train/yolo11n_dinosam_e3/weights/best.pt`.
+
+| Epoch | P | R | mAP50 | mAP50-95 |
+|------:|--:|--:|------:|---------:|
+| 1 | 0.033 | 0.057 | 0.020 | 0.010 |
+| 2 | 0.127 | 0.197 | 0.051 | 0.026 |
+| 3 (best) | 0.521 | 0.402 | 0.386 | 0.206 |
+
+10 epochs (~35 min / 0.580 h). `runs/train/yolo11n_dinosam/weights/best.pt` is Ultralytics fitness (epoch 10).
+
+| Epoch | P | R | mAP50 | mAP50-95 |
+|------:|--:|--:|------:|---------:|
+| 4 | 0.560 | 0.500 | 0.499 | 0.272 |
+| 6 | 0.624 | 0.516 | 0.546 | 0.307 |
+| 8 | 0.630 | 0.550 | 0.570 | 0.330 |
+| 10 (`best.pt`) | 0.643 | 0.564 | **0.579** | **0.341** |
+
+Fused `best.pt` val (38 images, 1190 instances): **P 0.644 · R 0.565 · mAP50 0.579**. Steady climb, no collapse — the denser factory labels are trainable. Relative to the clean-label student (mAP50 0.657 on 467 instances) the number is lower, as expected when the same detector is scored against ~2.5× more boxes that include factory extras. Snapshots live in `data/splits/train_smoke.json`.
+
 ```bash
 python src/estimate_distance.py --config configs/data.yaml
 python src/train.py --config configs/train.yaml --prepare-only
 python src/train.py --config configs/train.yaml --models yolo11n --epochs 3    # loader / freeze smoke
 python src/train.py --config configs/train.yaml --models yolo11n --epochs 10   # CPU val trajectory
+# DINO+SAM label A/B (writes runs/train/yolo11n_dinosam[_e3]/):
+python src/train.py --models yolo11n --epochs 3 --labels-dir data/labels/auto_generated --run-suffix _dinosam_e3
+python src/train.py --models yolo11n --epochs 10 --labels-dir data/labels/auto_generated --run-suffix _dinosam
 python src/train_statistics.py
 # after freeze: python src/auto_label.py --allow-eval --splits eval
 # GPU / 50 epochs: python src/train.py --config configs/train.yaml
+# hold-out A/B next: point evaluation.weights at runs/train/yolo11n_dinosam/weights/best.pt
 ```
 
 ## Quickstart
@@ -402,6 +429,7 @@ python src/evaluate_custom.py --export-examples
 python src/error_analysis.py
 python src/auto_label_dino_sam.py                              # DINO+SAM factory (~3.6 h CPU)
 python src/auto_label_dino_sam.py --allow-eval                  # hold-out proxy-GT audit (~4.5 h)
+python src/train.py --models yolo11n --epochs 10 --labels-dir data/labels/auto_generated --run-suffix _dinosam
 ```
 
 ## Submission checklist
@@ -417,7 +445,7 @@ What the brief asks for, mapped to this repo:
 | Failure analysis | `data/splits/error_taxonomy.json`, `outputs/diagnostics/`, `data/hard_negatives/` |
 | Automated labeling pipeline | `src/auto_label_dino_sam.py`, `data/labels/auto_generated/`, `data/splits/auto_label_dino_sam.json`, `results/auto_label_dino_sam/` |
 | Hold-out proxy-GT audit | `data/labels/eval_dino_sam/`, `data/splits/auto_label_dino_sam_eval.json`, `results/auto_label_dino_sam_eval/` |
-| Trained weights or a link | `runs/train/yolo11n/weights/best.pt` is gitignored (`*.pt`); upload to Drive/S3/HF and put the URL in the README or repo description |
+| Trained weights or a link | `runs/train/yolo11n/weights/best.pt` (clean labels) and `runs/train/yolo11n_dinosam/weights/best.pt` (factory labels) are gitignored (`*.pt`); upload to Drive/S3/HF and put the URL in the README or repo description |
 
 Ship a **public** GitHub repo, or private with reviewer access. Do **not** commit raw videos, `data/frames/`, or `.pt` blobs if the host is picky about size — keep cleaned eval labels (`data/labels/eval/`), splits/metrics JSON, and `outputs/examples/`.
 
@@ -431,6 +459,6 @@ Train is landscape 1080p/4K; hold-out mixes E (portrait, near) and F (higher alt
 
 The hold-out audit says ~44% of the student's FPs land on a box a second model calls a vehicle, so reported precision (0.605 near-band) understates the model. I did not restate the metrics on that basis: the audit samples 126 of 379 FPs and the auditor has its own error rate, so it bounds the bias rather than removing it.
 
-The DINO+SAM factory trades recall for geometry on this checkpoint: tighter boxes and rule-enforced schema, but 66% agreement on Clip C's low-contrast mid-range cars. Its 22.5 extra boxes/frame are unaudited — part real vehicles the teacher missed, part new FPs — so swapping the student onto those labels needs the hold-out A/B before anyone believes it.
+The DINO+SAM factory trades recall for geometry on this checkpoint: tighter boxes and rule-enforced schema, but 66% agreement on Clip C's low-contrast mid-range cars. Its 22.5 extra boxes/frame are unaudited — part real vehicles the teacher missed, part new FPs. The student trains on those labels without collapsing (val mAP50 0.579 @ 10 epochs on 1190 instances), but that number is not a fair A/B against the clean-label student (0.657 on 467 instances). The decisive comparison is a hold-out band pass with `evaluate_custom.py` pointed at `yolo11n_dinosam/weights/best.pt`.
 
 I am not claiming a Pi-ready detector. YOLO11n at 1280 is a training choice; onboard would be a smaller input, INT8, and a tracker, on a board I did not run here.
