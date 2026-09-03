@@ -86,6 +86,16 @@ evaluation:
     examples_dir: outputs/examples_dinosam
     video_dir: outputs/videos
 
+# Final A/B differential (src/final_diagnostics.py). Paths only — rules live under diagnostics.
+final_diagnostics:
+  baseline_taxonomy: data/splits/error_taxonomy_baseline.json
+  dinosam_taxonomy: data/splits/error_taxonomy_dinosam.json
+  report_path: data/splits/final_diagnostics.json
+  audit_dir: outputs/audit/edge_cases
+  top_n: 50
+  kinematic_move_frac: 0.02
+  visuals_dir: outputs/diagnostics_final
+
 # Error taxonomy on hold-out FPs/FNs. Diagnostic only: nothing here re-tunes the model.
 diagnostics:
   report_path: data/splits/error_taxonomy.json

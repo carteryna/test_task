@@ -309,6 +309,47 @@ Outputs: `data/splits/error_taxonomy.json` (counts, per-clip splits, per-instanc
 python src/error_analysis.py                 # all eval clips
 python src/error_analysis.py --clips E       # Clip E only
 python src/error_analysis.py --refresh       # ignore the prediction cache in runs/cache
+# factory student (writes error_taxonomy_dinosam.json; baseline JSON stays):
+python src/error_analysis.py \
+  --weights runs/train/yolo11n_dinosam/weights/best.pt \
+  --thresholds-path data/splits/eval_thresholds_dinosam.json \
+  --report-path data/splits/error_taxonomy_dinosam.json \
+  --no-crops --max-instances 200
+```
+
+## Final differential diagnostics
+
+`src/final_diagnostics.py` diffs the two hold-out taxonomies, measures the far-band pixel-area ceiling on the factory student, flags `kinematic_drift` under high ego-motion, and exports a 15-minute human audit pack. Nothing here re-tunes conf or weights.
+
+**Task 1 — taxonomy delta** (baseline conf=0.20 vs factory conf=0.50):
+
+![Task 1: FP taxonomy delta](outputs/diagnostics_final/task1_taxonomy_delta.png)
+
+| FP bucket | Baseline | DINO+SAM | Δ |
+|-----------|--------:|---------:|--:|
+| `gt_omission` | 93 (24.5%) | 416 (99.8%) | +323 |
+| unclassified | 280 (73.9%) | 0 (0%) | −280 |
+| residual (`gt_omission` ∪ unclassified) | 373 | 416 | +43 |
+| motorcycle / fracture / static | 6 | 1 | −5 |
+
+The raw `gt_omission` jump and empty unclassified bucket are a **rule-saturation artifact**, not an auto-labeler regression: factory frozen conf **equals** `gt_omission_conf` (0.50), so almost every surviving FP is tagged omission. Residual FPs (the domain-shift bucket that is not motorcycle/fracture/static) only moved **373 → 416**. Totals: TP 549→569, FN 434→414. The independent hold-out DINO+SAM audit (60% of sampled baseline `gt_omission` FPs were real vehicles) is still the auto-labeler validation; this script does not restate Precision on that basis.
+
+**Task 2 — far-band pixel ceiling** (200–400 m GT boxes, factory student):
+
+![Task 2: far-band pixel ceiling](outputs/diagnostics_final/task2_far_band_ceiling.png)
+
+TP median **1026 px²** (~32 px side, n=9) vs FN median **954 px²** (~31 px side, n=70). The two distributions sit on top of each other — far misses are not a tail of extra-tiny boxes. After 4K→1280 letterbox those ~31 px footprints become ~10 px on the tensor, ~1 cell on P3 (stride 8). That is the YOLO11n head’s spatial floor; more labels will not recover vehicles that collapse to a single feature cell. Hardware implication: zoom / higher input size / a higher-resolution P2 head, not another epoch.
+
+**Task 3 — kinematic_drift:**
+
+![Task 3: kinematic drift](outputs/diagnostics_final/task3_kinematic_drift.png)
+
+53 frame pairs have median GT centroid shift ≥ 2% of image width (pitch/yaw proxy). Under that motion: **6** sudden TP→FN flips and **3** broken pred track IDs (**9** events total) — all on Clip E during a ~6–11 s ego-motion spike. Clip F stays under its wider budget and logs zero drift events. Those 9 cases are the argument for offloading stabilization to the Pi 5’s VIO pipeline rather than asking the detector to track through aggressive gimbal motion.
+
+**Task 4 — audit pack:** top-50 residual FPs by confidence and top-50 near-band FNs by area, cropped to `outputs/audit/edge_cases/`. Blank sheet `audit_tags.csv` has `filename`, `prediction_type`, `semantic_cause` for a 15-minute visual pass. Full JSON: `data/splits/final_diagnostics.json`. Slide figures: `outputs/diagnostics_final/task{1,2,3}_*.png`.
+
+```bash
+python src/final_diagnostics.py
 ```
 
 ## Automated data factory (Grounding DINO → SAM)
@@ -499,6 +540,7 @@ python src/evaluate_custom.py --weights runs/train/yolo11n_dinosam/weights/best.
   --metrics-path data/splits/eval_metrics_dinosam.json \
   --examples-dir outputs/examples_dinosam --export-examples
 python src/export_eval_video.py --tag dinosam    # outputs/videos/eval_{E,F}_dinosam.mp4
+python src/final_diagnostics.py                  # A/B taxonomy + far-band ceiling + audit crops
 ```
 
 ## Submission checklist
@@ -512,7 +554,7 @@ What the brief asks for, mapped to this repo:
 | Metrics table | Evaluation & Metrics |
 | Example predictions with GT overlaid | `outputs/examples/` (clean student) and `outputs/examples_dinosam/` (factory student) |
 | Short detector video on eval | `outputs/videos/eval_E_dinosam.mp4`, `outputs/videos/eval_F_dinosam.mp4` |
-| Failure analysis | `data/splits/error_taxonomy.json`, `outputs/diagnostics/`, `data/hard_negatives/` |
+| Failure analysis | `data/splits/error_taxonomy.json`, `data/splits/error_taxonomy_dinosam.json`, `data/splits/final_diagnostics.json`, `outputs/diagnostics/`, `outputs/diagnostics_final/`, `data/hard_negatives/`, `outputs/audit/edge_cases/` |
 | Automated labeling pipeline | `src/auto_label_dino_sam.py`, `data/labels/auto_generated/`, `data/splits/auto_label_dino_sam.json`, `results/auto_label_dino_sam/` |
 | Hold-out proxy-GT audit | `data/labels/eval_dino_sam/`, `data/splits/auto_label_dino_sam_eval.json`, `results/auto_label_dino_sam_eval/` |
 | Clean vs DINO+SAM hold-out A/B | `data/splits/eval_metrics_dinosam.json`, `data/splits/eval_ab_clean_vs_dinosam.json` |
@@ -530,6 +572,6 @@ Train is landscape 1080p/4K; hold-out mixes E (portrait, near) and F (higher alt
 
 The hold-out audit says ~44% of the student's FPs land on a box a second model calls a vehicle, so reported precision (0.605 near-band) understates the model. I did not restate the metrics on that basis: the audit samples 126 of 379 FPs and the auditor has its own error rate, so it bounds the bias rather than removing it.
 
-The DINO+SAM factory trades recall for geometry on this checkpoint: tighter boxes and rule-enforced schema, but 66% agreement on Clip C's low-contrast mid-range cars. Its 22.5 extra boxes/frame are unaudited — part real vehicles the teacher missed, part new FPs. On the hold-out A/B the factory student improves far Det (0.063 → 0.114) and F near Det, with near F1 flat; Clip E near Det drops under the higher frozen conf (0.50 vs 0.20). Absolute far-band performance is still the unsolved problem.
+The DINO+SAM factory trades recall for geometry on this checkpoint: tighter boxes and rule-enforced schema, but 66% agreement on Clip C's low-contrast mid-range cars. Its 22.5 extra boxes/frame are unaudited — part real vehicles the teacher missed, part new FPs. On the hold-out A/B the factory student improves far Det (0.063 → 0.114) and F near Det, with near F1 flat; Clip E near Det drops under the higher frozen conf (0.50 vs 0.20). Absolute far-band performance is still the unsolved problem: far TP and FN boxes share a ~31 px median footprint (~10 px after 1280 letterbox), so the head is at its spatial floor. Nine `kinematic_drift` events under high ego-motion are a Pi 5 VIO problem, not a labelling one.
 
 I am not claiming a Pi-ready detector. YOLO11n at 1280 is a training choice; onboard would be a smaller input, INT8, and a tracker, on a board I did not run here.

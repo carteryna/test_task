@@ -1,0 +1,1810 @@
+{
+  "n_fp": 50,
+  "n_fn": 50,
+  "fp": [
+    {
+      "filename": "fp_residual_00_E_000876_c0.98_a9114.jpg",
+      "prediction_type": "FP",
+      "semantic_cause": "",
+      "clip_id": "E",
+      "path": "data/frames/E/000876.jpg",
+      "t_sec": 29.2,
+      "conf": 0.9775,
+      "area_px2": 9114.1,
+      "band": "near_0_200",
+      "error_type": "gt_omission",
+      "xyxy": [
+        1084.1,
+        15.4,
+        1200.5,
+        93.7
+      ]
+    },
+    {
+      "filename": "fp_residual_01_E_000900_c0.98_a9482.jpg",
+      "prediction_type": "FP",
+      "semantic_cause": "",
+      "clip_id": "E",
+      "path": "data/frames/E/000900.jpg",
+      "t_sec": 30.0,
+      "conf": 0.9768,
+      "area_px2": 9482.6,
+      "band": "near_0_200",
+      "error_type": "gt_omission",
+      "xyxy": [
+        1321.3,
+        378.2,
+        1446.4,
+        454.0
+      ]
+    },
+    {
+      "filename": "fp_residual_02_E_000102_c0.95_a172340.jpg",
+      "prediction_type": "FP",
+      "semantic_cause": "",
+      "clip_id": "E",
+      "path": "data/frames/E/000102.jpg",
+      "t_sec": 3.4,
+      "conf": 0.95,
+      "area_px2": 172340.2,
+      "band": "near_0_200",
+      "error_type": "gt_omission",
+      "xyxy": [
+        1291.0,
+        1920.0,
+        1588.6,
+        2499.1
+      ]
+    },
+    {
+      "filename": "fp_residual_03_E_000912_c0.95_a9120.jpg",
+      "prediction_type": "FP",
+      "semantic_cause": "",
+      "clip_id": "E",
+      "path": "data/frames/E/000912.jpg",
+      "t_sec": 30.4,
+      "conf": 0.9492,
+      "area_px2": 9120.7,
+      "band": "near_0_200",
+      "error_type": "gt_omission",
+      "xyxy": [
+        1337.5,
+        590.9,
+        1465.6,
+        662.1
+      ]
+    },
+    {
+      "filename": "fp_residual_04_E_000876_c0.95_a7870.jpg",
+      "prediction_type": "FP",
+      "semantic_cause": "",
+      "clip_id": "E",
+      "path": "data/frames/E/000876.jpg",
+      "t_sec": 29.2,
+      "conf": 0.9455,
+      "area_px2": 7870.6,
+      "band": "near_0_200",
+      "error_type": "gt_omission",
+      "xyxy": [
+        1292.2,
+        0.3,
+        1407.1,
+        68.8
+      ]
+    },
+    {
+      "filename": "fp_residual_05_E_000906_c0.94_a9344.jpg",
+      "prediction_type": "FP",
+      "semantic_cause": "",
+      "clip_id": "E",
+      "path": "data/frames/E/000906.jpg",
+      "t_sec": 30.2,
+      "conf": 0.9404,
+      "area_px2": 9344.7,
+      "band": "near_0_200",
+      "error_type": "gt_omission",
+      "xyxy": [
+        1329.1,
+        484.1,
+        1453.2,
+        559.4
+      ]
+    },
+    {
+      "filename": "fp_residual_06_F_000000_c0.93_a2727.jpg",
+      "prediction_type": "FP",
+      "semantic_cause": "",
+      "clip_id": "F",
+      "path": "data/frames/F/000000.jpg",
+      "t_sec": 0.0,
+      "conf": 0.9277,
+      "area_px2": 2727.2,
+      "band": "near_0_200",
+      "error_type": "gt_omission",
+      "xyxy": [
+        1780.7,
+        1015.6,
+        1846.1,
+        1057.3
+      ]
+    },
+    {
+      "filename": "fp_residual_07_E_000012_c0.93_a10910.jpg",
+      "prediction_type": "FP",
+      "semantic_cause": "",
+      "clip_id": "E",
+      "path": "data/frames/E/000012.jpg",
+      "t_sec": 0.4,
+      "conf": 0.9276,
+      "area_px2": 10910.5,
+      "band": "near_0_200",
+      "error_type": "gt_omission",
+      "xyxy": [
+        678.8,
+        1817.9,
+        813.0,
+        1899.2
+      ]
+    },
+    {
+      "filename": "fp_residual_08_E_000828_c0.93_a40968.jpg",
+      "prediction_type": "FP",
+      "semantic_cause": "",
+      "clip_id": "E",
+      "path": "data/frames/E/000828.jpg",
+      "t_sec": 27.6,
+      "conf": 0.925,
+      "area_px2": 40968.6,
+      "band": "near_0_200",
+      "error_type": "gt_omission",
+      "xyxy": [
+        91.0,
+        14.2,
+        234.8,
+        299.1
+      ]
+    },
+    {
+      "filename": "fp_residual_09_E_000900_c0.92_a9454.jpg",
+      "prediction_type": "FP",
+      "semantic_cause": "",
+      "clip_id": "E",
+      "path": "data/frames/E/000900.jpg",
+      "t_sec": 30.0,
+      "conf": 0.9202,
+      "area_px2": 9454.9,
+      "band": "near_0_200",
+      "error_type": "gt_omission",
+      "xyxy": [
+        1102.1,
+        407.0,
+        1227.0,
+        482.7
+      ]
+    },
+    {
+      "filename": "fp_residual_10_E_000000_c0.91_a12610.jpg",
+      "prediction_type": "FP",
+      "semantic_cause": "",
+      "clip_id": "E",
+      "path": "data/frames/E/000000.jpg",
+      "t_sec": 0.0,
+      "conf": 0.9112,
+      "area_px2": 12610.1,
+      "band": "near_0_200",
+      "error_type": "gt_omission",
+      "xyxy": [
+        694.2,
+        1547.9,
+        823.8,
+        1645.2
+      ]
+    },
+    {
+      "filename": "fp_residual_11_E_000084_c0.91_a63860.jpg",
+      "prediction_type": "FP",
+      "semantic_cause": "",
+      "clip_id": "E",
+      "path": "data/frames/E/000084.jpg",
+      "t_sec": 2.8,
+      "conf": 0.9104,
+      "area_px2": 63860.0,
+      "band": "near_0_200",
+      "error_type": "gt_omission",
+      "xyxy": [
+        896.2,
+        2026.5,
+        1065.5,
+        2403.7
+      ]
+    },
+    {
+      "filename": "fp_residual_12_E_000096_c0.91_a172776.jpg",
+      "prediction_type": "FP",
+      "semantic_cause": "",
+      "clip_id": "E",
+      "path": "data/frames/E/000096.jpg",
+      "t_sec": 3.2,
+      "conf": 0.9093,
+      "area_px2": 172776.4,
+      "band": "near_0_200",
+      "error_type": "gt_omission",
+      "xyxy": [
+        1282.2,
+        1778.7,
+        1574.2,
+        2370.4
+      ]
+    },
+    {
+      "filename": "fp_residual_13_E_000126_c0.90_a217354.jpg",
+      "prediction_type": "FP",
+      "semantic_cause": "",
+      "clip_id": "E",
+      "path": "data/frames/E/000126.jpg",
+      "t_sec": 4.2,
+      "conf": 0.904,
+      "area_px2": 217354.2,
+      "band": "near_0_200",
+      "error_type": "gt_omission",
+      "xyxy": [
+        1344.0,
+        2459.7,
+        1678.7,
+        3109.1
+      ]
+    },
+    {
+      "filename": "fp_residual_14_E_000108_c0.90_a194104.jpg",
+      "prediction_type": "FP",
+      "semantic_cause": "",
+      "clip_id": "E",
+      "path": "data/frames/E/000108.jpg",
+      "t_sec": 3.6,
+      "conf": 0.8978,
+      "area_px2": 194104.0,
+      "band": "near_0_200",
+      "error_type": "gt_omission",
+      "xyxy": [
+        1303.7,
+        2048.7,
+        1632.3,
+        2639.4
+      ]
+    },
+    {
+      "filename": "fp_residual_15_E_000264_c0.90_a12019.jpg",
+      "prediction_type": "FP",
+      "semantic_cause": "",
+      "clip_id": "E",
+      "path": "data/frames/E/000264.jpg",
+      "t_sec": 8.8,
+      "conf": 0.8957,
+      "area_px2": 12019.6,
+      "band": "near_0_200",
+      "error_type": "gt_omission",
+      "xyxy": [
+        1421.3,
+        3315.1,
+        1536.1,
+        3419.8
+      ]
+    },
+    {
+      "filename": "fp_residual_16_E_000486_c0.89_a11679.jpg",
+      "prediction_type": "FP",
+      "semantic_cause": "",
+      "clip_id": "E",
+      "path": "data/frames/E/000486.jpg",
+      "t_sec": 16.2,
+      "conf": 0.8943,
+      "area_px2": 11679.7,
+      "band": "near_0_200",
+      "error_type": "gt_omission",
+      "xyxy": [
+        1542.3,
+        2015.7,
+        1671.5,
+        2106.1
+      ]
+    },
+    {
+      "filename": "fp_residual_17_E_000048_c0.89_a154824.jpg",
+      "prediction_type": "FP",
+      "semantic_cause": "",
+      "clip_id": "E",
+      "path": "data/frames/E/000048.jpg",
+      "t_sec": 1.6,
+      "conf": 0.8941,
+      "area_px2": 154824.9,
+      "band": "near_0_200",
+      "error_type": "gt_omission",
+      "xyxy": [
+        1214.1,
+        840.0,
+        1486.2,
+        1409.0
+      ]
+    },
+    {
+      "filename": "fp_residual_18_E_000912_c0.89_a9308.jpg",
+      "prediction_type": "FP",
+      "semantic_cause": "",
+      "clip_id": "E",
+      "path": "data/frames/E/000912.jpg",
+      "t_sec": 30.4,
+      "conf": 0.8927,
+      "area_px2": 9308.3,
+      "band": "near_0_200",
+      "error_type": "gt_omission",
+      "xyxy": [
+        1113.9,
+        620.1,
+        1240.2,
+        693.8
+      ]
+    },
+    {
+      "filename": "fp_residual_19_E_000132_c0.89_a232026.jpg",
+      "prediction_type": "FP",
+      "semantic_cause": "",
+      "clip_id": "E",
+      "path": "data/frames/E/000132.jpg",
+      "t_sec": 4.4,
+      "conf": 0.8864,
+      "area_px2": 232026.6,
+      "band": "near_0_200",
+      "error_type": "gt_omission",
+      "xyxy": [
+        1368.9,
+        2618.8,
+        1726.8,
+        3267.1
+      ]
+    },
+    {
+      "filename": "fp_residual_20_E_000492_c0.89_a11459.jpg",
+      "prediction_type": "FP",
+      "semantic_cause": "",
+      "clip_id": "E",
+      "path": "data/frames/E/000492.jpg",
+      "t_sec": 16.4,
+      "conf": 0.8855,
+      "area_px2": 11459.1,
+      "band": "near_0_200",
+      "error_type": "gt_omission",
+      "xyxy": [
+        1547.1,
+        2069.4,
+        1680.5,
+        2155.3
+      ]
+    },
+    {
+      "filename": "fp_residual_21_E_000852_c0.88_a12995.jpg",
+      "prediction_type": "FP",
+      "semantic_cause": "",
+      "clip_id": "E",
+      "path": "data/frames/E/000852.jpg",
+      "t_sec": 28.4,
+      "conf": 0.8822,
+      "area_px2": 12995.2,
+      "band": "near_0_200",
+      "error_type": "gt_omission",
+      "xyxy": [
+        1595.8,
+        1636.1,
+        1708.9,
+        1751.0
+      ]
+    },
+    {
+      "filename": "fp_residual_22_F_000290_c0.88_a10434.jpg",
+      "prediction_type": "FP",
+      "semantic_cause": "",
+      "clip_id": "F",
+      "path": "data/frames/F/000290.jpg",
+      "t_sec": 11.6,
+      "conf": 0.8814,
+      "area_px2": 10434.0,
+      "band": "near_0_200",
+      "error_type": "gt_omission",
+      "xyxy": [
+        1557.8,
+        1533.8,
+        1638.0,
+        1663.9
+      ]
+    },
+    {
+      "filename": "fp_residual_23_F_000085_c0.88_a13601.jpg",
+      "prediction_type": "FP",
+      "semantic_cause": "",
+      "clip_id": "F",
+      "path": "data/frames/F/000085.jpg",
+      "t_sec": 3.4,
+      "conf": 0.881,
+      "area_px2": 13601.3,
+      "band": "near_0_200",
+      "error_type": "gt_omission",
+      "xyxy": [
+        1116.1,
+        1744.6,
+        1226.5,
+        1867.8
+      ]
+    },
+    {
+      "filename": "fp_residual_24_E_000180_c0.88_a64777.jpg",
+      "prediction_type": "FP",
+      "semantic_cause": "",
+      "clip_id": "E",
+      "path": "data/frames/E/000180.jpg",
+      "t_sec": 6.0,
+      "conf": 0.8808,
+      "area_px2": 64777.7,
+      "band": "near_0_200",
+      "error_type": "gt_omission",
+      "xyxy": [
+        885.4,
+        2099.0,
+        1059.3,
+        2471.5
+      ]
+    },
+    {
+      "filename": "fp_residual_25_F_000050_c0.88_a2180.jpg",
+      "prediction_type": "FP",
+      "semantic_cause": "",
+      "clip_id": "F",
+      "path": "data/frames/F/000050.jpg",
+      "t_sec": 2.0,
+      "conf": 0.8808,
+      "area_px2": 2180.2,
+      "band": "near_0_200",
+      "error_type": "gt_omission",
+      "xyxy": [
+        2008.9,
+        417.1,
+        2069.8,
+        452.9
+      ]
+    },
+    {
+      "filename": "fp_residual_26_E_000468_c0.88_a13929.jpg",
+      "prediction_type": "FP",
+      "semantic_cause": "",
+      "clip_id": "E",
+      "path": "data/frames/E/000468.jpg",
+      "t_sec": 15.6,
+      "conf": 0.8796,
+      "area_px2": 13929.1,
+      "band": "near_0_200",
+      "error_type": "gt_omission",
+      "xyxy": [
+        1514.5,
+        1832.1,
+        1636.9,
+        1945.9
+      ]
+    },
+    {
+      "filename": "fp_residual_27_F_000260_c0.87_a3100.jpg",
+      "prediction_type": "FP",
+      "semantic_cause": "",
+      "clip_id": "F",
+      "path": "data/frames/F/000260.jpg",
+      "t_sec": 10.4,
+      "conf": 0.8728,
+      "area_px2": 3100.2,
+      "band": "near_0_200",
+      "error_type": "gt_omission",
+      "xyxy": [
+        1823.9,
+        1111.2,
+        1901.6,
+        1151.1
+      ]
+    },
+    {
+      "filename": "fp_residual_28_E_000216_c0.87_a11375.jpg",
+      "prediction_type": "FP",
+      "semantic_cause": "",
+      "clip_id": "E",
+      "path": "data/frames/E/000216.jpg",
+      "t_sec": 7.2,
+      "conf": 0.8723,
+      "area_px2": 11375.2,
+      "band": "near_0_200",
+      "error_type": "gt_omission",
+      "xyxy": [
+        1245.8,
+        2115.9,
+        1376.1,
+        2203.2
+      ]
+    },
+    {
+      "filename": "fp_residual_29_E_000456_c0.87_a17102.jpg",
+      "prediction_type": "FP",
+      "semantic_cause": "",
+      "clip_id": "E",
+      "path": "data/frames/E/000456.jpg",
+      "t_sec": 15.2,
+      "conf": 0.8707,
+      "area_px2": 17102.3,
+      "band": "near_0_200",
+      "error_type": "gt_omission",
+      "xyxy": [
+        1498.2,
+        1692.1,
+        1622.4,
+        1829.8
+      ]
+    },
+    {
+      "filename": "fp_residual_30_E_000882_c0.87_a9090.jpg",
+      "prediction_type": "FP",
+      "semantic_cause": "",
+      "clip_id": "E",
+      "path": "data/frames/E/000882.jpg",
+      "t_sec": 29.4,
+      "conf": 0.8684,
+      "area_px2": 9090.7,
+      "band": "near_0_200",
+      "error_type": "gt_omission",
+      "xyxy": [
+        1299.2,
+        82.5,
+        1418.5,
+        158.7
+      ]
+    },
+    {
+      "filename": "fp_residual_31_E_000822_c0.87_a27453.jpg",
+      "prediction_type": "FP",
+      "semantic_cause": "",
+      "clip_id": "E",
+      "path": "data/frames/E/000822.jpg",
+      "t_sec": 27.4,
+      "conf": 0.8652,
+      "area_px2": 27453.7,
+      "band": "near_0_200",
+      "error_type": "gt_omission",
+      "xyxy": [
+        97.1,
+        7.1,
+        234.3,
+        207.2
+      ]
+    },
+    {
+      "filename": "fp_residual_32_E_000894_c0.86_a8895.jpg",
+      "prediction_type": "FP",
+      "semantic_cause": "",
+      "clip_id": "E",
+      "path": "data/frames/E/000894.jpg",
+      "t_sec": 29.8,
+      "conf": 0.8646,
+      "area_px2": 8895.6,
+      "band": "near_0_200",
+      "error_type": "gt_omission",
+      "xyxy": [
+        1312.7,
+        278.0,
+        1433.4,
+        351.7
+      ]
+    },
+    {
+      "filename": "fp_residual_33_E_000198_c0.86_a11513.jpg",
+      "prediction_type": "FP",
+      "semantic_cause": "",
+      "clip_id": "E",
+      "path": "data/frames/E/000198.jpg",
+      "t_sec": 6.6,
+      "conf": 0.8636,
+      "area_px2": 11513.9,
+      "band": "near_0_200",
+      "error_type": "gt_omission",
+      "xyxy": [
+        1207.4,
+        1752.6,
+        1326.1,
+        1849.6
+      ]
+    },
+    {
+      "filename": "fp_residual_34_F_000155_c0.86_a2391.jpg",
+      "prediction_type": "FP",
+      "semantic_cause": "",
+      "clip_id": "F",
+      "path": "data/frames/F/000155.jpg",
+      "t_sec": 6.2,
+      "conf": 0.8576,
+      "area_px2": 2391.1,
+      "band": "near_0_200",
+      "error_type": "gt_omission",
+      "xyxy": [
+        2139.1,
+        1272.2,
+        2192.0,
+        1317.4
+      ]
+    },
+    {
+      "filename": "fp_residual_35_F_000245_c0.86_a4527.jpg",
+      "prediction_type": "FP",
+      "semantic_cause": "",
+      "clip_id": "F",
+      "path": "data/frames/F/000245.jpg",
+      "t_sec": 9.8,
+      "conf": 0.8568,
+      "area_px2": 4527.4,
+      "band": "near_0_200",
+      "error_type": "gt_omission",
+      "xyxy": [
+        1781.7,
+        1555.1,
+        1834.1,
+        1641.5
+      ]
+    },
+    {
+      "filename": "fp_residual_36_E_000120_c0.86_a213742.jpg",
+      "prediction_type": "FP",
+      "semantic_cause": "",
+      "clip_id": "E",
+      "path": "data/frames/E/000120.jpg",
+      "t_sec": 4.0,
+      "conf": 0.8553,
+      "area_px2": 213742.9,
+      "band": "near_0_200",
+      "error_type": "gt_omission",
+      "xyxy": [
+        1334.4,
+        2317.1,
+        1671.8,
+        2950.6
+      ]
+    },
+    {
+      "filename": "fp_residual_37_E_000864_c0.85_a9083.jpg",
+      "prediction_type": "FP",
+      "semantic_cause": "",
+      "clip_id": "E",
+      "path": "data/frames/E/000864.jpg",
+      "t_sec": 28.8,
+      "conf": 0.8548,
+      "area_px2": 9083.6,
+      "band": "near_0_200",
+      "error_type": "gt_omission",
+      "xyxy": [
+        471.6,
+        0.0,
+        602.3,
+        69.5
+      ]
+    },
+    {
+      "filename": "fp_residual_38_E_000450_c0.84_a17581.jpg",
+      "prediction_type": "FP",
+      "semantic_cause": "",
+      "clip_id": "E",
+      "path": "data/frames/E/000450.jpg",
+      "t_sec": 15.0,
+      "conf": 0.8444,
+      "area_px2": 17581.2,
+      "band": "near_0_200",
+      "error_type": "gt_omission",
+      "xyxy": [
+        1487.3,
+        1615.5,
+        1606.9,
+        1762.5
+      ]
+    },
+    {
+      "filename": "fp_residual_39_E_000498_c0.84_a10364.jpg",
+      "prediction_type": "FP",
+      "semantic_cause": "",
+      "clip_id": "E",
+      "path": "data/frames/E/000498.jpg",
+      "t_sec": 16.6,
+      "conf": 0.8434,
+      "area_px2": 10364.2,
+      "band": "near_0_200",
+      "error_type": "gt_omission",
+      "xyxy": [
+        1551.7,
+        2127.8,
+        1686.3,
+        2204.8
+      ]
+    },
+    {
+      "filename": "fp_residual_40_E_000126_c0.84_a12339.jpg",
+      "prediction_type": "FP",
+      "semantic_cause": "",
+      "clip_id": "E",
+      "path": "data/frames/E/000126.jpg",
+      "t_sec": 4.2,
+      "conf": 0.8427,
+      "area_px2": 12339.0,
+      "band": "near_0_200",
+      "error_type": "gt_omission",
+      "xyxy": [
+        327.5,
+        0.0,
+        456.3,
+        95.8
+      ]
+    },
+    {
+      "filename": "fp_residual_41_E_000474_c0.84_a14581.jpg",
+      "prediction_type": "FP",
+      "semantic_cause": "",
+      "clip_id": "E",
+      "path": "data/frames/E/000474.jpg",
+      "t_sec": 15.8,
+      "conf": 0.8419,
+      "area_px2": 14581.7,
+      "band": "near_0_200",
+      "error_type": "gt_omission",
+      "xyxy": [
+        1524.3,
+        1892.3,
+        1653.8,
+        2004.9
+      ]
+    },
+    {
+      "filename": "fp_residual_42_F_000040_c0.83_a2208.jpg",
+      "prediction_type": "FP",
+      "semantic_cause": "",
+      "clip_id": "F",
+      "path": "data/frames/F/000040.jpg",
+      "t_sec": 1.6,
+      "conf": 0.8337,
+      "area_px2": 2208.1,
+      "band": "near_0_200",
+      "error_type": "gt_omission",
+      "xyxy": [
+        2002.3,
+        418.3,
+        2064.5,
+        453.8
+      ]
+    },
+    {
+      "filename": "fp_residual_43_F_000025_c0.83_a2378.jpg",
+      "prediction_type": "FP",
+      "semantic_cause": "",
+      "clip_id": "F",
+      "path": "data/frames/F/000025.jpg",
+      "t_sec": 1.0,
+      "conf": 0.8296,
+      "area_px2": 2378.4,
+      "band": "near_0_200",
+      "error_type": "gt_omission",
+      "xyxy": [
+        2002.6,
+        418.9,
+        2064.7,
+        457.2
+      ]
+    },
+    {
+      "filename": "fp_residual_44_E_000864_c0.83_a12030.jpg",
+      "prediction_type": "FP",
+      "semantic_cause": "",
+      "clip_id": "E",
+      "path": "data/frames/E/000864.jpg",
+      "t_sec": 28.8,
+      "conf": 0.8253,
+      "area_px2": 12030.1,
+      "band": "near_0_200",
+      "error_type": "gt_omission",
+      "xyxy": [
+        1619.3,
+        1943.0,
+        1761.5,
+        2027.6
+      ]
+    },
+    {
+      "filename": "fp_residual_45_E_000090_c0.82_a174237.jpg",
+      "prediction_type": "FP",
+      "semantic_cause": "",
+      "clip_id": "E",
+      "path": "data/frames/E/000090.jpg",
+      "t_sec": 3.0,
+      "conf": 0.8247,
+      "area_px2": 174237.0,
+      "band": "near_0_200",
+      "error_type": "gt_omission",
+      "xyxy": [
+        1271.7,
+        1667.5,
+        1570.0,
+        2251.6
+      ]
+    },
+    {
+      "filename": "fp_residual_46_E_000480_c0.82_a13699.jpg",
+      "prediction_type": "FP",
+      "semantic_cause": "",
+      "clip_id": "E",
+      "path": "data/frames/E/000480.jpg",
+      "t_sec": 16.0,
+      "conf": 0.824,
+      "area_px2": 13699.5,
+      "band": "near_0_200",
+      "error_type": "gt_omission",
+      "xyxy": [
+        1534.7,
+        1953.0,
+        1664.8,
+        2058.3
+      ]
+    },
+    {
+      "filename": "fp_residual_47_E_000054_c0.82_a156296.jpg",
+      "prediction_type": "FP",
+      "semantic_cause": "",
+      "clip_id": "E",
+      "path": "data/frames/E/000054.jpg",
+      "t_sec": 1.8,
+      "conf": 0.8224,
+      "area_px2": 156296.0,
+      "band": "near_0_200",
+      "error_type": "gt_omission",
+      "xyxy": [
+        1227.7,
+        953.3,
+        1506.8,
+        1513.3
+      ]
+    },
+    {
+      "filename": "fp_residual_48_E_000222_c0.82_a8544.jpg",
+      "prediction_type": "FP",
+      "semantic_cause": "",
+      "clip_id": "E",
+      "path": "data/frames/E/000222.jpg",
+      "t_sec": 7.4,
+      "conf": 0.8213,
+      "area_px2": 8544.6,
+      "band": "near_0_200",
+      "error_type": "gt_omission",
+      "xyxy": [
+        1289.7,
+        2245.1,
+        1392.4,
+        2328.3
+      ]
+    },
+    {
+      "filename": "fp_residual_49_F_000045_c0.82_a2149.jpg",
+      "prediction_type": "FP",
+      "semantic_cause": "",
+      "clip_id": "F",
+      "path": "data/frames/F/000045.jpg",
+      "t_sec": 1.8,
+      "conf": 0.8212,
+      "area_px2": 2149.2,
+      "band": "near_0_200",
+      "error_type": "gt_omission",
+      "xyxy": [
+        2005.6,
+        418.4,
+        2065.3,
+        454.4
+      ]
+    }
+  ],
+  "fn": [
+    {
+      "filename": "fn_near_00_E_000258_a150335.jpg",
+      "prediction_type": "FN",
+      "semantic_cause": "",
+      "clip_id": "E",
+      "path": "data/frames/E/000258.jpg",
+      "t_sec": 8.6,
+      "conf": null,
+      "area_px2": 150335.6,
+      "band": "near_0_200",
+      "error_type": "near_band_fn",
+      "xyxy": [
+        276.0,
+        3114.0,
+        537.0,
+        3690.0
+      ]
+    },
+    {
+      "filename": "fn_near_01_E_000288_a146556.jpg",
+      "prediction_type": "FN",
+      "semantic_cause": "",
+      "clip_id": "E",
+      "path": "data/frames/E/000288.jpg",
+      "t_sec": 9.6,
+      "conf": null,
+      "area_px2": 146556.0,
+      "band": "near_0_200",
+      "error_type": "near_band_fn",
+      "xyxy": [
+        1452.0,
+        3147.0,
+        1728.0,
+        3678.0
+      ]
+    },
+    {
+      "filename": "fn_near_02_E_000000_a144143.jpg",
+      "prediction_type": "FN",
+      "semantic_cause": "",
+      "clip_id": "E",
+      "path": "data/frames/E/000000.jpg",
+      "t_sec": 0.0,
+      "conf": null,
+      "area_px2": 144143.2,
+      "band": "near_0_200",
+      "error_type": "near_band_fn",
+      "xyxy": [
+        1233.0,
+        57.0,
+        1497.0,
+        603.0
+      ]
+    },
+    {
+      "filename": "fn_near_03_E_000264_a139356.jpg",
+      "prediction_type": "FN",
+      "semantic_cause": "",
+      "clip_id": "E",
+      "path": "data/frames/E/000264.jpg",
+      "t_sec": 8.8,
+      "conf": null,
+      "area_px2": 139356.5,
+      "band": "near_0_200",
+      "error_type": "near_band_fn",
+      "xyxy": [
+        261.0,
+        3348.0,
+        555.0,
+        3822.0
+      ]
+    },
+    {
+      "filename": "fn_near_04_E_000294_a127550.jpg",
+      "prediction_type": "FN",
+      "semantic_cause": "",
+      "clip_id": "E",
+      "path": "data/frames/E/000294.jpg",
+      "t_sec": 9.8,
+      "conf": null,
+      "area_px2": 127550.0,
+      "band": "near_0_200",
+      "error_type": "near_band_fn",
+      "xyxy": [
+        1495.9,
+        3314.5,
+        1740.0,
+        3837.1
+      ]
+    },
+    {
+      "filename": "fn_near_05_E_000006_a124739.jpg",
+      "prediction_type": "FN",
+      "semantic_cause": "",
+      "clip_id": "E",
+      "path": "data/frames/E/000006.jpg",
+      "t_sec": 0.2,
+      "conf": null,
+      "area_px2": 124739.5,
+      "band": "near_0_200",
+      "error_type": "near_band_fn",
+      "xyxy": [
+        1242.0,
+        138.0,
+        1473.0,
+        678.0
+      ]
+    },
+    {
+      "filename": "fn_near_06_E_000276_a105508.jpg",
+      "prediction_type": "FN",
+      "semantic_cause": "",
+      "clip_id": "E",
+      "path": "data/frames/E/000276.jpg",
+      "t_sec": 9.2,
+      "conf": null,
+      "area_px2": 105508.2,
+      "band": "near_0_200",
+      "error_type": "near_band_fn",
+      "xyxy": [
+        1428.1,
+        2820.3,
+        1651.3,
+        3293.0
+      ]
+    },
+    {
+      "filename": "fn_near_07_E_000288_a101043.jpg",
+      "prediction_type": "FN",
+      "semantic_cause": "",
+      "clip_id": "E",
+      "path": "data/frames/E/000288.jpg",
+      "t_sec": 9.6,
+      "conf": null,
+      "area_px2": 101043.8,
+      "band": "near_0_200",
+      "error_type": "near_band_fn",
+      "xyxy": [
+        1404.6,
+        2581.6,
+        1621.2,
+        3048.2
+      ]
+    },
+    {
+      "filename": "fn_near_08_E_000678_a99580.jpg",
+      "prediction_type": "FN",
+      "semantic_cause": "",
+      "clip_id": "E",
+      "path": "data/frames/E/000678.jpg",
+      "t_sec": 22.6,
+      "conf": null,
+      "area_px2": 99580.0,
+      "band": "near_0_200",
+      "error_type": "near_band_fn",
+      "xyxy": [
+        232.7,
+        3015.7,
+        437.0,
+        3502.9
+      ]
+    },
+    {
+      "filename": "fn_near_09_E_000270_a98052.jpg",
+      "prediction_type": "FN",
+      "semantic_cause": "",
+      "clip_id": "E",
+      "path": "data/frames/E/000270.jpg",
+      "t_sec": 9.0,
+      "conf": null,
+      "area_px2": 98052.5,
+      "band": "near_0_200",
+      "error_type": "near_band_fn",
+      "xyxy": [
+        1408.0,
+        2667.1,
+        1623.8,
+        3121.5
+      ]
+    },
+    {
+      "filename": "fn_near_10_E_000318_a93599.jpg",
+      "prediction_type": "FN",
+      "semantic_cause": "",
+      "clip_id": "E",
+      "path": "data/frames/E/000318.jpg",
+      "t_sec": 10.6,
+      "conf": null,
+      "area_px2": 93599.4,
+      "band": "near_0_200",
+      "error_type": "near_band_fn",
+      "xyxy": [
+        1515.0,
+        3447.0,
+        1755.0,
+        3837.0
+      ]
+    },
+    {
+      "filename": "fn_near_11_E_000516_a92895.jpg",
+      "prediction_type": "FN",
+      "semantic_cause": "",
+      "clip_id": "E",
+      "path": "data/frames/E/000516.jpg",
+      "t_sec": 17.2,
+      "conf": null,
+      "area_px2": 92895.9,
+      "band": "near_0_200",
+      "error_type": "near_band_fn",
+      "xyxy": [
+        1019.2,
+        3337.2,
+        1212.7,
+        3817.2
+      ]
+    },
+    {
+      "filename": "fn_near_12_E_000696_a91133.jpg",
+      "prediction_type": "FN",
+      "semantic_cause": "",
+      "clip_id": "E",
+      "path": "data/frames/E/000696.jpg",
+      "t_sec": 23.2,
+      "conf": null,
+      "area_px2": 91133.7,
+      "band": "near_0_200",
+      "error_type": "near_band_fn",
+      "xyxy": [
+        948.0,
+        3462.0,
+        1197.0,
+        3828.0
+      ]
+    },
+    {
+      "filename": "fn_near_13_E_000600_a90652.jpg",
+      "prediction_type": "FN",
+      "semantic_cause": "",
+      "clip_id": "E",
+      "path": "data/frames/E/000600.jpg",
+      "t_sec": 20.0,
+      "conf": null,
+      "area_px2": 90652.5,
+      "band": "near_0_200",
+      "error_type": "near_band_fn",
+      "xyxy": [
+        971.0,
+        3311.2,
+        1162.2,
+        3785.4
+      ]
+    },
+    {
+      "filename": "fn_near_14_E_000612_a90525.jpg",
+      "prediction_type": "FN",
+      "semantic_cause": "",
+      "clip_id": "E",
+      "path": "data/frames/E/000612.jpg",
+      "t_sec": 20.4,
+      "conf": null,
+      "area_px2": 90525.8,
+      "band": "near_0_200",
+      "error_type": "near_band_fn",
+      "xyxy": [
+        967.5,
+        3369.0,
+        1159.7,
+        3840.0
+      ]
+    },
+    {
+      "filename": "fn_near_15_E_000606_a89559.jpg",
+      "prediction_type": "FN",
+      "semantic_cause": "",
+      "clip_id": "E",
+      "path": "data/frames/E/000606.jpg",
+      "t_sec": 20.2,
+      "conf": null,
+      "area_px2": 89559.7,
+      "band": "near_0_200",
+      "error_type": "near_band_fn",
+      "xyxy": [
+        972.6,
+        3336.8,
+        1159.6,
+        3815.6
+      ]
+    },
+    {
+      "filename": "fn_near_16_E_000522_a89034.jpg",
+      "prediction_type": "FN",
+      "semantic_cause": "",
+      "clip_id": "E",
+      "path": "data/frames/E/000522.jpg",
+      "t_sec": 17.4,
+      "conf": null,
+      "area_px2": 89034.7,
+      "band": "near_0_200",
+      "error_type": "near_band_fn",
+      "xyxy": [
+        1016.8,
+        3280.4,
+        1206.0,
+        3750.9
+      ]
+    },
+    {
+      "filename": "fn_near_17_E_000576_a89020.jpg",
+      "prediction_type": "FN",
+      "semantic_cause": "",
+      "clip_id": "E",
+      "path": "data/frames/E/000576.jpg",
+      "t_sec": 19.2,
+      "conf": null,
+      "area_px2": 89020.0,
+      "band": "near_0_200",
+      "error_type": "near_band_fn",
+      "xyxy": [
+        979.0,
+        3214.3,
+        1171.1,
+        3677.8
+      ]
+    },
+    {
+      "filename": "fn_near_18_E_000588_a88519.jpg",
+      "prediction_type": "FN",
+      "semantic_cause": "",
+      "clip_id": "E",
+      "path": "data/frames/E/000588.jpg",
+      "t_sec": 19.6,
+      "conf": null,
+      "area_px2": 88519.1,
+      "band": "near_0_200",
+      "error_type": "near_band_fn",
+      "xyxy": [
+        975.7,
+        3257.3,
+        1164.0,
+        3727.4
+      ]
+    },
+    {
+      "filename": "fn_near_19_E_000690_a88208.jpg",
+      "prediction_type": "FN",
+      "semantic_cause": "",
+      "clip_id": "E",
+      "path": "data/frames/E/000690.jpg",
+      "t_sec": 23.0,
+      "conf": null,
+      "area_px2": 88208.8,
+      "band": "near_0_200",
+      "error_type": "near_band_fn",
+      "xyxy": [
+        951.0,
+        3453.0,
+        1194.0,
+        3816.0
+      ]
+    },
+    {
+      "filename": "fn_near_20_E_000582_a87948.jpg",
+      "prediction_type": "FN",
+      "semantic_cause": "",
+      "clip_id": "E",
+      "path": "data/frames/E/000582.jpg",
+      "t_sec": 19.4,
+      "conf": null,
+      "area_px2": 87948.2,
+      "band": "near_0_200",
+      "error_type": "near_band_fn",
+      "xyxy": [
+        979.0,
+        3233.5,
+        1166.8,
+        3701.8
+      ]
+    },
+    {
+      "filename": "fn_near_21_E_000540_a87366.jpg",
+      "prediction_type": "FN",
+      "semantic_cause": "",
+      "clip_id": "E",
+      "path": "data/frames/E/000540.jpg",
+      "t_sec": 18.0,
+      "conf": null,
+      "area_px2": 87366.4,
+      "band": "near_0_200",
+      "error_type": "near_band_fn",
+      "xyxy": [
+        999.8,
+        3181.9,
+        1190.6,
+        3639.8
+      ]
+    },
+    {
+      "filename": "fn_near_22_E_000144_a85320.jpg",
+      "prediction_type": "FN",
+      "semantic_cause": "",
+      "clip_id": "E",
+      "path": "data/frames/E/000144.jpg",
+      "t_sec": 4.8,
+      "conf": null,
+      "area_px2": 85320.0,
+      "band": "near_0_200",
+      "error_type": "near_band_fn",
+      "xyxy": [
+        348.0,
+        3336.0,
+        528.0,
+        3810.0
+      ]
+    },
+    {
+      "filename": "fn_near_23_E_000300_a84736.jpg",
+      "prediction_type": "FN",
+      "semantic_cause": "",
+      "clip_id": "E",
+      "path": "data/frames/E/000300.jpg",
+      "t_sec": 10.0,
+      "conf": null,
+      "area_px2": 84736.1,
+      "band": "near_0_200",
+      "error_type": "near_band_fn",
+      "xyxy": [
+        1519.9,
+        3492.1,
+        1763.4,
+        3840.0
+      ]
+    },
+    {
+      "filename": "fn_near_24_E_000564_a82944.jpg",
+      "prediction_type": "FN",
+      "semantic_cause": "",
+      "clip_id": "E",
+      "path": "data/frames/E/000564.jpg",
+      "t_sec": 18.8,
+      "conf": null,
+      "area_px2": 82944.1,
+      "band": "near_0_200",
+      "error_type": "near_band_fn",
+      "xyxy": [
+        987.0,
+        3201.0,
+        1179.0,
+        3633.0
+      ]
+    },
+    {
+      "filename": "fn_near_25_E_000618_a82787.jpg",
+      "prediction_type": "FN",
+      "semantic_cause": "",
+      "clip_id": "E",
+      "path": "data/frames/E/000618.jpg",
+      "t_sec": 20.6,
+      "conf": null,
+      "area_px2": 82787.1,
+      "band": "near_0_200",
+      "error_type": "near_band_fn",
+      "xyxy": [
+        970.6,
+        3405.2,
+        1161.1,
+        3839.9
+      ]
+    },
+    {
+      "filename": "fn_near_26_E_000276_a82677.jpg",
+      "prediction_type": "FN",
+      "semantic_cause": "",
+      "clip_id": "E",
+      "path": "data/frames/E/000276.jpg",
+      "t_sec": 9.2,
+      "conf": null,
+      "area_px2": 82677.0,
+      "band": "near_0_200",
+      "error_type": "near_band_fn",
+      "xyxy": [
+        1364.8,
+        2326.7,
+        1568.9,
+        2731.9
+      ]
+    },
+    {
+      "filename": "fn_near_27_E_000510_a79559.jpg",
+      "prediction_type": "FN",
+      "semantic_cause": "",
+      "clip_id": "E",
+      "path": "data/frames/E/000510.jpg",
+      "t_sec": 17.0,
+      "conf": null,
+      "area_px2": 79559.2,
+      "band": "near_0_200",
+      "error_type": "near_band_fn",
+      "xyxy": [
+        1017.0,
+        3432.0,
+        1221.0,
+        3822.0
+      ]
+    },
+    {
+      "filename": "fn_near_28_E_000624_a77685.jpg",
+      "prediction_type": "FN",
+      "semantic_cause": "",
+      "clip_id": "E",
+      "path": "data/frames/E/000624.jpg",
+      "t_sec": 20.8,
+      "conf": null,
+      "area_px2": 77685.9,
+      "band": "near_0_200",
+      "error_type": "near_band_fn",
+      "xyxy": [
+        969.3,
+        3431.0,
+        1159.7,
+        3838.9
+      ]
+    },
+    {
+      "filename": "fn_near_29_E_000504_a73260.jpg",
+      "prediction_type": "FN",
+      "semantic_cause": "",
+      "clip_id": "E",
+      "path": "data/frames/E/000504.jpg",
+      "t_sec": 16.8,
+      "conf": null,
+      "area_px2": 73260.6,
+      "band": "near_0_200",
+      "error_type": "near_band_fn",
+      "xyxy": [
+        1014.0,
+        3498.0,
+        1236.0,
+        3828.0
+      ]
+    },
+    {
+      "filename": "fn_near_30_E_000642_a71428.jpg",
+      "prediction_type": "FN",
+      "semantic_cause": "",
+      "clip_id": "E",
+      "path": "data/frames/E/000642.jpg",
+      "t_sec": 21.4,
+      "conf": null,
+      "area_px2": 71428.1,
+      "band": "near_0_200",
+      "error_type": "near_band_fn",
+      "xyxy": [
+        960.6,
+        3481.2,
+        1159.6,
+        3840.0
+      ]
+    },
+    {
+      "filename": "fn_near_31_E_000636_a69498.jpg",
+      "prediction_type": "FN",
+      "semantic_cause": "",
+      "clip_id": "E",
+      "path": "data/frames/E/000636.jpg",
+      "t_sec": 21.2,
+      "conf": null,
+      "area_px2": 69498.1,
+      "band": "near_0_200",
+      "error_type": "near_band_fn",
+      "xyxy": [
+        969.0,
+        3477.0,
+        1167.0,
+        3828.0
+      ]
+    },
+    {
+      "filename": "fn_near_32_E_000630_a69155.jpg",
+      "prediction_type": "FN",
+      "semantic_cause": "",
+      "clip_id": "E",
+      "path": "data/frames/E/000630.jpg",
+      "t_sec": 21.0,
+      "conf": null,
+      "area_px2": 69155.5,
+      "band": "near_0_200",
+      "error_type": "near_band_fn",
+      "xyxy": [
+        960.0,
+        3465.0,
+        1164.0,
+        3804.0
+      ]
+    },
+    {
+      "filename": "fn_near_33_E_000654_a68328.jpg",
+      "prediction_type": "FN",
+      "semantic_cause": "",
+      "clip_id": "E",
+      "path": "data/frames/E/000654.jpg",
+      "t_sec": 21.8,
+      "conf": null,
+      "area_px2": 68328.1,
+      "band": "near_0_200",
+      "error_type": "near_band_fn",
+      "xyxy": [
+        948.0,
+        3501.0,
+        1167.0,
+        3813.0
+      ]
+    },
+    {
+      "filename": "fn_near_34_E_000648_a67555.jpg",
+      "prediction_type": "FN",
+      "semantic_cause": "",
+      "clip_id": "E",
+      "path": "data/frames/E/000648.jpg",
+      "t_sec": 21.6,
+      "conf": null,
+      "area_px2": 67555.1,
+      "band": "near_0_200",
+      "error_type": "near_band_fn",
+      "xyxy": [
+        963.7,
+        3492.7,
+        1158.2,
+        3840.0
+      ]
+    },
+    {
+      "filename": "fn_near_35_E_000666_a62236.jpg",
+      "prediction_type": "FN",
+      "semantic_cause": "",
+      "clip_id": "E",
+      "path": "data/frames/E/000666.jpg",
+      "t_sec": 22.2,
+      "conf": null,
+      "area_px2": 62236.5,
+      "band": "near_0_200",
+      "error_type": "near_band_fn",
+      "xyxy": [
+        962.2,
+        3524.6,
+        1159.5,
+        3840.0
+      ]
+    },
+    {
+      "filename": "fn_near_36_E_000324_a54810.jpg",
+      "prediction_type": "FN",
+      "semantic_cause": "",
+      "clip_id": "E",
+      "path": "data/frames/E/000324.jpg",
+      "t_sec": 10.8,
+      "conf": null,
+      "area_px2": 54810.4,
+      "band": "near_0_200",
+      "error_type": "near_band_fn",
+      "xyxy": [
+        1521.0,
+        3624.0,
+        1782.0,
+        3834.0
+      ]
+    },
+    {
+      "filename": "fn_near_37_E_000750_a49770.jpg",
+      "prediction_type": "FN",
+      "semantic_cause": "",
+      "clip_id": "E",
+      "path": "data/frames/E/000750.jpg",
+      "t_sec": 25.0,
+      "conf": null,
+      "area_px2": 49770.1,
+      "band": "near_0_200",
+      "error_type": "near_band_fn",
+      "xyxy": [
+        1005.0,
+        3597.0,
+        1215.0,
+        3834.0
+      ]
+    },
+    {
+      "filename": "fn_near_38_E_000744_a47735.jpg",
+      "prediction_type": "FN",
+      "semantic_cause": "",
+      "clip_id": "E",
+      "path": "data/frames/E/000744.jpg",
+      "t_sec": 24.8,
+      "conf": null,
+      "area_px2": 47735.9,
+      "band": "near_0_200",
+      "error_type": "near_band_fn",
+      "xyxy": [
+        990.0,
+        3621.0,
+        1224.0,
+        3825.0
+      ]
+    },
+    {
+      "filename": "fn_near_39_F_000250_a26048.jpg",
+      "prediction_type": "FN",
+      "semantic_cause": "",
+      "clip_id": "F",
+      "path": "data/frames/F/000250.jpg",
+      "t_sec": 10.0,
+      "conf": null,
+      "area_px2": 26048.3,
+      "band": "near_0_200",
+      "error_type": "near_band_fn",
+      "xyxy": [
+        3576.3,
+        651.1,
+        3829.6,
+        753.9
+      ]
+    },
+    {
+      "filename": "fn_near_40_F_000230_a15017.jpg",
+      "prediction_type": "FN",
+      "semantic_cause": "",
+      "clip_id": "F",
+      "path": "data/frames/F/000230.jpg",
+      "t_sec": 9.2,
+      "conf": null,
+      "area_px2": 15017.5,
+      "band": "near_0_200",
+      "error_type": "near_band_fn",
+      "xyxy": [
+        1679.2,
+        1118.0,
+        1761.0,
+        1301.7
+      ]
+    },
+    {
+      "filename": "fn_near_41_F_000225_a14669.jpg",
+      "prediction_type": "FN",
+      "semantic_cause": "",
+      "clip_id": "F",
+      "path": "data/frames/F/000225.jpg",
+      "t_sec": 9.0,
+      "conf": null,
+      "area_px2": 14669.3,
+      "band": "near_0_200",
+      "error_type": "near_band_fn",
+      "xyxy": [
+        1684.8,
+        1101.6,
+        1765.7,
+        1283.1
+      ]
+    },
+    {
+      "filename": "fn_near_42_F_000235_a14040.jpg",
+      "prediction_type": "FN",
+      "semantic_cause": "",
+      "clip_id": "F",
+      "path": "data/frames/F/000235.jpg",
+      "t_sec": 9.4,
+      "conf": null,
+      "area_px2": 14040.0,
+      "band": "near_0_200",
+      "error_type": "near_band_fn",
+      "xyxy": [
+        1674.0,
+        1128.0,
+        1746.0,
+        1323.0
+      ]
+    },
+    {
+      "filename": "fn_near_43_F_000240_a13031.jpg",
+      "prediction_type": "FN",
+      "semantic_cause": "",
+      "clip_id": "F",
+      "path": "data/frames/F/000240.jpg",
+      "t_sec": 9.6,
+      "conf": null,
+      "area_px2": 13031.6,
+      "band": "near_0_200",
+      "error_type": "near_band_fn",
+      "xyxy": [
+        3724.3,
+        1998.0,
+        3840.0,
+        2110.7
+      ]
+    },
+    {
+      "filename": "fn_near_44_F_000250_a12627.jpg",
+      "prediction_type": "FN",
+      "semantic_cause": "",
+      "clip_id": "F",
+      "path": "data/frames/F/000250.jpg",
+      "t_sec": 10.0,
+      "conf": null,
+      "area_px2": 12627.1,
+      "band": "near_0_200",
+      "error_type": "near_band_fn",
+      "xyxy": [
+        1656.0,
+        1200.0,
+        1725.0,
+        1383.0
+      ]
+    },
+    {
+      "filename": "fn_near_45_F_000255_a12284.jpg",
+      "prediction_type": "FN",
+      "semantic_cause": "",
+      "clip_id": "F",
+      "path": "data/frames/F/000255.jpg",
+      "t_sec": 10.2,
+      "conf": null,
+      "area_px2": 12284.8,
+      "band": "near_0_200",
+      "error_type": "near_band_fn",
+      "xyxy": [
+        1653.0,
+        1206.0,
+        1716.0,
+        1401.0
+      ]
+    },
+    {
+      "filename": "fn_near_46_F_000245_a11880.jpg",
+      "prediction_type": "FN",
+      "semantic_cause": "",
+      "clip_id": "F",
+      "path": "data/frames/F/000245.jpg",
+      "t_sec": 9.8,
+      "conf": null,
+      "area_px2": 11880.3,
+      "band": "near_0_200",
+      "error_type": "near_band_fn",
+      "xyxy": [
+        1677.0,
+        1182.0,
+        1743.0,
+        1362.0
+      ]
+    },
+    {
+      "filename": "fn_near_47_F_000190_a11618.jpg",
+      "prediction_type": "FN",
+      "semantic_cause": "",
+      "clip_id": "F",
+      "path": "data/frames/F/000190.jpg",
+      "t_sec": 7.6,
+      "conf": null,
+      "area_px2": 11618.5,
+      "band": "near_0_200",
+      "error_type": "near_band_fn",
+      "xyxy": [
+        71.8,
+        923.4,
+        258.4,
+        985.7
+      ]
+    },
+    {
+      "filename": "fn_near_48_F_000120_a11340.jpg",
+      "prediction_type": "FN",
+      "semantic_cause": "",
+      "clip_id": "F",
+      "path": "data/frames/F/000120.jpg",
+      "t_sec": 4.8,
+      "conf": null,
+      "area_px2": 11340.1,
+      "band": "near_0_200",
+      "error_type": "near_band_fn",
+      "xyxy": [
+        2214.0,
+        2049.0,
+        2319.0,
+        2157.0
+      ]
+    },
+    {
+      "filename": "fn_near_49_F_000135_a9260.jpg",
+      "prediction_type": "FN",
+      "semantic_cause": "",
+      "clip_id": "F",
+      "path": "data/frames/F/000135.jpg",
+      "t_sec": 5.4,
+      "conf": null,
+      "area_px2": 9260.9,
+      "band": "near_0_200",
+      "error_type": "near_band_fn",
+      "xyxy": [
+        1581.0,
+        1938.0,
+        1644.0,
+        2085.0
+      ]
+    }
+  ],
+  "audit_tags_csv": "outputs/audit/edge_cases/audit_tags.csv",
+  "note": "Fill semantic_cause during the 15-minute human audit."
+}

@@ -753,6 +753,35 @@ def main() -> int:
         help="Ignore the cached predictions under runs/cache and re-run inference.",
     )
     parser.add_argument("--max-instances", type=int, default=60, help="Per-type rows kept in JSON.")
+    parser.add_argument(
+        "--thresholds-path",
+        type=Path,
+        default=None,
+        help="Override evaluation.thresholds_path (for A/B students).",
+    )
+    parser.add_argument(
+        "--report-path",
+        type=Path,
+        default=None,
+        help="Override diagnostics.report_path (e.g. error_taxonomy_dinosam.json).",
+    )
+    parser.add_argument(
+        "--crops-dir",
+        type=Path,
+        default=None,
+        help="Override diagnostics.crops_dir",
+    )
+    parser.add_argument(
+        "--visuals-dir",
+        type=Path,
+        default=None,
+        help="Override diagnostics.visuals_dir",
+    )
+    parser.add_argument(
+        "--no-visuals",
+        action="store_true",
+        help="Skip the 2x2 diagnostic grid",
+    )
     args = parser.parse_args()
 
     cfg_path = args.config if args.config.is_absolute() else REPO_ROOT / args.config
@@ -761,6 +790,10 @@ def main() -> int:
     diag_cfg = cfg["diagnostics"]
     dist_cfg = cfg["distance"]
     rules = diag_cfg["rules"]
+
+    def _resolve(path_like: Path | str | None, default: str | Path) -> Path:
+        p = Path(path_like if path_like is not None else default)
+        return p if p.is_absolute() else REPO_ROOT / p
 
     splits_dir = REPO_ROOT / cfg["paths"]["splits_dir"]
     manifest = ev.load_manifest(splits_dir / "manifest.csv")
@@ -772,7 +805,7 @@ def main() -> int:
     if not weights.exists():
         raise FileNotFoundError(f"Missing weights: {weights}")
 
-    thresholds_path = REPO_ROOT / eval_cfg["thresholds_path"]
+    thresholds_path = _resolve(args.thresholds_path, eval_cfg["thresholds_path"])
     if args.conf is not None:
         conf = float(args.conf)
         thresholds_note = "conf overridden on the command line"
@@ -844,11 +877,14 @@ def main() -> int:
     for key, row in summary["fn"].items():
         print(f"{key:<24} {row['count']:7d} {row['pct_of_fn']:8.2f}%")
 
+    crops_dir = _resolve(args.crops_dir, diag_cfg["crops_dir"])
+    visuals_dir = _resolve(args.visuals_dir, diag_cfg["visuals_dir"])
+
     crops = {"n_crops": 0, "skipped": True}
     if not args.no_crops:
         crops = mine_hard_negatives(
             result,
-            REPO_ROOT / diag_cfg["crops_dir"],
+            crops_dir,
             max_crops=int(diag_cfg["max_crops"]),
             pad_px=int(diag_cfg["crop_pad_px"]),
         )
@@ -857,8 +893,10 @@ def main() -> int:
             f"(strict tracks={crops['n_strict_tracks']}, relaxed={crops['n_relaxed_tracks']})"
         )
 
-    visuals = render_diagnostics(result, frames, REPO_ROOT / diag_cfg["visuals_dir"])
-    print(f"Diagnostics grid: {visuals['grid']}")
+    visuals: dict = {"grid": None, "skipped": True}
+    if not args.no_visuals:
+        visuals = render_diagnostics(result, frames, visuals_dir)
+        print(f"Diagnostics grid: {visuals['grid']}")
 
     def trim(rows: list[dict], key: str) -> list[dict]:
         out: list[dict] = []
@@ -897,7 +935,7 @@ def main() -> int:
         "large_gt_area_threshold_px2": result["large_gt_area_threshold"],
         "static_track_stats_top": result["static_stats"][:10],
         "hard_negatives": {
-            "dir": str(diag_cfg["crops_dir"]),
+            "dir": str(crops_dir.relative_to(REPO_ROOT)),
             "n_crops": crops.get("n_crops", 0),
             "n_strict_tracks": len(result["strict_static"]),
             "n_relaxed_tracks": len(result["relaxed_static"]),
@@ -905,13 +943,14 @@ def main() -> int:
         "visuals": visuals,
         "fp_instances": trim(result["fp_instances"], "error_type"),
         "fn_instances": result["fn_instances"][: args.max_instances],
+        "thresholds_path": str(thresholds_path.relative_to(REPO_ROOT)),
         "note": (
             "Diagnostic pass over frozen hold-out predictions. Precedence for FPs: "
             + " > ".join(FP_PRECEDENCE)
             + ". 'fp_taxonomy_any_tag' counts every rule that fired."
         ),
     }
-    report_path = REPO_ROOT / diag_cfg["report_path"]
+    report_path = _resolve(args.report_path, diag_cfg["report_path"])
     report_path.parent.mkdir(parents=True, exist_ok=True)
     report_path.write_text(json.dumps(report, indent=2) + "\n")
     print(f"Wrote {report_path.relative_to(REPO_ROOT)}")

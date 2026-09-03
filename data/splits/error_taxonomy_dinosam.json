@@ -1,0 +1,4624 @@
+{
+  "role": "error_taxonomy",
+  "weights": "runs/train/yolo11n_dinosam/weights/best.pt",
+  "device": "cpu",
+  "conf": 0.5,
+  "conf_source": "conf frozen on val by evaluate_custom.py --tune-val",
+  "iou_match": 0.5,
+  "clips": [
+    "E",
+    "F"
+  ],
+  "n_frames": 214,
+  "n_tracks": 509,
+  "totals": {
+    "tp": 569,
+    "fp": 417,
+    "fn": 414,
+    "gt": 983,
+    "pred": 986
+  },
+  "fp_taxonomy": {
+    "gt_omission": {
+      "count": 416,
+      "pct_of_fp": 99.76
+    },
+    "suspected_motorcycle": {
+      "count": 1,
+      "pct_of_fp": 0.24
+    },
+    "fractured_truck": {
+      "count": 0,
+      "pct_of_fp": 0.0
+    },
+    "static_hallucination": {
+      "count": 0,
+      "pct_of_fp": 0.0
+    },
+    "unclassified": {
+      "count": 0,
+      "pct_of_fp": 0.0
+    }
+  },
+  "fp_taxonomy_any_tag": {
+    "gt_omission": {
+      "count": 417,
+      "pct_of_fp": 100.0
+    },
+    "suspected_motorcycle": {
+      "count": 1,
+      "pct_of_fp": 0.24
+    },
+    "fractured_truck": {
+      "count": 0,
+      "pct_of_fp": 0.0
+    },
+    "static_hallucination": {
+      "count": 0,
+      "pct_of_fp": 0.0
+    }
+  },
+  "fp_unclassified_profile": {
+    "count": 0,
+    "by_band": {},
+    "conf_median": null,
+    "conf_p90": null,
+    "note": "FPs no rule claimed: mostly sub-0.5 boxes on true-looking clutter."
+  },
+  "fn_taxonomy": {
+    "fractured_truck": {
+      "count": 0,
+      "pct_of_fn": 0.0
+    },
+    "unclassified": {
+      "count": 414,
+      "pct_of_fn": 100.0
+    }
+  },
+  "per_clip_fp": {
+    "E": {
+      "gt_omission": 222,
+      "suspected_motorcycle": 1
+    },
+    "F": {
+      "gt_omission": 194
+    }
+  },
+  "per_clip_fn": {},
+  "tracker": {
+    "type": "bytetrack_style_two_stage_iou",
+    "high_conf": 0.5,
+    "iou_high": 0.3,
+    "iou_low": 0.2,
+    "max_age": 3,
+    "note": "Own implementation; keeps the CPU-only dependency set unchanged."
+  },
+  "rules": {
+    "gt_omission_conf": 0.5,
+    "motorcycle_aspect": 3.0,
+    "fracture_min_parts": 2,
+    "fracture_containment": 0.6,
+    "fracture_large_pct": 75,
+    "static_move_px": 5.0,
+    "static_min_frames": 30,
+    "relaxed_move_frac": 0.01,
+    "relaxed_min_frames": 8
+  },
+  "large_gt_area_threshold_px2": {
+    "E": 80356.3,
+    "F": 4320.0
+  },
+  "static_track_stats_top": [
+    {
+      "clip_id": "F",
+      "track_id": 2,
+      "n_fp_frames": 42,
+      "strict_run": 9,
+      "relaxed_run": 32
+    },
+    {
+      "clip_id": "F",
+      "track_id": 69,
+      "n_fp_frames": 3,
+      "strict_run": 3,
+      "relaxed_run": 3
+    },
+    {
+      "clip_id": "F",
+      "track_id": 84,
+      "n_fp_frames": 11,
+      "strict_run": 1,
+      "relaxed_run": 5
+    },
+    {
+      "clip_id": "F",
+      "track_id": 26,
+      "n_fp_frames": 3,
+      "strict_run": 1,
+      "relaxed_run": 3
+    },
+    {
+      "clip_id": "F",
+      "track_id": 40,
+      "n_fp_frames": 5,
+      "strict_run": 1,
+      "relaxed_run": 3
+    },
+    {
+      "clip_id": "F",
+      "track_id": 46,
+      "n_fp_frames": 3,
+      "strict_run": 1,
+      "relaxed_run": 3
+    },
+    {
+      "clip_id": "F",
+      "track_id": 141,
+      "n_fp_frames": 8,
+      "strict_run": 1,
+      "relaxed_run": 3
+    },
+    {
+      "clip_id": "E",
+      "track_id": 170,
+      "n_fp_frames": 3,
+      "strict_run": 1,
+      "relaxed_run": 2
+    },
+    {
+      "clip_id": "F",
+      "track_id": 68,
+      "n_fp_frames": 3,
+      "strict_run": 1,
+      "relaxed_run": 2
+    },
+    {
+      "clip_id": "F",
+      "track_id": 145,
+      "n_fp_frames": 4,
+      "strict_run": 1,
+      "relaxed_run": 2
+    }
+  ],
+  "hard_negatives": {
+    "dir": "data/hard_negatives_dinosam",
+    "n_crops": 0,
+    "n_strict_tracks": 0,
+    "n_relaxed_tracks": 1
+  },
+  "visuals": {
+    "gt_omission": "outputs/diagnostics_dinosam/gt_omission.jpg",
+    "suspected_motorcycle": "outputs/diagnostics_dinosam/suspected_motorcycle.jpg",
+    "fractured_truck": "outputs/diagnostics_dinosam/fractured_truck.jpg",
+    "static_hallucination": "outputs/diagnostics_dinosam/static_hallucination.jpg",
+    "grid": "outputs/diagnostics_dinosam/error_taxonomy_grid.jpg"
+  },
+  "fp_instances": [
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000876.jpg",
+      "frame_idx": 146,
+      "t_sec": 29.2,
+      "pred_index": 0,
+      "track_id": 212,
+      "conf": 0.9775,
+      "aspect": 1.49,
+      "band": "near_0_200",
+      "xyxy": [
+        1084.1,
+        15.4,
+        1200.5,
+        93.7
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000900.jpg",
+      "frame_idx": 150,
+      "t_sec": 30.0,
+      "pred_index": 0,
+      "track_id": 232,
+      "conf": 0.9768,
+      "aspect": 1.65,
+      "band": "near_0_200",
+      "xyxy": [
+        1321.3,
+        378.2,
+        1446.4,
+        454.0
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000102.jpg",
+      "frame_idx": 17,
+      "t_sec": 3.4,
+      "pred_index": 0,
+      "track_id": 10,
+      "conf": 0.95,
+      "aspect": 1.95,
+      "band": "near_0_200",
+      "xyxy": [
+        1291.0,
+        1920.0,
+        1588.6,
+        2499.1
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000912.jpg",
+      "frame_idx": 152,
+      "t_sec": 30.4,
+      "pred_index": 0,
+      "track_id": 240,
+      "conf": 0.9492,
+      "aspect": 1.8,
+      "band": "near_0_200",
+      "xyxy": [
+        1337.5,
+        590.9,
+        1465.6,
+        662.1
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000876.jpg",
+      "frame_idx": 146,
+      "t_sec": 29.2,
+      "pred_index": 1,
+      "track_id": 213,
+      "conf": 0.9455,
+      "aspect": 1.68,
+      "band": "near_0_200",
+      "xyxy": [
+        1292.2,
+        0.3,
+        1407.1,
+        68.8
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000906.jpg",
+      "frame_idx": 151,
+      "t_sec": 30.2,
+      "pred_index": 1,
+      "track_id": 236,
+      "conf": 0.9404,
+      "aspect": 1.65,
+      "band": "near_0_200",
+      "xyxy": [
+        1329.1,
+        484.1,
+        1453.2,
+        559.4
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "F",
+      "path": "data/frames/F/000000.jpg",
+      "frame_idx": 0,
+      "t_sec": 0.0,
+      "pred_index": 0,
+      "track_id": 1,
+      "conf": 0.9277,
+      "aspect": 1.57,
+      "band": "near_0_200",
+      "xyxy": [
+        1780.7,
+        1015.6,
+        1846.1,
+        1057.3
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000012.jpg",
+      "frame_idx": 2,
+      "t_sec": 0.4,
+      "pred_index": 1,
+      "track_id": 9,
+      "conf": 0.9276,
+      "aspect": 1.65,
+      "band": "near_0_200",
+      "xyxy": [
+        678.8,
+        1817.9,
+        813.0,
+        1899.2
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000828.jpg",
+      "frame_idx": 138,
+      "t_sec": 27.6,
+      "pred_index": 1,
+      "track_id": 197,
+      "conf": 0.925,
+      "aspect": 1.98,
+      "band": "near_0_200",
+      "xyxy": [
+        91.0,
+        14.2,
+        234.8,
+        299.1
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000900.jpg",
+      "frame_idx": 150,
+      "t_sec": 30.0,
+      "pred_index": 2,
+      "track_id": 234,
+      "conf": 0.9202,
+      "aspect": 1.65,
+      "band": "near_0_200",
+      "xyxy": [
+        1102.1,
+        407.0,
+        1227.0,
+        482.7
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000000.jpg",
+      "frame_idx": 0,
+      "t_sec": 0.0,
+      "pred_index": 0,
+      "track_id": 1,
+      "conf": 0.9112,
+      "aspect": 1.33,
+      "band": "near_0_200",
+      "xyxy": [
+        694.2,
+        1547.9,
+        823.8,
+        1645.2
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000084.jpg",
+      "frame_idx": 14,
+      "t_sec": 2.8,
+      "pred_index": 1,
+      "track_id": 2,
+      "conf": 0.9104,
+      "aspect": 2.23,
+      "band": "near_0_200",
+      "xyxy": [
+        896.2,
+        2026.5,
+        1065.5,
+        2403.7
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000096.jpg",
+      "frame_idx": 16,
+      "t_sec": 3.2,
+      "pred_index": 1,
+      "track_id": 10,
+      "conf": 0.9093,
+      "aspect": 2.03,
+      "band": "near_0_200",
+      "xyxy": [
+        1282.2,
+        1778.7,
+        1574.2,
+        2370.4
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000126.jpg",
+      "frame_idx": 21,
+      "t_sec": 4.2,
+      "pred_index": 1,
+      "track_id": 10,
+      "conf": 0.904,
+      "aspect": 1.94,
+      "band": "near_0_200",
+      "xyxy": [
+        1344.0,
+        2459.7,
+        1678.7,
+        3109.1
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000108.jpg",
+      "frame_idx": 18,
+      "t_sec": 3.6,
+      "pred_index": 1,
+      "track_id": 10,
+      "conf": 0.8978,
+      "aspect": 1.8,
+      "band": "near_0_200",
+      "xyxy": [
+        1303.7,
+        2048.7,
+        1632.3,
+        2639.4
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000264.jpg",
+      "frame_idx": 44,
+      "t_sec": 8.8,
+      "pred_index": 1,
+      "track_id": 117,
+      "conf": 0.8957,
+      "aspect": 1.1,
+      "band": "near_0_200",
+      "xyxy": [
+        1421.3,
+        3315.1,
+        1536.1,
+        3419.8
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000486.jpg",
+      "frame_idx": 81,
+      "t_sec": 16.2,
+      "pred_index": 0,
+      "track_id": 167,
+      "conf": 0.8943,
+      "aspect": 1.43,
+      "band": "near_0_200",
+      "xyxy": [
+        1542.3,
+        2015.7,
+        1671.5,
+        2106.1
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000048.jpg",
+      "frame_idx": 8,
+      "t_sec": 1.6,
+      "pred_index": 1,
+      "track_id": 10,
+      "conf": 0.8941,
+      "aspect": 2.09,
+      "band": "near_0_200",
+      "xyxy": [
+        1214.1,
+        840.0,
+        1486.2,
+        1409.0
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000912.jpg",
+      "frame_idx": 152,
+      "t_sec": 30.4,
+      "pred_index": 2,
+      "track_id": 242,
+      "conf": 0.8927,
+      "aspect": 1.71,
+      "band": "near_0_200",
+      "xyxy": [
+        1113.9,
+        620.1,
+        1240.2,
+        693.8
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000132.jpg",
+      "frame_idx": 22,
+      "t_sec": 4.4,
+      "pred_index": 0,
+      "track_id": 10,
+      "conf": 0.8864,
+      "aspect": 1.81,
+      "band": "near_0_200",
+      "xyxy": [
+        1368.9,
+        2618.8,
+        1726.8,
+        3267.1
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000492.jpg",
+      "frame_idx": 82,
+      "t_sec": 16.4,
+      "pred_index": 0,
+      "track_id": 168,
+      "conf": 0.8855,
+      "aspect": 1.55,
+      "band": "near_0_200",
+      "xyxy": [
+        1547.1,
+        2069.4,
+        1680.5,
+        2155.3
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000852.jpg",
+      "frame_idx": 142,
+      "t_sec": 28.4,
+      "pred_index": 1,
+      "track_id": 202,
+      "conf": 0.8822,
+      "aspect": 1.02,
+      "band": "near_0_200",
+      "xyxy": [
+        1595.8,
+        1636.1,
+        1708.9,
+        1751.0
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "F",
+      "path": "data/frames/F/000290.jpg",
+      "frame_idx": 58,
+      "t_sec": 11.6,
+      "pred_index": 1,
+      "track_id": 257,
+      "conf": 0.8814,
+      "aspect": 1.62,
+      "band": "near_0_200",
+      "xyxy": [
+        1557.8,
+        1533.8,
+        1638.0,
+        1663.9
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "F",
+      "path": "data/frames/F/000085.jpg",
+      "frame_idx": 17,
+      "t_sec": 3.4,
+      "pred_index": 0,
+      "track_id": 48,
+      "conf": 0.881,
+      "aspect": 1.12,
+      "band": "near_0_200",
+      "xyxy": [
+        1116.1,
+        1744.6,
+        1226.5,
+        1867.8
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000180.jpg",
+      "frame_idx": 30,
+      "t_sec": 6.0,
+      "pred_index": 2,
+      "track_id": 2,
+      "conf": 0.8808,
+      "aspect": 2.14,
+      "band": "near_0_200",
+      "xyxy": [
+        885.4,
+        2099.0,
+        1059.3,
+        2471.5
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "F",
+      "path": "data/frames/F/000050.jpg",
+      "frame_idx": 10,
+      "t_sec": 2.0,
+      "pred_index": 0,
+      "track_id": 2,
+      "conf": 0.8808,
+      "aspect": 1.7,
+      "band": "near_0_200",
+      "xyxy": [
+        2008.9,
+        417.1,
+        2069.8,
+        452.9
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000468.jpg",
+      "frame_idx": 78,
+      "t_sec": 15.6,
+      "pred_index": 0,
+      "track_id": 163,
+      "conf": 0.8796,
+      "aspect": 1.08,
+      "band": "near_0_200",
+      "xyxy": [
+        1514.5,
+        1832.1,
+        1636.9,
+        1945.9
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "F",
+      "path": "data/frames/F/000260.jpg",
+      "frame_idx": 52,
+      "t_sec": 10.4,
+      "pred_index": 0,
+      "track_id": 234,
+      "conf": 0.8728,
+      "aspect": 1.95,
+      "band": "near_0_200",
+      "xyxy": [
+        1823.9,
+        1111.2,
+        1901.6,
+        1151.1
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000216.jpg",
+      "frame_idx": 36,
+      "t_sec": 7.2,
+      "pred_index": 3,
+      "track_id": 102,
+      "conf": 0.8723,
+      "aspect": 1.49,
+      "band": "near_0_200",
+      "xyxy": [
+        1245.8,
+        2115.9,
+        1376.1,
+        2203.2
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000456.jpg",
+      "frame_idx": 76,
+      "t_sec": 15.2,
+      "pred_index": 0,
+      "track_id": 162,
+      "conf": 0.8707,
+      "aspect": 1.11,
+      "band": "near_0_200",
+      "xyxy": [
+        1498.2,
+        1692.1,
+        1622.4,
+        1829.8
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000882.jpg",
+      "frame_idx": 147,
+      "t_sec": 29.4,
+      "pred_index": 1,
+      "track_id": 217,
+      "conf": 0.8684,
+      "aspect": 1.56,
+      "band": "near_0_200",
+      "xyxy": [
+        1299.2,
+        82.5,
+        1418.5,
+        158.7
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000822.jpg",
+      "frame_idx": 137,
+      "t_sec": 27.4,
+      "pred_index": 1,
+      "track_id": 197,
+      "conf": 0.8652,
+      "aspect": 1.46,
+      "band": "near_0_200",
+      "xyxy": [
+        97.1,
+        7.1,
+        234.3,
+        207.2
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000894.jpg",
+      "frame_idx": 149,
+      "t_sec": 29.8,
+      "pred_index": 2,
+      "track_id": 228,
+      "conf": 0.8646,
+      "aspect": 1.64,
+      "band": "near_0_200",
+      "xyxy": [
+        1312.7,
+        278.0,
+        1433.4,
+        351.7
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000198.jpg",
+      "frame_idx": 33,
+      "t_sec": 6.6,
+      "pred_index": 1,
+      "track_id": 93,
+      "conf": 0.8636,
+      "aspect": 1.23,
+      "band": "near_0_200",
+      "xyxy": [
+        1207.4,
+        1752.6,
+        1326.1,
+        1849.6
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "F",
+      "path": "data/frames/F/000155.jpg",
+      "frame_idx": 31,
+      "t_sec": 6.2,
+      "pred_index": 0,
+      "track_id": 112,
+      "conf": 0.8576,
+      "aspect": 1.17,
+      "band": "near_0_200",
+      "xyxy": [
+        2139.1,
+        1272.2,
+        2192.0,
+        1317.4
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "F",
+      "path": "data/frames/F/000245.jpg",
+      "frame_idx": 49,
+      "t_sec": 9.8,
+      "pred_index": 0,
+      "track_id": 214,
+      "conf": 0.8568,
+      "aspect": 1.65,
+      "band": "near_0_200",
+      "xyxy": [
+        1781.7,
+        1555.1,
+        1834.1,
+        1641.5
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000120.jpg",
+      "frame_idx": 20,
+      "t_sec": 4.0,
+      "pred_index": 0,
+      "track_id": 10,
+      "conf": 0.8553,
+      "aspect": 1.88,
+      "band": "near_0_200",
+      "xyxy": [
+        1334.4,
+        2317.1,
+        1671.8,
+        2950.6
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000864.jpg",
+      "frame_idx": 144,
+      "t_sec": 28.8,
+      "pred_index": 2,
+      "track_id": 205,
+      "conf": 0.8548,
+      "aspect": 1.88,
+      "band": "near_0_200",
+      "xyxy": [
+        471.6,
+        0.0,
+        602.3,
+        69.5
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000450.jpg",
+      "frame_idx": 75,
+      "t_sec": 15.0,
+      "pred_index": 1,
+      "track_id": 161,
+      "conf": 0.8444,
+      "aspect": 1.23,
+      "band": "near_0_200",
+      "xyxy": [
+        1487.3,
+        1615.5,
+        1606.9,
+        1762.5
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000498.jpg",
+      "frame_idx": 83,
+      "t_sec": 16.6,
+      "pred_index": 0,
+      "track_id": 169,
+      "conf": 0.8434,
+      "aspect": 1.75,
+      "band": "near_0_200",
+      "xyxy": [
+        1551.7,
+        2127.8,
+        1686.3,
+        2204.8
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000126.jpg",
+      "frame_idx": 21,
+      "t_sec": 4.2,
+      "pred_index": 2,
+      "track_id": 59,
+      "conf": 0.8427,
+      "aspect": 1.34,
+      "band": "near_0_200",
+      "xyxy": [
+        327.5,
+        0.0,
+        456.3,
+        95.8
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000474.jpg",
+      "frame_idx": 79,
+      "t_sec": 15.8,
+      "pred_index": 0,
+      "track_id": 164,
+      "conf": 0.8419,
+      "aspect": 1.15,
+      "band": "near_0_200",
+      "xyxy": [
+        1524.3,
+        1892.3,
+        1653.8,
+        2004.9
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "F",
+      "path": "data/frames/F/000040.jpg",
+      "frame_idx": 8,
+      "t_sec": 1.6,
+      "pred_index": 1,
+      "track_id": 2,
+      "conf": 0.8337,
+      "aspect": 1.75,
+      "band": "near_0_200",
+      "xyxy": [
+        2002.3,
+        418.3,
+        2064.5,
+        453.8
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "F",
+      "path": "data/frames/F/000025.jpg",
+      "frame_idx": 5,
+      "t_sec": 1.0,
+      "pred_index": 1,
+      "track_id": 2,
+      "conf": 0.8296,
+      "aspect": 1.62,
+      "band": "near_0_200",
+      "xyxy": [
+        2002.6,
+        418.9,
+        2064.7,
+        457.2
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000864.jpg",
+      "frame_idx": 144,
+      "t_sec": 28.8,
+      "pred_index": 3,
+      "track_id": 206,
+      "conf": 0.8253,
+      "aspect": 1.68,
+      "band": "near_0_200",
+      "xyxy": [
+        1619.3,
+        1943.0,
+        1761.5,
+        2027.6
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000090.jpg",
+      "frame_idx": 15,
+      "t_sec": 3.0,
+      "pred_index": 2,
+      "track_id": 10,
+      "conf": 0.8247,
+      "aspect": 1.96,
+      "band": "near_0_200",
+      "xyxy": [
+        1271.7,
+        1667.5,
+        1570.0,
+        2251.6
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000480.jpg",
+      "frame_idx": 80,
+      "t_sec": 16.0,
+      "pred_index": 0,
+      "track_id": 165,
+      "conf": 0.824,
+      "aspect": 1.24,
+      "band": "near_0_200",
+      "xyxy": [
+        1534.7,
+        1953.0,
+        1664.8,
+        2058.3
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000054.jpg",
+      "frame_idx": 9,
+      "t_sec": 1.8,
+      "pred_index": 2,
+      "track_id": 10,
+      "conf": 0.8224,
+      "aspect": 2.01,
+      "band": "near_0_200",
+      "xyxy": [
+        1227.7,
+        953.3,
+        1506.8,
+        1513.3
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000222.jpg",
+      "frame_idx": 37,
+      "t_sec": 7.4,
+      "pred_index": 3,
+      "track_id": 104,
+      "conf": 0.8213,
+      "aspect": 1.23,
+      "band": "near_0_200",
+      "xyxy": [
+        1289.7,
+        2245.1,
+        1392.4,
+        2328.3
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "F",
+      "path": "data/frames/F/000045.jpg",
+      "frame_idx": 9,
+      "t_sec": 1.8,
+      "pred_index": 1,
+      "track_id": 2,
+      "conf": 0.8212,
+      "aspect": 1.66,
+      "band": "near_0_200",
+      "xyxy": [
+        2005.6,
+        418.4,
+        2065.3,
+        454.4
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000504.jpg",
+      "frame_idx": 84,
+      "t_sec": 16.8,
+      "pred_index": 0,
+      "track_id": 170,
+      "conf": 0.8202,
+      "aspect": 1.65,
+      "band": "near_0_200",
+      "xyxy": [
+        1561.9,
+        2178.8,
+        1692.3,
+        2257.9
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000888.jpg",
+      "frame_idx": 148,
+      "t_sec": 29.6,
+      "pred_index": 1,
+      "track_id": 223,
+      "conf": 0.8197,
+      "aspect": 1.61,
+      "band": "near_0_200",
+      "xyxy": [
+        1306.3,
+        178.4,
+        1428.7,
+        254.6
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000366.jpg",
+      "frame_idx": 61,
+      "t_sec": 12.2,
+      "pred_index": 0,
+      "track_id": 151,
+      "conf": 0.8191,
+      "aspect": 1.1,
+      "band": "near_0_200",
+      "xyxy": [
+        1556.1,
+        2229.4,
+        1684.7,
+        2346.8
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000192.jpg",
+      "frame_idx": 32,
+      "t_sec": 6.4,
+      "pred_index": 3,
+      "track_id": 89,
+      "conf": 0.8163,
+      "aspect": 1.52,
+      "band": "near_0_200",
+      "xyxy": [
+        1343.9,
+        2244.9,
+        1473.2,
+        2330.0
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "F",
+      "path": "data/frames/F/000030.jpg",
+      "frame_idx": 6,
+      "t_sec": 1.2,
+      "pred_index": 0,
+      "track_id": 2,
+      "conf": 0.8152,
+      "aspect": 1.61,
+      "band": "near_0_200",
+      "xyxy": [
+        2001.4,
+        418.1,
+        2064.5,
+        457.3
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000060.jpg",
+      "frame_idx": 10,
+      "t_sec": 2.0,
+      "pred_index": 2,
+      "track_id": 10,
+      "conf": 0.8137,
+      "aspect": 1.82,
+      "band": "near_0_200",
+      "xyxy": [
+        1217.5,
+        1062.9,
+        1523.7,
+        1620.9
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000816.jpg",
+      "frame_idx": 136,
+      "t_sec": 27.2,
+      "pred_index": 1,
+      "track_id": 197,
+      "conf": 0.8111,
+      "aspect": 1.09,
+      "band": "near_0_200",
+      "xyxy": [
+        103.5,
+        0.0,
+        235.5,
+        120.6
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "F",
+      "path": "data/frames/F/000140.jpg",
+      "frame_idx": 28,
+      "t_sec": 5.6,
+      "pred_index": 2,
+      "track_id": 84,
+      "conf": 0.806,
+      "aspect": 1.15,
+      "band": "near_0_200",
+      "xyxy": [
+        0.0,
+        703.6,
+        141.0,
+        865.8
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000282.jpg",
+      "frame_idx": 47,
+      "t_sec": 9.4,
+      "pred_index": 2,
+      "track_id": 123,
+      "conf": 0.8028,
+      "aspect": 2.82,
+      "band": "near_0_200",
+      "xyxy": [
+        9.8,
+        3600.5,
+        683.9,
+        3840.0
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000078.jpg",
+      "frame_idx": 13,
+      "t_sec": 2.6,
+      "pred_index": 2,
+      "track_id": 10,
+      "conf": 0.8026,
+      "aspect": 1.98,
+      "band": "near_0_200",
+      "xyxy": [
+        1254.9,
+        1418.1,
+        1549.6,
+        2002.0
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000246.jpg",
+      "frame_idx": 41,
+      "t_sec": 8.2,
+      "pred_index": 3,
+      "track_id": 113,
+      "conf": 0.8011,
+      "aspect": 1.83,
+      "band": "near_0_200",
+      "xyxy": [
+        1329.1,
+        2822.4,
+        1476.0,
+        2902.8
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000084.jpg",
+      "frame_idx": 14,
+      "t_sec": 2.8,
+      "pred_index": 2,
+      "track_id": 10,
+      "conf": 0.7972,
+      "aspect": 1.9,
+      "band": "near_0_200",
+      "xyxy": [
+        1253.9,
+        1536.4,
+        1554.9,
+        2109.6
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000462.jpg",
+      "frame_idx": 77,
+      "t_sec": 15.4,
+      "pred_index": 1,
+      "track_id": 162,
+      "conf": 0.7968,
+      "aspect": 1.03,
+      "band": "near_0_200",
+      "xyxy": [
+        1505.8,
+        1757.5,
+        1632.4,
+        1887.7
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "F",
+      "path": "data/frames/F/000195.jpg",
+      "frame_idx": 39,
+      "t_sec": 7.8,
+      "pred_index": 1,
+      "track_id": 150,
+      "conf": 0.796,
+      "aspect": 1.87,
+      "band": "near_0_200",
+      "xyxy": [
+        3548.7,
+        1256.6,
+        3737.0,
+        1357.1
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "F",
+      "path": "data/frames/F/000070.jpg",
+      "frame_idx": 14,
+      "t_sec": 2.8,
+      "pred_index": 0,
+      "track_id": 2,
+      "conf": 0.7946,
+      "aspect": 1.52,
+      "band": "near_0_200",
+      "xyxy": [
+        2009.4,
+        412.2,
+        2068.4,
+        450.9
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000894.jpg",
+      "frame_idx": 149,
+      "t_sec": 29.8,
+      "pred_index": 3,
+      "track_id": 229,
+      "conf": 0.7916,
+      "aspect": 1.63,
+      "band": "near_0_200",
+      "xyxy": [
+        1096.8,
+        305.9,
+        1219.1,
+        380.8
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000270.jpg",
+      "frame_idx": 45,
+      "t_sec": 9.0,
+      "pred_index": 3,
+      "track_id": 120,
+      "conf": 0.7872,
+      "aspect": 1.04,
+      "band": "near_0_200",
+      "xyxy": [
+        1443.5,
+        3500.0,
+        1560.6,
+        3612.5
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000006.jpg",
+      "frame_idx": 1,
+      "t_sec": 0.2,
+      "pred_index": 1,
+      "track_id": 5,
+      "conf": 0.786,
+      "aspect": 2.37,
+      "band": "near_0_200",
+      "xyxy": [
+        562.7,
+        2241.2,
+        712.0,
+        2304.3
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000228.jpg",
+      "frame_idx": 38,
+      "t_sec": 7.6,
+      "pred_index": 3,
+      "track_id": 106,
+      "conf": 0.7845,
+      "aspect": 1.59,
+      "band": "near_0_200",
+      "xyxy": [
+        1281.8,
+        2380.9,
+        1415.8,
+        2465.3
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000906.jpg",
+      "frame_idx": 151,
+      "t_sec": 30.2,
+      "pred_index": 4,
+      "track_id": 237,
+      "conf": 0.7843,
+      "aspect": 2.37,
+      "band": "near_0_200",
+      "xyxy": [
+        1799.7,
+        3267.1,
+        1973.3,
+        3340.4
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000000.jpg",
+      "frame_idx": 0,
+      "t_sec": 0.0,
+      "pred_index": 2,
+      "track_id": 3,
+      "conf": 0.7822,
+      "aspect": 1.98,
+      "band": "near_0_200",
+      "xyxy": [
+        574.3,
+        2091.8,
+        722.5,
+        2166.7
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000378.jpg",
+      "frame_idx": 63,
+      "t_sec": 12.6,
+      "pred_index": 1,
+      "track_id": 153,
+      "conf": 0.7816,
+      "aspect": 1.64,
+      "band": "near_0_200",
+      "xyxy": [
+        1587.4,
+        2523.0,
+        1734.0,
+        2612.4
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000360.jpg",
+      "frame_idx": 60,
+      "t_sec": 12.0,
+      "pred_index": 0,
+      "track_id": 149,
+      "conf": 0.7801,
+      "aspect": 1.03,
+      "band": "near_0_200",
+      "xyxy": [
+        1531.2,
+        2085.7,
+        1661.6,
+        2219.5
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000138.jpg",
+      "frame_idx": 23,
+      "t_sec": 4.6,
+      "pred_index": 4,
+      "track_id": 10,
+      "conf": 0.7795,
+      "aspect": 1.88,
+      "band": "near_0_200",
+      "xyxy": [
+        1379.7,
+        2756.9,
+        1745.2,
+        3442.5
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "F",
+      "path": "data/frames/F/000035.jpg",
+      "frame_idx": 7,
+      "t_sec": 1.4,
+      "pred_index": 1,
+      "track_id": 2,
+      "conf": 0.7773,
+      "aspect": 1.69,
+      "band": "near_0_200",
+      "xyxy": [
+        2000.8,
+        418.1,
+        2064.6,
+        455.9
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "F",
+      "path": "data/frames/F/000115.jpg",
+      "frame_idx": 23,
+      "t_sec": 4.6,
+      "pred_index": 0,
+      "track_id": 2,
+      "conf": 0.7749,
+      "aspect": 1.22,
+      "band": "near_0_200",
+      "xyxy": [
+        2020.0,
+        407.2,
+        2078.0,
+        454.7
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "F",
+      "path": "data/frames/F/000065.jpg",
+      "frame_idx": 13,
+      "t_sec": 2.6,
+      "pred_index": 0,
+      "track_id": 36,
+      "conf": 0.7742,
+      "aspect": 1.1,
+      "band": "near_0_200",
+      "xyxy": [
+        2179.3,
+        1529.8,
+        2248.0,
+        1591.9
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000906.jpg",
+      "frame_idx": 151,
+      "t_sec": 30.2,
+      "pred_index": 5,
+      "track_id": 238,
+      "conf": 0.7693,
+      "aspect": 1.74,
+      "band": "near_0_200",
+      "xyxy": [
+        1106.7,
+        512.2,
+        1234.8,
+        585.6
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000060.jpg",
+      "frame_idx": 10,
+      "t_sec": 2.0,
+      "pred_index": 3,
+      "track_id": 24,
+      "conf": 0.7667,
+      "aspect": 1.33,
+      "band": "near_0_200",
+      "xyxy": [
+        539.3,
+        3726.1,
+        689.2,
+        3839.0
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000006.jpg",
+      "frame_idx": 1,
+      "t_sec": 0.2,
+      "pred_index": 2,
+      "track_id": 6,
+      "conf": 0.7653,
+      "aspect": 1.43,
+      "band": "near_0_200",
+      "xyxy": [
+        692.1,
+        1684.7,
+        816.0,
+        1771.5
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000276.jpg",
+      "frame_idx": 46,
+      "t_sec": 9.2,
+      "pred_index": 2,
+      "track_id": 122,
+      "conf": 0.7649,
+      "aspect": 1.12,
+      "band": "near_0_200",
+      "xyxy": [
+        1469.6,
+        3707.6,
+        1589.2,
+        3814.4
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "F",
+      "path": "data/frames/F/000250.jpg",
+      "frame_idx": 50,
+      "t_sec": 10.0,
+      "pred_index": 1,
+      "track_id": 223,
+      "conf": 0.7647,
+      "aspect": 1.3,
+      "band": "near_0_200",
+      "xyxy": [
+        1618.9,
+        1786.2,
+        1761.8,
+        1896.2
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000096.jpg",
+      "frame_idx": 16,
+      "t_sec": 3.2,
+      "pred_index": 3,
+      "track_id": 38,
+      "conf": 0.7638,
+      "aspect": 1.53,
+      "band": "near_0_200",
+      "xyxy": [
+        1111.4,
+        57.5,
+        1200.2,
+        193.5
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "F",
+      "path": "data/frames/F/000055.jpg",
+      "frame_idx": 11,
+      "t_sec": 2.2,
+      "pred_index": 0,
+      "track_id": 2,
+      "conf": 0.7633,
+      "aspect": 1.58,
+      "band": "near_0_200",
+      "xyxy": [
+        2008.8,
+        416.3,
+        2066.8,
+        453.0
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "F",
+      "path": "data/frames/F/000120.jpg",
+      "frame_idx": 24,
+      "t_sec": 4.8,
+      "pred_index": 0,
+      "track_id": 2,
+      "conf": 0.7625,
+      "aspect": 1.24,
+      "band": "near_0_200",
+      "xyxy": [
+        2019.3,
+        408.4,
+        2076.9,
+        454.7
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "F",
+      "path": "data/frames/F/000040.jpg",
+      "frame_idx": 8,
+      "t_sec": 1.6,
+      "pred_index": 3,
+      "track_id": 26,
+      "conf": 0.7622,
+      "aspect": 2.11,
+      "band": "near_0_200",
+      "xyxy": [
+        1749.3,
+        990.8,
+        1834.0,
+        1030.9
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "F",
+      "path": "data/frames/F/000020.jpg",
+      "frame_idx": 4,
+      "t_sec": 0.8,
+      "pred_index": 1,
+      "track_id": 2,
+      "conf": 0.7614,
+      "aspect": 1.5,
+      "band": "near_0_200",
+      "xyxy": [
+        2001.5,
+        419.2,
+        2063.5,
+        460.7
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000114.jpg",
+      "frame_idx": 19,
+      "t_sec": 3.8,
+      "pred_index": 3,
+      "track_id": 10,
+      "conf": 0.761,
+      "aspect": 1.75,
+      "band": "near_0_200",
+      "xyxy": [
+        1305.1,
+        2179.4,
+        1651.0,
+        2783.9
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000372.jpg",
+      "frame_idx": 62,
+      "t_sec": 12.4,
+      "pred_index": 1,
+      "track_id": 152,
+      "conf": 0.7603,
+      "aspect": 1.31,
+      "band": "near_0_200",
+      "xyxy": [
+        1570.2,
+        2371.7,
+        1709.2,
+        2478.1
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "F",
+      "path": "data/frames/F/000105.jpg",
+      "frame_idx": 21,
+      "t_sec": 4.2,
+      "pred_index": 0,
+      "track_id": 61,
+      "conf": 0.7602,
+      "aspect": 1.35,
+      "band": "near_0_200",
+      "xyxy": [
+        2070.4,
+        1351.1,
+        2112.3,
+        1407.5
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000876.jpg",
+      "frame_idx": 146,
+      "t_sec": 29.2,
+      "pred_index": 5,
+      "track_id": 211,
+      "conf": 0.76,
+      "aspect": 1.72,
+      "band": "near_0_200",
+      "xyxy": [
+        1562.3,
+        428.8,
+        1904.9,
+        1018.0
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000018.jpg",
+      "frame_idx": 3,
+      "t_sec": 0.6,
+      "pred_index": 1,
+      "track_id": 12,
+      "conf": 0.7595,
+      "aspect": 1.89,
+      "band": "near_0_200",
+      "xyxy": [
+        671.3,
+        1957.4,
+        806.7,
+        2029.1
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "F",
+      "path": "data/frames/F/000000.jpg",
+      "frame_idx": 0,
+      "t_sec": 0.0,
+      "pred_index": 1,
+      "track_id": 2,
+      "conf": 0.7577,
+      "aspect": 1.58,
+      "band": "near_0_200",
+      "xyxy": [
+        1999.0,
+        424.8,
+        2059.5,
+        463.1
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000858.jpg",
+      "frame_idx": 143,
+      "t_sec": 28.6,
+      "pred_index": 2,
+      "track_id": 203,
+      "conf": 0.7573,
+      "aspect": 1.3,
+      "band": "near_0_200",
+      "xyxy": [
+        1603.4,
+        1784.4,
+        1735.1,
+        1885.4
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "F",
+      "path": "data/frames/F/000110.jpg",
+      "frame_idx": 22,
+      "t_sec": 4.4,
+      "pred_index": 0,
+      "track_id": 63,
+      "conf": 0.756,
+      "aspect": 1.15,
+      "band": "near_0_200",
+      "xyxy": [
+        2067.0,
+        1281.1,
+        2110.8,
+        1331.6
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000258.jpg",
+      "frame_idx": 43,
+      "t_sec": 8.6,
+      "pred_index": 2,
+      "track_id": 116,
+      "conf": 0.7543,
+      "aspect": 1.53,
+      "band": "near_0_200",
+      "xyxy": [
+        1367.6,
+        3146.3,
+        1516.2,
+        3243.5
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000912.jpg",
+      "frame_idx": 152,
+      "t_sec": 30.4,
+      "pred_index": 4,
+      "track_id": 243,
+      "conf": 0.7495,
+      "aspect": 2.12,
+      "band": "near_0_200",
+      "xyxy": [
+        1838.5,
+        3484.3,
+        2000.9,
+        3560.8
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "F",
+      "path": "data/frames/F/000260.jpg",
+      "frame_idx": 52,
+      "t_sec": 10.4,
+      "pred_index": 2,
+      "track_id": 236,
+      "conf": 0.749,
+      "aspect": 1.03,
+      "band": "near_0_200",
+      "xyxy": [
+        1770.4,
+        1210.7,
+        1821.9,
+        1263.9
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000072.jpg",
+      "frame_idx": 12,
+      "t_sec": 2.4,
+      "pred_index": 2,
+      "track_id": 10,
+      "conf": 0.7482,
+      "aspect": 1.88,
+      "band": "near_0_200",
+      "xyxy": [
+        1234.3,
+        1293.1,
+        1546.5,
+        1881.4
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "F",
+      "path": "data/frames/F/000240.jpg",
+      "frame_idx": 48,
+      "t_sec": 9.6,
+      "pred_index": 2,
+      "track_id": 210,
+      "conf": 0.7453,
+      "aspect": 1.86,
+      "band": "near_0_200",
+      "xyxy": [
+        2062.6,
+        1345.5,
+        2160.4,
+        1398.1
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "F",
+      "path": "data/frames/F/000230.jpg",
+      "frame_idx": 46,
+      "t_sec": 9.2,
+      "pred_index": 1,
+      "track_id": 194,
+      "conf": 0.7439,
+      "aspect": 1.73,
+      "band": "near_0_200",
+      "xyxy": [
+        1909.9,
+        764.4,
+        1965.4,
+        796.5
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000066.jpg",
+      "frame_idx": 11,
+      "t_sec": 2.2,
+      "pred_index": 2,
+      "track_id": 10,
+      "conf": 0.7438,
+      "aspect": 1.96,
+      "band": "near_0_200",
+      "xyxy": [
+        1233.2,
+        1167.8,
+        1539.3,
+        1768.7
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000204.jpg",
+      "frame_idx": 34,
+      "t_sec": 6.8,
+      "pred_index": 3,
+      "track_id": 95,
+      "conf": 0.7429,
+      "aspect": 1.4,
+      "band": "near_0_200",
+      "xyxy": [
+        1406.0,
+        2515.3,
+        1516.6,
+        2594.0
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "F",
+      "path": "data/frames/F/000030.jpg",
+      "frame_idx": 6,
+      "t_sec": 1.2,
+      "pred_index": 1,
+      "track_id": 20,
+      "conf": 0.7421,
+      "aspect": 2.07,
+      "band": "near_0_200",
+      "xyxy": [
+        1430.6,
+        1245.1,
+        1542.9,
+        1299.4
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "F",
+      "path": "data/frames/F/000180.jpg",
+      "frame_idx": 36,
+      "t_sec": 7.2,
+      "pred_index": 3,
+      "track_id": 144,
+      "conf": 0.7413,
+      "aspect": 1.39,
+      "band": "near_0_200",
+      "xyxy": [
+        2048.5,
+        1177.1,
+        2107.1,
+        1219.4
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "F",
+      "path": "data/frames/F/000245.jpg",
+      "frame_idx": 49,
+      "t_sec": 9.8,
+      "pred_index": 1,
+      "track_id": 215,
+      "conf": 0.7413,
+      "aspect": 1.82,
+      "band": "near_0_200",
+      "xyxy": [
+        3319.8,
+        1098.4,
+        3495.9,
+        1195.0
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000204.jpg",
+      "frame_idx": 34,
+      "t_sec": 6.8,
+      "pred_index": 4,
+      "track_id": 96,
+      "conf": 0.7406,
+      "aspect": 1.25,
+      "band": "near_0_200",
+      "xyxy": [
+        1219.7,
+        1867.9,
+        1339.2,
+        1963.7
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "F",
+      "path": "data/frames/F/000230.jpg",
+      "frame_idx": 46,
+      "t_sec": 9.2,
+      "pred_index": 2,
+      "track_id": 195,
+      "conf": 0.7349,
+      "aspect": 1.26,
+      "band": "near_0_200",
+      "xyxy": [
+        2081.3,
+        1295.8,
+        2140.5,
+        1342.8
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "F",
+      "path": "data/frames/F/000245.jpg",
+      "frame_idx": 49,
+      "t_sec": 9.8,
+      "pred_index": 2,
+      "track_id": 216,
+      "conf": 0.7333,
+      "aspect": 1.02,
+      "band": "near_0_200",
+      "xyxy": [
+        1828.7,
+        1034.8,
+        1868.9,
+        1075.8
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000762.jpg",
+      "frame_idx": 127,
+      "t_sec": 25.4,
+      "pred_index": 1,
+      "track_id": 192,
+      "conf": 0.7327,
+      "aspect": 1.1,
+      "band": "near_0_200",
+      "xyxy": [
+        1348.9,
+        0.0,
+        1424.8,
+        83.3
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "F",
+      "path": "data/frames/F/000080.jpg",
+      "frame_idx": 16,
+      "t_sec": 3.2,
+      "pred_index": 0,
+      "track_id": 45,
+      "conf": 0.7324,
+      "aspect": 1.22,
+      "band": "near_0_200",
+      "xyxy": [
+        2143.5,
+        1317.0,
+        2183.4,
+        1365.8
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "F",
+      "path": "data/frames/F/000125.jpg",
+      "frame_idx": 25,
+      "t_sec": 5.0,
+      "pred_index": 1,
+      "track_id": 2,
+      "conf": 0.7317,
+      "aspect": 1.37,
+      "band": "near_0_200",
+      "xyxy": [
+        2020.7,
+        408.4,
+        2076.5,
+        449.2
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "F",
+      "path": "data/frames/F/000130.jpg",
+      "frame_idx": 26,
+      "t_sec": 5.2,
+      "pred_index": 2,
+      "track_id": 2,
+      "conf": 0.7308,
+      "aspect": 1.31,
+      "band": "near_0_200",
+      "xyxy": [
+        2022.3,
+        406.5,
+        2075.8,
+        447.5
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000192.jpg",
+      "frame_idx": 32,
+      "t_sec": 6.4,
+      "pred_index": 4,
+      "track_id": 90,
+      "conf": 0.7292,
+      "aspect": 1.03,
+      "band": "near_0_200",
+      "xyxy": [
+        1744.7,
+        3184.4,
+        1859.9,
+        3296.4
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "F",
+      "path": "data/frames/F/000225.jpg",
+      "frame_idx": 45,
+      "t_sec": 9.0,
+      "pred_index": 3,
+      "track_id": 2,
+      "conf": 0.7285,
+      "aspect": 1.57,
+      "band": "near_0_200",
+      "xyxy": [
+        2040.9,
+        391.7,
+        2092.9,
+        424.9
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000120.jpg",
+      "frame_idx": 20,
+      "t_sec": 4.0,
+      "pred_index": 4,
+      "track_id": 55,
+      "conf": 0.7274,
+      "aspect": 1.12,
+      "band": "near_0_200",
+      "xyxy": [
+        1519.3,
+        1621.1,
+        1613.7,
+        1705.6
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "F",
+      "path": "data/frames/F/000070.jpg",
+      "frame_idx": 14,
+      "t_sec": 2.8,
+      "pred_index": 1,
+      "track_id": 38,
+      "conf": 0.727,
+      "aspect": 1.09,
+      "band": "near_0_200",
+      "xyxy": [
+        2165.7,
+        1441.0,
+        2219.1,
+        1499.0
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000156.jpg",
+      "frame_idx": 26,
+      "t_sec": 5.2,
+      "pred_index": 4,
+      "track_id": 10,
+      "conf": 0.7248,
+      "aspect": 1.62,
+      "band": "near_0_200",
+      "xyxy": [
+        1421.3,
+        3177.0,
+        1829.2,
+        3837.4
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "suspected_motorcycle",
+      "tags": [
+        "gt_omission",
+        "suspected_motorcycle"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000876.jpg",
+      "frame_idx": 146,
+      "t_sec": 29.2,
+      "pred_index": 6,
+      "track_id": 207,
+      "conf": 0.7239,
+      "aspect": 3.03,
+      "band": "near_0_200",
+      "xyxy": [
+        1560.1,
+        9.6,
+        1655.3,
+        297.6
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "F",
+      "path": "data/frames/F/000205.jpg",
+      "frame_idx": 41,
+      "t_sec": 8.2,
+      "pred_index": 1,
+      "track_id": 141,
+      "conf": 0.7238,
+      "aspect": 1.99,
+      "band": "near_0_200",
+      "xyxy": [
+        460.6,
+        747.6,
+        562.3,
+        798.9
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "F",
+      "path": "data/frames/F/000150.jpg",
+      "frame_idx": 30,
+      "t_sec": 6.0,
+      "pred_index": 4,
+      "track_id": 110,
+      "conf": 0.7227,
+      "aspect": 1.75,
+      "band": "far_200_400",
+      "xyxy": [
+        1857.0,
+        769.0,
+        1901.7,
+        794.6
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "F",
+      "path": "data/frames/F/000155.jpg",
+      "frame_idx": 31,
+      "t_sec": 6.2,
+      "pred_index": 2,
+      "track_id": 84,
+      "conf": 0.7203,
+      "aspect": 1.2,
+      "band": "near_0_200",
+      "xyxy": [
+        0.0,
+        697.1,
+        190.8,
+        856.5
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "F",
+      "path": "data/frames/F/000190.jpg",
+      "frame_idx": 38,
+      "t_sec": 7.6,
+      "pred_index": 2,
+      "track_id": 2,
+      "conf": 0.7171,
+      "aspect": 1.5,
+      "band": "near_0_200",
+      "xyxy": [
+        2031.4,
+        395.2,
+        2085.5,
+        431.4
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "F",
+      "path": "data/frames/F/000265.jpg",
+      "frame_idx": 53,
+      "t_sec": 10.6,
+      "pred_index": 1,
+      "track_id": 241,
+      "conf": 0.7169,
+      "aspect": 2.13,
+      "band": "near_0_200",
+      "xyxy": [
+        630.2,
+        694.1,
+        714.7,
+        733.7
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "F",
+      "path": "data/frames/F/000235.jpg",
+      "frame_idx": 47,
+      "t_sec": 9.4,
+      "pred_index": 5,
+      "track_id": 204,
+      "conf": 0.716,
+      "aspect": 1.19,
+      "band": "near_0_200",
+      "xyxy": [
+        1908.6,
+        777.7,
+        1944.9,
+        808.1
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "F",
+      "path": "data/frames/F/000185.jpg",
+      "frame_idx": 37,
+      "t_sec": 7.4,
+      "pred_index": 1,
+      "track_id": 146,
+      "conf": 0.7145,
+      "aspect": 2.38,
+      "band": "near_0_200",
+      "xyxy": [
+        1833.9,
+        914.1,
+        1912.5,
+        947.1
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000054.jpg",
+      "frame_idx": 9,
+      "t_sec": 1.8,
+      "pred_index": 3,
+      "track_id": 21,
+      "conf": 0.7134,
+      "aspect": 1.67,
+      "band": "near_0_200",
+      "xyxy": [
+        1195.3,
+        945.4,
+        1273.7,
+        1076.1
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000216.jpg",
+      "frame_idx": 36,
+      "t_sec": 7.2,
+      "pred_index": 4,
+      "track_id": 103,
+      "conf": 0.713,
+      "aspect": 1.61,
+      "band": "near_0_200",
+      "xyxy": [
+        1721.2,
+        3324.4,
+        1818.0,
+        3480.4
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000144.jpg",
+      "frame_idx": 24,
+      "t_sec": 4.8,
+      "pred_index": 4,
+      "track_id": 70,
+      "conf": 0.7103,
+      "aspect": 1.03,
+      "band": "near_0_200",
+      "xyxy": [
+        1574.4,
+        2082.3,
+        1673.3,
+        2177.9
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "F",
+      "path": "data/frames/F/000090.jpg",
+      "frame_idx": 18,
+      "t_sec": 3.6,
+      "pred_index": 0,
+      "track_id": 52,
+      "conf": 0.7098,
+      "aspect": 1.33,
+      "band": "near_0_200",
+      "xyxy": [
+        1684.7,
+        1464.4,
+        1752.0,
+        1553.6
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "F",
+      "path": "data/frames/F/000150.jpg",
+      "frame_idx": 30,
+      "t_sec": 6.0,
+      "pred_index": 5,
+      "track_id": 2,
+      "conf": 0.7092,
+      "aspect": 1.42,
+      "band": "near_0_200",
+      "xyxy": [
+        2015.3,
+        400.8,
+        2078.3,
+        445.1
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "F",
+      "path": "data/frames/F/000145.jpg",
+      "frame_idx": 29,
+      "t_sec": 5.8,
+      "pred_index": 4,
+      "track_id": 84,
+      "conf": 0.7077,
+      "aspect": 1.02,
+      "band": "near_0_200",
+      "xyxy": [
+        0.0,
+        701.7,
+        156.5,
+        861.5
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000186.jpg",
+      "frame_idx": 31,
+      "t_sec": 6.2,
+      "pred_index": 3,
+      "track_id": 87,
+      "conf": 0.7062,
+      "aspect": 1.01,
+      "band": "near_0_200",
+      "xyxy": [
+        1718.6,
+        3023.2,
+        1836.6,
+        3139.5
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000054.jpg",
+      "frame_idx": 9,
+      "t_sec": 1.8,
+      "pred_index": 4,
+      "track_id": 22,
+      "conf": 0.7025,
+      "aspect": 2.1,
+      "band": "near_0_200",
+      "xyxy": [
+        663.1,
+        286.0,
+        817.0,
+        359.4
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "F",
+      "path": "data/frames/F/000255.jpg",
+      "frame_idx": 51,
+      "t_sec": 10.2,
+      "pred_index": 2,
+      "track_id": 228,
+      "conf": 0.7019,
+      "aspect": 1.2,
+      "band": "near_0_200",
+      "xyxy": [
+        2782.5,
+        821.7,
+        2903.0,
+        921.9
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000510.jpg",
+      "frame_idx": 85,
+      "t_sec": 17.0,
+      "pred_index": 0,
+      "track_id": 170,
+      "conf": 0.7018,
+      "aspect": 1.83,
+      "band": "near_0_200",
+      "xyxy": [
+        1564.5,
+        2217.0,
+        1699.7,
+        2290.8
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "F",
+      "path": "data/frames/F/000075.jpg",
+      "frame_idx": 15,
+      "t_sec": 3.0,
+      "pred_index": 1,
+      "track_id": 2,
+      "conf": 0.6999,
+      "aspect": 1.55,
+      "band": "near_0_200",
+      "xyxy": [
+        2009.2,
+        412.4,
+        2069.5,
+        451.2
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000042.jpg",
+      "frame_idx": 7,
+      "t_sec": 1.4,
+      "pred_index": 2,
+      "track_id": 18,
+      "conf": 0.6965,
+      "aspect": 2.03,
+      "band": "near_0_200",
+      "xyxy": [
+        479.1,
+        0.0,
+        594.3,
+        56.9
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000888.jpg",
+      "frame_idx": 148,
+      "t_sec": 29.6,
+      "pred_index": 4,
+      "track_id": 224,
+      "conf": 0.6932,
+      "aspect": 1.61,
+      "band": "near_0_200",
+      "xyxy": [
+        1091.7,
+        206.2,
+        1214.4,
+        282.3
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000120.jpg",
+      "frame_idx": 20,
+      "t_sec": 4.0,
+      "pred_index": 5,
+      "track_id": 56,
+      "conf": 0.6905,
+      "aspect": 1.11,
+      "band": "near_0_200",
+      "xyxy": [
+        1218.5,
+        893.5,
+        1320.4,
+        1006.4
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "F",
+      "path": "data/frames/F/000275.jpg",
+      "frame_idx": 55,
+      "t_sec": 11.0,
+      "pred_index": 1,
+      "track_id": 251,
+      "conf": 0.6895,
+      "aspect": 1.66,
+      "band": "near_0_200",
+      "xyxy": [
+        3208.4,
+        1030.2,
+        3341.6,
+        1110.5
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "F",
+      "path": "data/frames/F/000065.jpg",
+      "frame_idx": 13,
+      "t_sec": 2.6,
+      "pred_index": 1,
+      "track_id": 2,
+      "conf": 0.6874,
+      "aspect": 1.71,
+      "band": "near_0_200",
+      "xyxy": [
+        2008.4,
+        415.0,
+        2070.0,
+        451.0
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "F",
+      "path": "data/frames/F/000140.jpg",
+      "frame_idx": 28,
+      "t_sec": 5.6,
+      "pred_index": 4,
+      "track_id": 2,
+      "conf": 0.6869,
+      "aspect": 1.31,
+      "band": "near_0_200",
+      "xyxy": [
+        2025.1,
+        404.0,
+        2077.6,
+        444.1
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "F",
+      "path": "data/frames/F/000110.jpg",
+      "frame_idx": 22,
+      "t_sec": 4.4,
+      "pred_index": 1,
+      "track_id": 2,
+      "conf": 0.6865,
+      "aspect": 1.32,
+      "band": "near_0_200",
+      "xyxy": [
+        2016.4,
+        408.9,
+        2077.5,
+        455.1
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "F",
+      "path": "data/frames/F/000185.jpg",
+      "frame_idx": 37,
+      "t_sec": 7.4,
+      "pred_index": 2,
+      "track_id": 141,
+      "conf": 0.6861,
+      "aspect": 1.92,
+      "band": "near_0_200",
+      "xyxy": [
+        400.4,
+        772.6,
+        496.3,
+        822.4
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "F",
+      "path": "data/frames/F/000255.jpg",
+      "frame_idx": 51,
+      "t_sec": 10.2,
+      "pred_index": 4,
+      "track_id": 229,
+      "conf": 0.6852,
+      "aspect": 1.13,
+      "band": "near_0_200",
+      "xyxy": [
+        1781.0,
+        1181.4,
+        1822.9,
+        1228.7
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000480.jpg",
+      "frame_idx": 80,
+      "t_sec": 16.0,
+      "pred_index": 2,
+      "track_id": 166,
+      "conf": 0.6837,
+      "aspect": 1.49,
+      "band": "near_0_200",
+      "xyxy": [
+        1064.9,
+        3728.4,
+        1231.4,
+        3840.0
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "F",
+      "path": "data/frames/F/000085.jpg",
+      "frame_idx": 17,
+      "t_sec": 3.4,
+      "pred_index": 1,
+      "track_id": 41,
+      "conf": 0.6826,
+      "aspect": 1.74,
+      "band": "near_0_200",
+      "xyxy": [
+        3348.7,
+        599.4,
+        3460.7,
+        663.9
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000828.jpg",
+      "frame_idx": 138,
+      "t_sec": 27.6,
+      "pred_index": 2,
+      "track_id": 199,
+      "conf": 0.6815,
+      "aspect": 1.76,
+      "band": "near_0_200",
+      "xyxy": [
+        1512.0,
+        1078.3,
+        1631.0,
+        1288.4
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "F",
+      "path": "data/frames/F/000275.jpg",
+      "frame_idx": 55,
+      "t_sec": 11.0,
+      "pred_index": 2,
+      "track_id": 252,
+      "conf": 0.6815,
+      "aspect": 2.5,
+      "band": "near_0_200",
+      "xyxy": [
+        1845.6,
+        902.8,
+        1951.5,
+        945.2
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "F",
+      "path": "data/frames/F/000200.jpg",
+      "frame_idx": 40,
+      "t_sec": 8.0,
+      "pred_index": 4,
+      "track_id": 145,
+      "conf": 0.6812,
+      "aspect": 1.28,
+      "band": "near_0_200",
+      "xyxy": [
+        2868.5,
+        899.9,
+        3021.1,
+        1019.0
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000210.jpg",
+      "frame_idx": 35,
+      "t_sec": 7.0,
+      "pred_index": 3,
+      "track_id": 98,
+      "conf": 0.6811,
+      "aspect": 1.69,
+      "band": "near_0_200",
+      "xyxy": [
+        1406.0,
+        2658.2,
+        1538.9,
+        2736.6
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "F",
+      "path": "data/frames/F/000160.jpg",
+      "frame_idx": 32,
+      "t_sec": 6.4,
+      "pred_index": 3,
+      "track_id": 84,
+      "conf": 0.6806,
+      "aspect": 1.26,
+      "band": "near_0_200",
+      "xyxy": [
+        0.0,
+        689.6,
+        210.3,
+        856.4
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000618.jpg",
+      "frame_idx": 103,
+      "t_sec": 20.6,
+      "pred_index": 2,
+      "track_id": 179,
+      "conf": 0.6801,
+      "aspect": 2.09,
+      "band": "near_0_200",
+      "xyxy": [
+        1861.4,
+        2255.1,
+        1993.9,
+        2532.6
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000870.jpg",
+      "frame_idx": 145,
+      "t_sec": 29.0,
+      "pred_index": 3,
+      "track_id": 207,
+      "conf": 0.6798,
+      "aspect": 1.97,
+      "band": "near_0_200",
+      "xyxy": [
+        1548.2,
+        2.8,
+        1645.8,
+        195.2
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "F",
+      "path": "data/frames/F/000225.jpg",
+      "frame_idx": 45,
+      "t_sec": 9.0,
+      "pred_index": 6,
+      "track_id": 186,
+      "conf": 0.6792,
+      "aspect": 1.94,
+      "band": "far_200_400",
+      "xyxy": [
+        1868.7,
+        799.1,
+        1919.1,
+        825.1
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000912.jpg",
+      "frame_idx": 152,
+      "t_sec": 30.4,
+      "pred_index": 6,
+      "track_id": 244,
+      "conf": 0.6772,
+      "aspect": 1.48,
+      "band": "near_0_200",
+      "xyxy": [
+        160.0,
+        2485.7,
+        281.6,
+        2665.1
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000066.jpg",
+      "frame_idx": 11,
+      "t_sec": 2.2,
+      "pred_index": 3,
+      "track_id": 26,
+      "conf": 0.6771,
+      "aspect": 1.28,
+      "band": "near_0_200",
+      "xyxy": [
+        1212.0,
+        42.7,
+        1308.3,
+        166.2
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000114.jpg",
+      "frame_idx": 19,
+      "t_sec": 3.8,
+      "pred_index": 4,
+      "track_id": 50,
+      "conf": 0.6765,
+      "aspect": 1.11,
+      "band": "near_0_200",
+      "xyxy": [
+        1216.6,
+        795.5,
+        1316.9,
+        907.4
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "F",
+      "path": "data/frames/F/000135.jpg",
+      "frame_idx": 27,
+      "t_sec": 5.4,
+      "pred_index": 2,
+      "track_id": 2,
+      "conf": 0.6765,
+      "aspect": 1.36,
+      "band": "near_0_200",
+      "xyxy": [
+        2022.5,
+        406.0,
+        2077.3,
+        446.3
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000030.jpg",
+      "frame_idx": 5,
+      "t_sec": 1.0,
+      "pred_index": 2,
+      "track_id": 15,
+      "conf": 0.6764,
+      "aspect": 1.31,
+      "band": "near_0_200",
+      "xyxy": [
+        371.0,
+        3633.0,
+        563.5,
+        3779.6
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "F",
+      "path": "data/frames/F/000080.jpg",
+      "frame_idx": 16,
+      "t_sec": 3.2,
+      "pred_index": 1,
+      "track_id": 2,
+      "conf": 0.6763,
+      "aspect": 1.48,
+      "band": "near_0_200",
+      "xyxy": [
+        2012.2,
+        415.6,
+        2071.5,
+        455.7
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000300.jpg",
+      "frame_idx": 50,
+      "t_sec": 10.0,
+      "pred_index": 2,
+      "track_id": 131,
+      "conf": 0.6729,
+      "aspect": 1.92,
+      "band": "near_0_200",
+      "xyxy": [
+        1720.6,
+        1200.4,
+        1831.6,
+        1413.3
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "F",
+      "path": "data/frames/F/000230.jpg",
+      "frame_idx": 46,
+      "t_sec": 9.2,
+      "pred_index": 3,
+      "track_id": 196,
+      "conf": 0.6729,
+      "aspect": 1.48,
+      "band": "near_0_200",
+      "xyxy": [
+        1685.7,
+        1549.1,
+        1745.7,
+        1637.7
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "F",
+      "path": "data/frames/F/000135.jpg",
+      "frame_idx": 27,
+      "t_sec": 5.4,
+      "pred_index": 3,
+      "track_id": 84,
+      "conf": 0.672,
+      "aspect": 1.33,
+      "band": "near_0_200",
+      "xyxy": [
+        0.0,
+        709.3,
+        119.0,
+        867.4
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "F",
+      "path": "data/frames/F/000120.jpg",
+      "frame_idx": 24,
+      "t_sec": 4.8,
+      "pred_index": 2,
+      "track_id": 69,
+      "conf": 0.6715,
+      "aspect": 1.19,
+      "band": "near_0_200",
+      "xyxy": [
+        1596.7,
+        435.2,
+        1633.2,
+        465.8
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000030.jpg",
+      "frame_idx": 5,
+      "t_sec": 1.0,
+      "pred_index": 3,
+      "track_id": 16,
+      "conf": 0.671,
+      "aspect": 2.79,
+      "band": "far_200_400",
+      "xyxy": [
+        652.9,
+        2251.1,
+        799.4,
+        2303.7
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "F",
+      "path": "data/frames/F/000070.jpg",
+      "frame_idx": 14,
+      "t_sec": 2.8,
+      "pred_index": 2,
+      "track_id": 39,
+      "conf": 0.671,
+      "aspect": 2.48,
+      "band": "near_0_200",
+      "xyxy": [
+        1720.7,
+        1103.4,
+        1831.9,
+        1148.3
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000312.jpg",
+      "frame_idx": 52,
+      "t_sec": 10.4,
+      "pred_index": 2,
+      "track_id": 136,
+      "conf": 0.6708,
+      "aspect": 2.42,
+      "band": "near_0_200",
+      "xyxy": [
+        1766.5,
+        1430.5,
+        1881.4,
+        1708.7
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000906.jpg",
+      "frame_idx": 151,
+      "t_sec": 30.2,
+      "pred_index": 6,
+      "track_id": 211,
+      "conf": 0.6696,
+      "aspect": 1.56,
+      "band": "near_0_200",
+      "xyxy": [
+        1634.2,
+        1022.8,
+        2023.7,
+        1630.5
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "F",
+      "path": "data/frames/F/000210.jpg",
+      "frame_idx": 42,
+      "t_sec": 8.4,
+      "pred_index": 4,
+      "track_id": 2,
+      "conf": 0.6696,
+      "aspect": 1.67,
+      "band": "near_0_200",
+      "xyxy": [
+        2034.6,
+        392.8,
+        2095.6,
+        429.5
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000210.jpg",
+      "frame_idx": 35,
+      "t_sec": 7.0,
+      "pred_index": 4,
+      "track_id": 99,
+      "conf": 0.6689,
+      "aspect": 1.05,
+      "band": "near_0_200",
+      "xyxy": [
+        1827.7,
+        3694.4,
+        1952.2,
+        3825.4
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000882.jpg",
+      "frame_idx": 147,
+      "t_sec": 29.4,
+      "pred_index": 4,
+      "track_id": 218,
+      "conf": 0.6689,
+      "aspect": 1.63,
+      "band": "near_0_200",
+      "xyxy": [
+        1087.3,
+        111.3,
+        1210.3,
+        186.6
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000276.jpg",
+      "frame_idx": 46,
+      "t_sec": 9.2,
+      "pred_index": 3,
+      "track_id": 123,
+      "conf": 0.6683,
+      "aspect": 1.65,
+      "band": "near_0_200",
+      "xyxy": [
+        0.0,
+        3421.8,
+        686.2,
+        3838.8
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000252.jpg",
+      "frame_idx": 42,
+      "t_sec": 8.4,
+      "pred_index": 4,
+      "track_id": 115,
+      "conf": 0.6676,
+      "aspect": 1.62,
+      "band": "near_0_200",
+      "xyxy": [
+        1356.2,
+        2982.0,
+        1495.9,
+        3068.2
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000768.jpg",
+      "frame_idx": 128,
+      "t_sec": 25.6,
+      "pred_index": 1,
+      "track_id": 193,
+      "conf": 0.6661,
+      "aspect": 1.85,
+      "band": "near_0_200",
+      "xyxy": [
+        1365.5,
+        10.3,
+        1449.2,
+        164.7
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "F",
+      "path": "data/frames/F/000145.jpg",
+      "frame_idx": 29,
+      "t_sec": 5.8,
+      "pred_index": 5,
+      "track_id": 2,
+      "conf": 0.6657,
+      "aspect": 1.29,
+      "band": "near_0_200",
+      "xyxy": [
+        2023.4,
+        402.7,
+        2078.8,
+        445.4
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "F",
+      "path": "data/frames/F/000230.jpg",
+      "frame_idx": 46,
+      "t_sec": 9.2,
+      "pred_index": 4,
+      "track_id": 197,
+      "conf": 0.6657,
+      "aspect": 2.61,
+      "band": "near_0_200",
+      "xyxy": [
+        1831.8,
+        979.5,
+        1911.3,
+        1009.9
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000210.jpg",
+      "frame_idx": 35,
+      "t_sec": 7.0,
+      "pred_index": 5,
+      "track_id": 100,
+      "conf": 0.6645,
+      "aspect": 1.35,
+      "band": "near_0_200",
+      "xyxy": [
+        1233.9,
+        1990.2,
+        1356.8,
+        2081.1
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000222.jpg",
+      "frame_idx": 37,
+      "t_sec": 7.4,
+      "pred_index": 4,
+      "track_id": 105,
+      "conf": 0.6616,
+      "aspect": 1.61,
+      "band": "near_0_200",
+      "xyxy": [
+        1436.9,
+        2956.8,
+        1584.1,
+        3048.1
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "F",
+      "path": "data/frames/F/000085.jpg",
+      "frame_idx": 17,
+      "t_sec": 3.4,
+      "pred_index": 2,
+      "track_id": 49,
+      "conf": 0.6615,
+      "aspect": 1.39,
+      "band": "near_0_200",
+      "xyxy": [
+        1677.2,
+        538.4,
+        1780.7,
+        682.7
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "F",
+      "path": "data/frames/F/000255.jpg",
+      "frame_idx": 51,
+      "t_sec": 10.2,
+      "pred_index": 5,
+      "track_id": 215,
+      "conf": 0.659,
+      "aspect": 1.43,
+      "band": "near_0_200",
+      "xyxy": [
+        3279.0,
+        1073.2,
+        3401.0,
+        1158.5
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000126.jpg",
+      "frame_idx": 21,
+      "t_sec": 4.2,
+      "pred_index": 6,
+      "track_id": 61,
+      "conf": 0.658,
+      "aspect": 1.04,
+      "band": "near_0_200",
+      "xyxy": [
+        1218.5,
+        995.4,
+        1324.7,
+        1105.9
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "F",
+      "path": "data/frames/F/000105.jpg",
+      "frame_idx": 21,
+      "t_sec": 4.2,
+      "pred_index": 1,
+      "track_id": 2,
+      "conf": 0.6577,
+      "aspect": 1.24,
+      "band": "near_0_200",
+      "xyxy": [
+        2017.1,
+        409.5,
+        2075.0,
+        456.1
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "F",
+      "path": "data/frames/F/000160.jpg",
+      "frame_idx": 32,
+      "t_sec": 6.4,
+      "pred_index": 5,
+      "track_id": 2,
+      "conf": 0.6574,
+      "aspect": 1.33,
+      "band": "near_0_200",
+      "xyxy": [
+        2026.8,
+        401.2,
+        2076.8,
+        438.9
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000234.jpg",
+      "frame_idx": 39,
+      "t_sec": 7.8,
+      "pred_index": 4,
+      "track_id": 109,
+      "conf": 0.6538,
+      "aspect": 1.63,
+      "band": "near_0_200",
+      "xyxy": [
+        1304.5,
+        2521.4,
+        1435.5,
+        2601.7
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "F",
+      "path": "data/frames/F/000175.jpg",
+      "frame_idx": 35,
+      "t_sec": 7.0,
+      "pred_index": 3,
+      "track_id": 84,
+      "conf": 0.6535,
+      "aspect": 1.61,
+      "band": "near_0_200",
+      "xyxy": [
+        0.0,
+        673.9,
+        261.3,
+        836.0
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000108.jpg",
+      "frame_idx": 18,
+      "t_sec": 3.6,
+      "pred_index": 4,
+      "track_id": 47,
+      "conf": 0.6517,
+      "aspect": 1.41,
+      "band": "near_0_200",
+      "xyxy": [
+        1111.9,
+        236.0,
+        1200.6,
+        361.3
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000444.jpg",
+      "frame_idx": 74,
+      "t_sec": 14.8,
+      "pred_index": 1,
+      "track_id": 160,
+      "conf": 0.6513,
+      "aspect": 1.05,
+      "band": "near_0_200",
+      "xyxy": [
+        1484.1,
+        1543.4,
+        1591.4,
+        1645.6
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "F",
+      "path": "data/frames/F/000220.jpg",
+      "frame_idx": 44,
+      "t_sec": 8.8,
+      "pred_index": 1,
+      "track_id": 182,
+      "conf": 0.6505,
+      "aspect": 1.54,
+      "band": "near_0_200",
+      "xyxy": [
+        1712.2,
+        1460.1,
+        1831.5,
+        1537.3
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000750.jpg",
+      "frame_idx": 125,
+      "t_sec": 25.0,
+      "pred_index": 1,
+      "track_id": 192,
+      "conf": 0.6488,
+      "aspect": 1.27,
+      "band": "near_0_200",
+      "xyxy": [
+        1327.0,
+        8.2,
+        1395.8,
+        62.4
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "F",
+      "path": "data/frames/F/000300.jpg",
+      "frame_idx": 60,
+      "t_sec": 12.0,
+      "pred_index": 2,
+      "track_id": 241,
+      "conf": 0.6484,
+      "aspect": 1.86,
+      "band": "near_0_200",
+      "xyxy": [
+        702.4,
+        669.8,
+        775.0,
+        708.8
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000090.jpg",
+      "frame_idx": 15,
+      "t_sec": 3.0,
+      "pred_index": 3,
+      "track_id": 34,
+      "conf": 0.6479,
+      "aspect": 1.27,
+      "band": "near_0_200",
+      "xyxy": [
+        1113.4,
+        2.2,
+        1195.9,
+        106.8
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000126.jpg",
+      "frame_idx": 21,
+      "t_sec": 4.2,
+      "pred_index": 7,
+      "track_id": 62,
+      "conf": 0.6463,
+      "aspect": 1.24,
+      "band": "near_0_200",
+      "xyxy": [
+        1105.8,
+        513.2,
+        1206.5,
+        637.9
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000168.jpg",
+      "frame_idx": 28,
+      "t_sec": 5.6,
+      "pred_index": 4,
+      "track_id": 79,
+      "conf": 0.6435,
+      "aspect": 1.04,
+      "band": "near_0_200",
+      "xyxy": [
+        1651.2,
+        2592.4,
+        1759.5,
+        2696.2
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000132.jpg",
+      "frame_idx": 22,
+      "t_sec": 4.4,
+      "pred_index": 6,
+      "track_id": 65,
+      "conf": 0.6429,
+      "aspect": 1.19,
+      "band": "near_0_200",
+      "xyxy": [
+        1108.8,
+        606.9,
+        1210.7,
+        728.5
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "F",
+      "path": "data/frames/F/000030.jpg",
+      "frame_idx": 6,
+      "t_sec": 1.2,
+      "pred_index": 3,
+      "track_id": 21,
+      "conf": 0.6424,
+      "aspect": 1.73,
+      "band": "near_0_200",
+      "xyxy": [
+        3540.0,
+        1476.5,
+        3746.0,
+        1595.5
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "F",
+      "path": "data/frames/F/000105.jpg",
+      "frame_idx": 21,
+      "t_sec": 4.2,
+      "pred_index": 2,
+      "track_id": 62,
+      "conf": 0.641,
+      "aspect": 1.07,
+      "band": "near_0_200",
+      "xyxy": [
+        2226.7,
+        554.1,
+        2278.9,
+        610.0
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "F",
+      "path": "data/frames/F/000120.jpg",
+      "frame_idx": 24,
+      "t_sec": 4.8,
+      "pred_index": 3,
+      "track_id": 72,
+      "conf": 0.6403,
+      "aspect": 1.93,
+      "band": "near_0_200",
+      "xyxy": [
+        2057.5,
+        1172.2,
+        2126.5,
+        1207.9
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "F",
+      "path": "data/frames/F/000150.jpg",
+      "frame_idx": 30,
+      "t_sec": 6.0,
+      "pred_index": 6,
+      "track_id": 84,
+      "conf": 0.6394,
+      "aspect": 1.06,
+      "band": "near_0_200",
+      "xyxy": [
+        0.0,
+        698.0,
+        171.6,
+        859.6
+      ],
+      "gt_index": null
+    },
+    {
+      "error_type": "gt_omission",
+      "tags": [
+        "gt_omission"
+      ],
+      "clip_id": "E",
+      "path": "data/frames/E/000174.jpg",
+      "frame_idx": 29,
+      "t_sec": 5.8,
+      "pred_index": 4,
+      "track_id": 10,
+      "conf": 0.6387,
+      "aspect": 1.25,
+      "band": "near_0_200",
+      "xyxy": [
+        1493.6,
+        3592.2,
+        1803.0,
+        3840.0
+      ],
+      "gt_index": null
+    }
+  ],
+  "fn_instances": [],
+  "thresholds_path": "data/splits/eval_thresholds_dinosam.json",
+  "note": "Diagnostic pass over frozen hold-out predictions. Precedence for FPs: fractured_truck > static_hallucination > suspected_motorcycle > gt_omission. 'fp_taxonomy_any_tag' counts every rule that fired."
+}
