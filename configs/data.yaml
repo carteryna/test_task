@@ -92,6 +92,7 @@ final_diagnostics:
   dinosam_taxonomy: data/splits/error_taxonomy_dinosam.json
   report_path: data/splits/final_diagnostics.json
   audit_dir: outputs/audit/edge_cases
+  audit_summary_path: data/splits/audit_summary.json
   top_n: 50
   kinematic_move_frac: 0.02
   visuals_dir: outputs/diagnostics_final

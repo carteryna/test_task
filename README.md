@@ -346,7 +346,37 @@ TP median **1026 px²** (~32 px side, n=9) vs FN median **954 px²** (~31 px sid
 
 53 frame pairs have median GT centroid shift ≥ 2% of image width (pitch/yaw proxy). Under that motion: **6** sudden TP→FN flips and **3** broken pred track IDs (**9** events total) — all on Clip E during a ~6–11 s ego-motion spike. Clip F stays under its wider budget and logs zero drift events. Those 9 cases are the argument for offloading stabilization to the Pi 5’s VIO pipeline rather than asking the detector to track through aggressive gimbal motion.
 
-**Task 4 — audit pack:** top-50 residual FPs by confidence and top-50 near-band FNs by area, cropped to `outputs/audit/edge_cases/`. Blank sheet `audit_tags.csv` has `filename`, `prediction_type`, `semantic_cause` for a 15-minute visual pass. Full JSON: `data/splits/final_diagnostics.json`. Slide figures: `outputs/diagnostics_final/task{1,2,3}_*.png`.
+**Task 4 — audit pack:** top-50 residual FPs by confidence and top-50 near-band FNs by area, cropped to `outputs/audit/edge_cases/`. Sheet `audit_tags.csv` has `filename`, `prediction_type`, `semantic_cause`. Full JSON: `data/splits/final_diagnostics.json`. Slide figures: `outputs/diagnostics_final/task{1,2,3}_*.png`.
+
+### Manual edge-case audit (filled)
+
+Human pass over the 100-crop pack (DINO+SAM student, hold-out E+F). Tags live in `outputs/audit/edge_cases/audit_tags.csv`; tallies in `data/splits/audit_summary.json`.
+
+**FP (50 highest-conf residual):**
+
+| Tag | Count | Share |
+|-----|------:|------:|
+| `gantry_sign` | 16 | 32% |
+| `shadow_glare` | 10 | 20% |
+| `infra_pole` | 9 | 18% |
+| `proxy_gt_miss` | 8 | 16% |
+| `partial_vehicle` | 3 | 6% |
+| `uncertain` / `several_uncertain` | 4 | 8% |
+
+Rollup: **true clutter 70%** (gantry + glare + pole) · **vehicle-like 22%** (proxy miss + partial) · uncertain 8%. Clip mix 40 E / 10 F — E is mostly infrastructure clutter; F is half vehicle-like.
+
+**FN (50 largest near-band):**
+
+| Tag | Count | Share |
+|-----|------:|------:|
+| `motion_blur` | 19 | 38% |
+| `truncated` | 19 | 38% |
+| `articulated` | 8 | 16% |
+| `label_noise` | 4 | 8% |
+
+Clip E (39): truncated 19 · motion_blur 18 · label_noise 2. Clip F (11): articulated 8 · label_noise 2 · motion_blur 1.
+
+**Headlines:** (1) top FPs are mostly gantry/pole/glare, not proxy-GT debt; (2) near FNs are ego-motion + FOV truncation, matching Task 3 on E; (3) F’s large near misses are articulated trucks. **Next bet:** hard-negative mining for gantry/pole/glare, Pi 5 VIO for E motion, truck-aware geometry for F — not another far-band epoch alone.
 
 ```bash
 python src/final_diagnostics.py
@@ -554,7 +584,7 @@ What the brief asks for, mapped to this repo:
 | Metrics table | Evaluation & Metrics |
 | Example predictions with GT overlaid | `outputs/examples/` (clean student) and `outputs/examples_dinosam/` (factory student) |
 | Short detector video on eval | `outputs/videos/eval_E_dinosam.mp4`, `outputs/videos/eval_F_dinosam.mp4` |
-| Failure analysis | `data/splits/error_taxonomy.json`, `data/splits/error_taxonomy_dinosam.json`, `data/splits/final_diagnostics.json`, `outputs/diagnostics/`, `outputs/diagnostics_final/`, `data/hard_negatives/`, `outputs/audit/edge_cases/` |
+| Failure analysis | `data/splits/error_taxonomy.json`, `data/splits/error_taxonomy_dinosam.json`, `data/splits/final_diagnostics.json`, `data/splits/audit_summary.json`, `outputs/diagnostics/`, `outputs/diagnostics_final/`, `data/hard_negatives/`, `outputs/audit/edge_cases/` |
 | Automated labeling pipeline | `src/auto_label_dino_sam.py`, `data/labels/auto_generated/`, `data/splits/auto_label_dino_sam.json`, `results/auto_label_dino_sam/` |
 | Hold-out proxy-GT audit | `data/labels/eval_dino_sam/`, `data/splits/auto_label_dino_sam_eval.json`, `results/auto_label_dino_sam_eval/` |
 | Clean vs DINO+SAM hold-out A/B | `data/splits/eval_metrics_dinosam.json`, `data/splits/eval_ab_clean_vs_dinosam.json` |

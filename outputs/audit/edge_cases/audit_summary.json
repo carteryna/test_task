@@ -1,0 +1,205 @@
+{
+  "role": "manual_edge_case_audit",
+  "source_csv": "outputs/audit/edge_cases/audit_tags.csv",
+  "student": "runs/train/yolo11n_dinosam/weights/best.pt",
+  "sample": {
+    "n_total": 100,
+    "n_fp": 50,
+    "n_fn": 50,
+    "fp_selection": "top-50 residual FPs by confidence (unclassified \u222a gt_omission)",
+    "fn_selection": "top-50 near-band (0\u2013200 m) FNs by GT box area"
+  },
+  "fp": {
+    "n": 50,
+    "semantic_cause": {
+      "gantry_sign": {
+        "count": 16,
+        "pct": 32.0
+      },
+      "shadow_glare": {
+        "count": 10,
+        "pct": 20.0
+      },
+      "infra_pole": {
+        "count": 9,
+        "pct": 18.0
+      },
+      "proxy_gt_miss": {
+        "count": 8,
+        "pct": 16.0
+      },
+      "partial_vehicle": {
+        "count": 3,
+        "pct": 6.0
+      },
+      "several_uncertain": {
+        "count": 3,
+        "pct": 6.0
+      },
+      "uncertain": {
+        "count": 1,
+        "pct": 2.0
+      }
+    },
+    "by_clip": {
+      "E": {
+        "n": 40,
+        "semantic_cause": {
+          "gantry_sign": {
+            "count": 12,
+            "pct": 30.0
+          },
+          "infra_pole": {
+            "count": 9,
+            "pct": 22.5
+          },
+          "shadow_glare": {
+            "count": 9,
+            "pct": 22.5
+          },
+          "proxy_gt_miss": {
+            "count": 4,
+            "pct": 10.0
+          },
+          "several_uncertain": {
+            "count": 3,
+            "pct": 7.5
+          },
+          "partial_vehicle": {
+            "count": 2,
+            "pct": 5.0
+          },
+          "uncertain": {
+            "count": 1,
+            "pct": 2.5
+          }
+        }
+      },
+      "F": {
+        "n": 10,
+        "semantic_cause": {
+          "proxy_gt_miss": {
+            "count": 4,
+            "pct": 40.0
+          },
+          "gantry_sign": {
+            "count": 4,
+            "pct": 40.0
+          },
+          "partial_vehicle": {
+            "count": 1,
+            "pct": 10.0
+          },
+          "shadow_glare": {
+            "count": 1,
+            "pct": 10.0
+          }
+        }
+      }
+    },
+    "rollup": {
+      "true_clutter": {
+        "count": 35,
+        "pct": 70.0,
+        "tags": [
+          "gantry_sign",
+          "shadow_glare",
+          "infra_pole"
+        ]
+      },
+      "vehicle_like": {
+        "count": 11,
+        "pct": 22.0,
+        "proxy_gt_miss": 8,
+        "partial_vehicle": 3
+      },
+      "uncertain": {
+        "count": 4,
+        "pct": 8.0,
+        "note": "includes uncertain and several_uncertain"
+      }
+    }
+  },
+  "fn": {
+    "n": 50,
+    "semantic_cause": {
+      "motion_blur": {
+        "count": 19,
+        "pct": 38.0
+      },
+      "truncated": {
+        "count": 19,
+        "pct": 38.0
+      },
+      "articulated": {
+        "count": 8,
+        "pct": 16.0
+      },
+      "label_noise": {
+        "count": 4,
+        "pct": 8.0
+      }
+    },
+    "by_clip": {
+      "E": {
+        "n": 39,
+        "semantic_cause": {
+          "truncated": {
+            "count": 19,
+            "pct": 48.7
+          },
+          "motion_blur": {
+            "count": 18,
+            "pct": 46.2
+          },
+          "label_noise": {
+            "count": 2,
+            "pct": 5.1
+          }
+        }
+      },
+      "F": {
+        "n": 11,
+        "semantic_cause": {
+          "articulated": {
+            "count": 8,
+            "pct": 72.7
+          },
+          "label_noise": {
+            "count": 2,
+            "pct": 18.2
+          },
+          "motion_blur": {
+            "count": 1,
+            "pct": 9.1
+          }
+        }
+      }
+    },
+    "rollup": {
+      "motion_blur": {
+        "count": 19,
+        "pct": 38.0
+      },
+      "truncated": {
+        "count": 19,
+        "pct": 38.0
+      },
+      "articulated": {
+        "count": 8,
+        "pct": 16.0
+      },
+      "label_noise": {
+        "count": 4,
+        "pct": 8.0
+      }
+    }
+  },
+  "headlines": [
+    "70% of top residual FPs are infrastructure clutter (gantry/sign, pole, shadow/glare), not label debt.",
+    "Only 22% of top FPs are vehicle-like (8 proxy_gt_miss + 3 partial_vehicle); precision is somewhat understated but clutter dominates this pack.",
+    "Near-FN pack is split between motion_blur (38%) and truncated (38%); aligns with Clip E kinematic_drift and FOV-edge misses.",
+    "Clip F near FNs are mostly articulated trucks (8/11); Clip E is motion_blur + truncated."
+  ],
+  "next_bet": "Mine gantry/pole/glare hard-negatives for the next student; keep Pi 5 VIO for Clip E ego-motion FNs; truck-aware geometry for Clip F articulated misses."
+}
