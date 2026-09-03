@@ -23,3 +23,6 @@ __pycache__/
 .vscode/
 
 ml_engineer_test_task.pdf
+
+# Regenerable annotated JPEG dumps for eval videos (MP4s under outputs/videos/ are kept).
+outputs/videos/frames_*/

@@ -56,6 +56,10 @@ eval_gt:
   distance_boxes_csv: data/splits/eval_distance_boxes.csv
 
 # Band metrics: conf/NMS chosen on val only, then one hold-out pass (eval never used for selection).
+# Default weights are the clean-label student (reported baseline). A/B the factory student with:
+#   python src/evaluate_custom.py --weights runs/train/yolo11n_dinosam/weights/best.pt \
+#     --thresholds-path data/splits/eval_thresholds_dinosam.json \
+#     --metrics-path data/splits/eval_metrics_dinosam.json --tune-val --score-eval
 evaluation:
   weights: runs/train/yolo11n/weights/best.pt
   imgsz: 1280
@@ -73,6 +77,14 @@ evaluation:
   # Submission stills: side-by-side GT | preds + combined legend under outputs/examples/.
   examples_dir: outputs/examples
   examples_per_clip: 3
+  # Parallel A/B paths for the DINO+SAM student (CLI overrides; baseline JSON stays).
+  dinosam:
+    weights: runs/train/yolo11n_dinosam/weights/best.pt
+    thresholds_path: data/splits/eval_thresholds_dinosam.json
+    metrics_path: data/splits/eval_metrics_dinosam.json
+    overlay_dir: results/eval_overlays_dinosam
+    examples_dir: outputs/examples_dinosam
+    video_dir: outputs/videos
 
 # Error taxonomy on hold-out FPs/FNs. Diagnostic only: nothing here re-tunes the model.
 diagnostics:

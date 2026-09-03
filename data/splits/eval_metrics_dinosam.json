@@ -1,0 +1,220 @@
+{
+  "role": "holdout_eval",
+  "weights": "runs/train/yolo11n_dinosam/weights/best.pt",
+  "imgsz": 1280,
+  "device": "cpu",
+  "conf": 0.5,
+  "nms_iou": 0.5,
+  "iou_match": 0.5,
+  "thresholds_path": "data/splits/eval_thresholds_dinosam.json",
+  "thresholds_source": {
+    "chosen_conf": 0.5,
+    "val_selection_score": 0.5565,
+    "eval_used_for_selection": false
+  },
+  "n_frames": 214,
+  "bands": {
+    "near_0_200": {
+      "tp": 560,
+      "fp": 394,
+      "fn": 344,
+      "n_gt": 904,
+      "detection_rate": 0.6195,
+      "precision": 0.587,
+      "f1": 0.6028,
+      "false_alarms_per_min": 110.4673,
+      "time_to_first_s": 0.0,
+      "time_to_first_per_clip_s": {
+        "E": 0.0,
+        "F": 0.0
+      }
+    },
+    "far_200_400": {
+      "tp": 9,
+      "fp": 23,
+      "fn": 70,
+      "n_gt": 79,
+      "detection_rate": 0.1139,
+      "precision": 0.2812,
+      "f1": 0.1622,
+      "false_alarms_per_min": 6.4486,
+      "time_to_first_s": 0.2,
+      "time_to_first_per_clip_s": {
+        "E": 3.4,
+        "F": 0.2
+      }
+    }
+  },
+  "selection_score": 0.3825,
+  "per_clip": {
+    "E": {
+      "n_frames": 153,
+      "bands": {
+        "near_0_200": {
+          "tp": 339,
+          "fp": 217,
+          "fn": 39,
+          "n_gt": 378,
+          "detection_rate": 0.8968,
+          "precision": 0.6097,
+          "f1": 0.7259,
+          "false_alarms_per_min": 85.098,
+          "time_to_first_s": 0.0,
+          "time_to_first_per_clip_s": {
+            "E": 0.0
+          }
+        },
+        "far_200_400": {
+          "tp": 1,
+          "fp": 6,
+          "fn": 0,
+          "n_gt": 1,
+          "detection_rate": 1.0,
+          "precision": 0.1429,
+          "f1": 0.25,
+          "false_alarms_per_min": 2.3529,
+          "time_to_first_s": 3.4,
+          "time_to_first_per_clip_s": {
+            "E": 3.4
+          }
+        }
+      }
+    },
+    "F": {
+      "n_frames": 61,
+      "bands": {
+        "near_0_200": {
+          "tp": 221,
+          "fp": 177,
+          "fn": 305,
+          "n_gt": 526,
+          "detection_rate": 0.4202,
+          "precision": 0.5553,
+          "f1": 0.4784,
+          "false_alarms_per_min": 174.0984,
+          "time_to_first_s": 0.0,
+          "time_to_first_per_clip_s": {
+            "F": 0.0
+          }
+        },
+        "far_200_400": {
+          "tp": 8,
+          "fp": 17,
+          "fn": 70,
+          "n_gt": 78,
+          "detection_rate": 0.1026,
+          "precision": 0.32,
+          "f1": 0.1553,
+          "false_alarms_per_min": 16.7213,
+          "time_to_first_s": 0.2,
+          "time_to_first_per_clip_s": {
+            "F": 0.2
+          }
+        }
+      }
+    }
+  },
+  "overlays": [
+    "results/eval_overlays_dinosam/E_000882.jpg",
+    "results/eval_overlays_dinosam/E_000126.jpg",
+    "results/eval_overlays_dinosam/E_000174.jpg",
+    "results/eval_overlays_dinosam/E_000114.jpg",
+    "results/eval_overlays_dinosam/F_000120.jpg",
+    "results/eval_overlays_dinosam/F_000165.jpg",
+    "results/eval_overlays_dinosam/F_000185.jpg",
+    "results/eval_overlays_dinosam/F_000195.jpg"
+  ],
+  "examples": [
+    {
+      "clip_id": "E",
+      "tag": "success",
+      "frame": "data/frames/E/000150.jpg",
+      "t_sec": 5.0,
+      "conf": 0.5,
+      "tp": 5,
+      "fp": 2,
+      "fn": 0,
+      "far_gt": 0,
+      "far_tp": 0,
+      "side_by_side": "outputs/examples_dinosam/E_000150_success_side_by_side.jpg",
+      "combined": "outputs/examples_dinosam/E_000150_success_combined.jpg"
+    },
+    {
+      "clip_id": "E",
+      "tag": "far",
+      "frame": "data/frames/E/000102.jpg",
+      "t_sec": 3.4,
+      "conf": 0.5,
+      "tp": 3,
+      "fp": 4,
+      "fn": 0,
+      "far_gt": 1,
+      "far_tp": 1,
+      "side_by_side": "outputs/examples_dinosam/E_000102_far_side_by_side.jpg",
+      "combined": "outputs/examples_dinosam/E_000102_far_combined.jpg"
+    },
+    {
+      "clip_id": "E",
+      "tag": "hard",
+      "frame": "data/frames/E/000882.jpg",
+      "t_sec": 29.4,
+      "conf": 0.5,
+      "tp": 3,
+      "fp": 6,
+      "fn": 0,
+      "far_gt": 0,
+      "far_tp": 0,
+      "side_by_side": "outputs/examples_dinosam/E_000882_hard_side_by_side.jpg",
+      "combined": "outputs/examples_dinosam/E_000882_hard_combined.jpg"
+    },
+    {
+      "clip_id": "F",
+      "tag": "success",
+      "frame": "data/frames/F/000235.jpg",
+      "t_sec": 9.4,
+      "conf": 0.5,
+      "tp": 8,
+      "fp": 2,
+      "fn": 2,
+      "far_gt": 1,
+      "far_tp": 0,
+      "side_by_side": "outputs/examples_dinosam/F_000235_success_side_by_side.jpg",
+      "combined": "outputs/examples_dinosam/F_000235_success_combined.jpg"
+    },
+    {
+      "clip_id": "F",
+      "tag": "far",
+      "frame": "data/frames/F/000290.jpg",
+      "t_sec": 11.6,
+      "conf": 0.5,
+      "tp": 5,
+      "fp": 1,
+      "fn": 5,
+      "far_gt": 4,
+      "far_tp": 1,
+      "side_by_side": "outputs/examples_dinosam/F_000290_far_side_by_side.jpg",
+      "combined": "outputs/examples_dinosam/F_000290_far_combined.jpg"
+    },
+    {
+      "clip_id": "F",
+      "tag": "hard",
+      "frame": "data/frames/F/000120.jpg",
+      "t_sec": 4.8,
+      "conf": 0.5,
+      "tp": 2,
+      "fp": 7,
+      "fn": 9,
+      "far_gt": 0,
+      "far_tp": 0,
+      "side_by_side": "outputs/examples_dinosam/F_000120_hard_side_by_side.jpg",
+      "combined": "outputs/examples_dinosam/F_000120_hard_combined.jpg"
+    }
+  ],
+  "examples_dir": "outputs/examples_dinosam",
+  "distance_priors": {
+    "w_ref_m": 2.0,
+    "fov_v_deg": 40.0,
+    "size_side": "min"
+  },
+  "note": "IoU>=0.5 greedy match; TP/FN by GT band; FP by predicted-box band; FA/min = FP*60/N_frames; TTFD = min in-clip t_sec with a TP (per band)."
+}

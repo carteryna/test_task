@@ -1,0 +1,26 @@
+{
+  "role": "eval_detector_video",
+  "weights": "runs/train/yolo11n_dinosam/weights/best.pt",
+  "thresholds_path": "data/splits/eval_thresholds_dinosam.json",
+  "conf": 0.5,
+  "nms_iou": 0.5,
+  "playback_fps": 5.0,
+  "max_side": 1280,
+  "n_frames": 214,
+  "clips": {
+    "E": {
+      "n_frames": 153,
+      "video": "outputs/videos/eval_E_dinosam.mp4"
+    },
+    "F": {
+      "n_frames": 61,
+      "video": "outputs/videos/eval_F_dinosam.mp4"
+    }
+  },
+  "videos": [
+    "outputs/videos/eval_E_dinosam.mp4",
+    "outputs/videos/eval_F_dinosam.mp4"
+  ],
+  "frames_dir": "outputs/videos/frames_dinosam",
+  "note": "Match view: green=GT matched, yellow=GT miss, blue=pred TP, red=pred FP. Hold-out proxy GT; conf frozen on val. Per-clip MP4s kept; combined dropped to save size. Frame JPEGs regenerable."
+}

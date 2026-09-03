@@ -1,0 +1,86 @@
+{
+  "role": "holdout_ab_clean_vs_dinosam",
+  "protocol": "same evaluate_custom.py; conf frozen on val (clean labels) via mean_band_f1; score E+F once on frozen proxy GT",
+  "clean": {
+    "weights": "runs/train/yolo11n/weights/best.pt",
+    "conf": 0.2,
+    "val_selection_score": 0.6492,
+    "selection_score": 0.348,
+    "near": {
+      "detection_rate": 0.6018,
+      "precision": 0.6051,
+      "f1": 0.6034,
+      "false_alarms_per_min": 99.5327,
+      "tp": 544,
+      "fp": 355,
+      "fn": 360,
+      "n_gt": 904,
+      "time_to_first_s": 0.0
+    },
+    "far": {
+      "detection_rate": 0.0633,
+      "precision": 0.1724,
+      "f1": 0.0926,
+      "false_alarms_per_min": 6.729,
+      "tp": 5,
+      "fp": 24,
+      "fn": 74,
+      "n_gt": 79,
+      "time_to_first_s": 0.4
+    }
+  },
+  "dinosam": {
+    "weights": "runs/train/yolo11n_dinosam/weights/best.pt",
+    "conf": 0.5,
+    "val_selection_score": 0.5565,
+    "selection_score": 0.3825,
+    "near": {
+      "detection_rate": 0.6195,
+      "precision": 0.587,
+      "f1": 0.6028,
+      "false_alarms_per_min": 110.4673,
+      "tp": 560,
+      "fp": 394,
+      "fn": 344,
+      "n_gt": 904,
+      "time_to_first_s": 0.0
+    },
+    "far": {
+      "detection_rate": 0.1139,
+      "precision": 0.2812,
+      "f1": 0.1622,
+      "false_alarms_per_min": 6.4486,
+      "tp": 9,
+      "fp": 23,
+      "fn": 70,
+      "n_gt": 79,
+      "time_to_first_s": 0.2
+    }
+  },
+  "delta_dinosam_minus_clean": {
+    "near": {
+      "detection_rate": 0.0177,
+      "precision": -0.0181,
+      "f1": -0.0006,
+      "false_alarms_per_min": 10.9346,
+      "tp": 16,
+      "fp": 39,
+      "fn": -16,
+      "n_gt": 0,
+      "time_to_first_s": 0.0
+    },
+    "far": {
+      "detection_rate": 0.0506,
+      "precision": 0.1088,
+      "f1": 0.0696,
+      "false_alarms_per_min": -0.2804,
+      "tp": 4,
+      "fp": -1,
+      "fn": -4,
+      "n_gt": 0,
+      "time_to_first_s": -0.2
+    },
+    "selection_score": 0.0345
+  },
+  "note": "Baseline JSON (eval_metrics.json) untouched. Far-band Det 0.063->0.114 is the main win; near F1 flat; E near Det drops under conf=0.50."
+}

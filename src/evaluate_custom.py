@@ -762,6 +762,30 @@ def main() -> int:
         default=None,
         help="Override frozen conf when scoring (does not retune).",
     )
+    parser.add_argument(
+        "--thresholds-path",
+        type=Path,
+        default=None,
+        help="Override evaluation.thresholds_path (keeps baseline JSON intact for A/B).",
+    )
+    parser.add_argument(
+        "--metrics-path",
+        type=Path,
+        default=None,
+        help="Override evaluation.metrics_path (keeps baseline JSON intact for A/B).",
+    )
+    parser.add_argument(
+        "--overlay-dir",
+        type=Path,
+        default=None,
+        help="Override evaluation.overlay_dir",
+    )
+    parser.add_argument(
+        "--examples-dir",
+        type=Path,
+        default=None,
+        help="Override evaluation.examples_dir",
+    )
     args = parser.parse_args()
     if args.export_examples:
         args.score_eval = True
@@ -782,17 +806,21 @@ def main() -> int:
     if not weights.exists():
         raise FileNotFoundError(f"Missing weights: {weights}")
 
+    def _resolve(path_like: Path | str | None, default: str | Path) -> Path:
+        p = Path(path_like if path_like is not None else default)
+        return p if p.is_absolute() else REPO_ROOT / p
+
     device = pick_device(args.device)
     imgsz = int(eval_cfg["imgsz"])
     iou_match = float(eval_cfg["iou_match"])
     nms_iou = float(eval_cfg["nms_iou"])
     conf_floor = float(eval_cfg["predict_conf_floor"])
     conf_grid = [float(c) for c in eval_cfg["conf_grid"]]
-    thresholds_path = REPO_ROOT / eval_cfg["thresholds_path"]
-    metrics_path = REPO_ROOT / eval_cfg["metrics_path"]
-    overlay_dir = REPO_ROOT / eval_cfg["overlay_dir"]
+    thresholds_path = _resolve(args.thresholds_path, eval_cfg["thresholds_path"])
+    metrics_path = _resolve(args.metrics_path, eval_cfg["metrics_path"])
+    overlay_dir = _resolve(args.overlay_dir, eval_cfg["overlay_dir"])
     overlay_max = int(eval_cfg.get("overlay_max_per_clip", 4))
-    examples_dir = REPO_ROOT / eval_cfg.get("examples_dir", "outputs/examples")
+    examples_dir = _resolve(args.examples_dir, eval_cfg.get("examples_dir", "outputs/examples"))
     examples_per_clip = int(eval_cfg.get("examples_per_clip", 3))
 
     frozen = None
@@ -894,13 +922,15 @@ def main() -> int:
         )
         print_band_table("EVAL (hold-out)", report)
         overlays = draw_overlays(detail, overlay_dir, max_per_clip=overlay_max)
-        print(f"\nExporting submission examples → {examples_dir.relative_to(REPO_ROOT)}")
-        example_rows = export_submission_examples(
-            detail,
-            examples_dir,
-            per_clip=examples_per_clip,
-            conf=conf,
-        )
+        example_rows: list[dict] = []
+        if args.export_examples:
+            print(f"\nExporting submission examples → {examples_dir.relative_to(REPO_ROOT)}")
+            example_rows = export_submission_examples(
+                detail,
+                examples_dir,
+                per_clip=examples_per_clip,
+                conf=conf,
+            )
 
         # Per-clip breakdown
         by_clip_rels: dict[str, list[str]] = defaultdict(list)

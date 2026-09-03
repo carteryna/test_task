@@ -211,18 +211,76 @@ Hold-out (YOLO11n `best.pt`, 214 frames, conf=0.20):
 
 Far-band hold-out recall is the weak number (**5 / 79** TP). That matches the train story: 10 px boxes after 1280 letterbox, plus F’s altitude/domain shift vs A–D. Near-band is carried by E; F pulls overall near Det down and FA/min up. JSON: `data/splits/eval_thresholds.json`, `data/splits/eval_metrics.json`.
 
+### Hold-out A/B: clean labels vs DINO+SAM student
+
+Same protocol, separate outputs so the baseline JSON above is untouched. Val still uses **cleaned** labels for conf selection (identical selection target); hold-out still uses the frozen proxy GT. Factory student: `runs/train/yolo11n_dinosam/weights/best.pt`.
+
+Val sweep for the factory student chose **`conf=0.50`** (val mean-band F1 **0.557**) — higher than the clean student’s 0.20, because factory training produces denser high-confidence clutter against the cleaner val GT. Hold-out once at that frozen conf:
+
+| Metric | Clean 0–200 m | DINO+SAM 0–200 m | Clean 200–400 m | DINO+SAM 200–400 m |
+|--------|--------------:|-----------------:|----------------:|-------------------:|
+| Detection rate | 0.602 | **0.619** | 0.063 | **0.114** |
+| Precision | **0.605** | 0.587 | 0.172 | **0.281** |
+| F1 | 0.603 | 0.603 | 0.093 | **0.162** |
+| False alarms / min | **99.5** | 110.5 | 6.7 | **6.4** |
+| Time to first (s) | 0.0 | 0.0 | 0.4 | **0.2** |
+
+| Clip | Clean Near Det / Prec | DINO+SAM Near Det / Prec | Clean Far Det | DINO+SAM Far Det |
+|------|----------------------:|-------------------------:|--------------:|-----------------:|
+| E | **0.997 / 0.818** | 0.897 / 0.610 | 1.0 (n=1) | 1.0 (n=1) |
+| F | 0.318 / 0.381 | **0.420 / 0.555** | 0.051 | **0.103** |
+
+Mean-band selection score: **0.348 → 0.383**. The factory student buys far-band recall (**5 → 9** TP of 79) and F near-band Det, at the cost of Clip E’s near-perfect Det under the higher conf and a small near-band precision drop. Far band is still weak in absolute terms — 11% Det is not solved — but the A/B moves the right way on the metric that was the bottleneck. Artifacts: `data/splits/eval_thresholds_dinosam.json`, `data/splits/eval_metrics_dinosam.json`, `data/splits/eval_ab_clean_vs_dinosam.json`, overlays in `results/eval_overlays_dinosam/`.
+
+```bash
+python src/evaluate_custom.py \
+  --weights runs/train/yolo11n_dinosam/weights/best.pt \
+  --thresholds-path data/splits/eval_thresholds_dinosam.json \
+  --metrics-path data/splits/eval_metrics_dinosam.json \
+  --overlay-dir results/eval_overlays_dinosam \
+  --examples-dir outputs/examples_dinosam \
+  --tune-val --score-eval
+python src/evaluate_custom.py --weights runs/train/yolo11n_dinosam/weights/best.pt \
+  --thresholds-path data/splits/eval_thresholds_dinosam.json \
+  --metrics-path data/splits/eval_metrics_dinosam.json \
+  --examples-dir outputs/examples_dinosam --export-examples
+```
+
 ### Example predictions (eval)
 
-Curated stills for the repo review live under **`outputs/examples/`** (3 frames × clips E and F). Each frame has:
+Curated stills for the **clean-label** student live under **`outputs/examples/`** (3 frames × clips E and F). The factory-student set is the same layout under **`outputs/examples_dinosam/`**. Each frame has:
 
 - `*_side_by_side.jpg` — left **GT** (green), right **student preds** (blue + conf)
 - `*_combined.jpg` — match view: GT matched green, GT miss yellow, pred TP blue, pred FP red
 
-Tags: `success` (clean TPs), `far` (best far-band coverage on that clip), `hard` (error-heavy). Index: `outputs/examples/manifest.json`. Debug dumps (error-sorted) stay in `results/eval_overlays/`.
+Tags: `success` (clean TPs), `far` (best far-band coverage on that clip), `hard` (error-heavy). Index: `manifest.json` in each folder. Debug dumps (error-sorted) stay in `results/eval_overlays/` / `results/eval_overlays_dinosam/`.
+
+### Detector video (eval)
+
+`src/export_eval_video.py` draws the match view on every hold-out sample and encodes H.264 via ffmpeg at the eval sample rate (5 fps). Factory student, conf frozen at **0.50**:
+
+| Clip | File | Duration | Size |
+|------|------|----------:|-----:|
+| E | [`outputs/videos/eval_E_dinosam.mp4`](outputs/videos/eval_E_dinosam.mp4) | ~30.6 s | 16 MB |
+| F | [`outputs/videos/eval_F_dinosam.mp4`](outputs/videos/eval_F_dinosam.mp4) | ~12.2 s | 11 MB |
+
+Legend on every frame: green = GT matched, yellow = GT miss, blue = pred TP, red = pred FP. Banner shows `t_sec`, conf, TP/FP/FN, far-GT count. Manifest: `outputs/videos/manifest_dinosam.json`. Intermediate JPEGs under `outputs/videos/frames_*` are gitignored and regenerable.
 
 ```bash
 python src/evaluate_custom.py --tune-val --score-eval
 python src/evaluate_custom.py --export-examples   # re-score + rewrite outputs/examples/
+# Factory-student stills + video (baseline examples/ untouched):
+python src/evaluate_custom.py --weights runs/train/yolo11n_dinosam/weights/best.pt \
+  --thresholds-path data/splits/eval_thresholds_dinosam.json \
+  --metrics-path data/splits/eval_metrics_dinosam.json \
+  --examples-dir outputs/examples_dinosam --export-examples
+python src/export_eval_video.py \
+  --weights runs/train/yolo11n_dinosam/weights/best.pt \
+  --thresholds-path data/splits/eval_thresholds_dinosam.json \
+  --tag dinosam
+# Short cut of F only: add --clips F
+# Clean-label baseline video: --weights runs/train/yolo11n/weights/best.pt --tag clean \
+#   --thresholds-path data/splits/eval_thresholds.json
 ```
 
 ## Error taxonomy & diagnostics
@@ -295,7 +353,7 @@ Agreement with the human-cleaned teacher labels (IoU 0.4). This measures **diver
 
 Clip C is the honest failure: it is the only clip where the factory produces *fewer* boxes than the teacher, and the previews show why — isolated dark cars on open asphalt at mid range are missed by `grounding-dino-tiny`. The factory buys geometry and rule-enforced cleanliness; on this checkpoint it gives back recall on low-contrast mid-range vehicles. `grounding-dino-base` or a 3×3 tiling would likely close it at 2–4× the runtime, which I did not spend.
 
-The reported hold-out band metrics above still come from the clean-label student (`runs/train/yolo11n`). A student trained on these factory labels is at `runs/train/yolo11n_dinosam` (val mAP50 0.579 on denser labels); the hold-out A/B is the next comparison.
+The headline hold-out band table still reports the clean-label student (`runs/train/yolo11n`). The factory student (`yolo11n_dinosam`) has its own hold-out A/B in [Hold-out A/B](#hold-out-ab-clean-labels-vs-dinosam-student): far Det 0.063 → 0.114, mean-band score 0.348 → 0.383.
 
 ```bash
 python src/auto_label_dino_sam.py                          # all train/val (A–D), ~3.6 h CPU
@@ -386,7 +444,7 @@ Smoke (3 epochs, ~11 min / 0.180 h). `runs/train/yolo11n_dinosam_e3/weights/best
 | 8 | 0.630 | 0.550 | 0.570 | 0.330 |
 | 10 (`best.pt`) | 0.643 | 0.564 | **0.579** | **0.341** |
 
-Fused `best.pt` val (38 images, 1190 instances): **P 0.644 · R 0.565 · mAP50 0.579**. Steady climb, no collapse — the denser factory labels are trainable. Relative to the clean-label student (mAP50 0.657 on 467 instances) the number is lower, as expected when the same detector is scored against ~2.5× more boxes that include factory extras. Snapshots live in `data/splits/train_smoke.json`.
+Fused `best.pt` val (38 images, 1190 instances): **P 0.644 · R 0.565 · mAP50 0.579**. Steady climb, no collapse — the denser factory labels are trainable. Relative to the clean-label student (mAP50 0.657 on 467 instances) the number is lower, as expected when the same detector is scored against ~2.5× more boxes that include factory extras. The fair A/B is the hold-out band table above (far Det ↑, near F1 flat). Snapshots live in `data/splits/train_smoke.json`.
 
 ```bash
 python src/estimate_distance.py --config configs/data.yaml
@@ -399,7 +457,10 @@ python src/train.py --models yolo11n --epochs 10 --labels-dir data/labels/auto_g
 python src/train_statistics.py
 # after freeze: python src/auto_label.py --allow-eval --splits eval
 # GPU / 50 epochs: python src/train.py --config configs/train.yaml
-# hold-out A/B next: point evaluation.weights at runs/train/yolo11n_dinosam/weights/best.pt
+# hold-out A/B (writes *_dinosam.json; baseline metrics untouched):
+python src/evaluate_custom.py --weights runs/train/yolo11n_dinosam/weights/best.pt \
+  --thresholds-path data/splits/eval_thresholds_dinosam.json \
+  --metrics-path data/splits/eval_metrics_dinosam.json --tune-val --score-eval
 ```
 
 ## Quickstart
@@ -430,6 +491,14 @@ python src/error_analysis.py
 python src/auto_label_dino_sam.py                              # DINO+SAM factory (~3.6 h CPU)
 python src/auto_label_dino_sam.py --allow-eval                  # hold-out proxy-GT audit (~4.5 h)
 python src/train.py --models yolo11n --epochs 10 --labels-dir data/labels/auto_generated --run-suffix _dinosam
+python src/evaluate_custom.py --weights runs/train/yolo11n_dinosam/weights/best.pt \
+  --thresholds-path data/splits/eval_thresholds_dinosam.json \
+  --metrics-path data/splits/eval_metrics_dinosam.json --tune-val --score-eval
+python src/evaluate_custom.py --weights runs/train/yolo11n_dinosam/weights/best.pt \
+  --thresholds-path data/splits/eval_thresholds_dinosam.json \
+  --metrics-path data/splits/eval_metrics_dinosam.json \
+  --examples-dir outputs/examples_dinosam --export-examples
+python src/export_eval_video.py --tag dinosam    # outputs/videos/eval_{E,F}_dinosam.mp4
 ```
 
 ## Submission checklist
@@ -441,10 +510,12 @@ What the brief asks for, mapped to this repo:
 | Runnable code | `src/`, `configs/`, `requirements.txt`, Quickstart above |
 | Strategy + key decisions | README sections above |
 | Metrics table | Evaluation & Metrics |
-| Example predictions with GT overlaid | `outputs/examples/*_side_by_side.jpg` and `*_combined.jpg` |
+| Example predictions with GT overlaid | `outputs/examples/` (clean student) and `outputs/examples_dinosam/` (factory student) |
+| Short detector video on eval | `outputs/videos/eval_E_dinosam.mp4`, `outputs/videos/eval_F_dinosam.mp4` |
 | Failure analysis | `data/splits/error_taxonomy.json`, `outputs/diagnostics/`, `data/hard_negatives/` |
 | Automated labeling pipeline | `src/auto_label_dino_sam.py`, `data/labels/auto_generated/`, `data/splits/auto_label_dino_sam.json`, `results/auto_label_dino_sam/` |
 | Hold-out proxy-GT audit | `data/labels/eval_dino_sam/`, `data/splits/auto_label_dino_sam_eval.json`, `results/auto_label_dino_sam_eval/` |
+| Clean vs DINO+SAM hold-out A/B | `data/splits/eval_metrics_dinosam.json`, `data/splits/eval_ab_clean_vs_dinosam.json` |
 | Trained weights or a link | `runs/train/yolo11n/weights/best.pt` (clean labels) and `runs/train/yolo11n_dinosam/weights/best.pt` (factory labels) are gitignored (`*.pt`); upload to Drive/S3/HF and put the URL in the README or repo description |
 
 Ship a **public** GitHub repo, or private with reviewer access. Do **not** commit raw videos, `data/frames/`, or `.pt` blobs if the host is picky about size — keep cleaned eval labels (`data/labels/eval/`), splits/metrics JSON, and `outputs/examples/`.
@@ -459,6 +530,6 @@ Train is landscape 1080p/4K; hold-out mixes E (portrait, near) and F (higher alt
 
 The hold-out audit says ~44% of the student's FPs land on a box a second model calls a vehicle, so reported precision (0.605 near-band) understates the model. I did not restate the metrics on that basis: the audit samples 126 of 379 FPs and the auditor has its own error rate, so it bounds the bias rather than removing it.
 
-The DINO+SAM factory trades recall for geometry on this checkpoint: tighter boxes and rule-enforced schema, but 66% agreement on Clip C's low-contrast mid-range cars. Its 22.5 extra boxes/frame are unaudited — part real vehicles the teacher missed, part new FPs. The student trains on those labels without collapsing (val mAP50 0.579 @ 10 epochs on 1190 instances), but that number is not a fair A/B against the clean-label student (0.657 on 467 instances). The decisive comparison is a hold-out band pass with `evaluate_custom.py` pointed at `yolo11n_dinosam/weights/best.pt`.
+The DINO+SAM factory trades recall for geometry on this checkpoint: tighter boxes and rule-enforced schema, but 66% agreement on Clip C's low-contrast mid-range cars. Its 22.5 extra boxes/frame are unaudited — part real vehicles the teacher missed, part new FPs. On the hold-out A/B the factory student improves far Det (0.063 → 0.114) and F near Det, with near F1 flat; Clip E near Det drops under the higher frozen conf (0.50 vs 0.20). Absolute far-band performance is still the unsolved problem.
 
 I am not claiming a Pi-ready detector. YOLO11n at 1280 is a training choice; onboard would be a smaller input, INT8, and a tracker, on a board I did not run here.

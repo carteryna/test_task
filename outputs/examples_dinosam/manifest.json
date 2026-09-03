@@ -1,0 +1,95 @@
+{
+  "role": "submission_examples",
+  "conf": 0.5,
+  "n_examples": 6,
+  "legend": {
+    "side_by_side": "Left = GT (green). Right = student preds (blue) + conf.",
+    "combined": "GT matched green, GT miss yellow, pred TP blue, pred FP red."
+  },
+  "examples": [
+    {
+      "clip_id": "E",
+      "tag": "success",
+      "frame": "data/frames/E/000150.jpg",
+      "t_sec": 5.0,
+      "conf": 0.5,
+      "tp": 5,
+      "fp": 2,
+      "fn": 0,
+      "far_gt": 0,
+      "far_tp": 0,
+      "side_by_side": "outputs/examples_dinosam/E_000150_success_side_by_side.jpg",
+      "combined": "outputs/examples_dinosam/E_000150_success_combined.jpg"
+    },
+    {
+      "clip_id": "E",
+      "tag": "far",
+      "frame": "data/frames/E/000102.jpg",
+      "t_sec": 3.4,
+      "conf": 0.5,
+      "tp": 3,
+      "fp": 4,
+      "fn": 0,
+      "far_gt": 1,
+      "far_tp": 1,
+      "side_by_side": "outputs/examples_dinosam/E_000102_far_side_by_side.jpg",
+      "combined": "outputs/examples_dinosam/E_000102_far_combined.jpg"
+    },
+    {
+      "clip_id": "E",
+      "tag": "hard",
+      "frame": "data/frames/E/000882.jpg",
+      "t_sec": 29.4,
+      "conf": 0.5,
+      "tp": 3,
+      "fp": 6,
+      "fn": 0,
+      "far_gt": 0,
+      "far_tp": 0,
+      "side_by_side": "outputs/examples_dinosam/E_000882_hard_side_by_side.jpg",
+      "combined": "outputs/examples_dinosam/E_000882_hard_combined.jpg"
+    },
+    {
+      "clip_id": "F",
+      "tag": "success",
+      "frame": "data/frames/F/000235.jpg",
+      "t_sec": 9.4,
+      "conf": 0.5,
+      "tp": 8,
+      "fp": 2,
+      "fn": 2,
+      "far_gt": 1,
+      "far_tp": 0,
+      "side_by_side": "outputs/examples_dinosam/F_000235_success_side_by_side.jpg",
+      "combined": "outputs/examples_dinosam/F_000235_success_combined.jpg"
+    },
+    {
+      "clip_id": "F",
+      "tag": "far",
+      "frame": "data/frames/F/000290.jpg",
+      "t_sec": 11.6,
+      "conf": 0.5,
+      "tp": 5,
+      "fp": 1,
+      "fn": 5,
+      "far_gt": 4,
+      "far_tp": 1,
+      "side_by_side": "outputs/examples_dinosam/F_000290_far_side_by_side.jpg",
+      "combined": "outputs/examples_dinosam/F_000290_far_combined.jpg"
+    },
+    {
+      "clip_id": "F",
+      "tag": "hard",
+      "frame": "data/frames/F/000120.jpg",
+      "t_sec": 4.8,
+      "conf": 0.5,
+      "tp": 2,
+      "fp": 7,
+      "fn": 9,
+      "far_gt": 0,
+      "far_tp": 0,
+      "side_by_side": "outputs/examples_dinosam/F_000120_hard_side_by_side.jpg",
+      "combined": "outputs/examples_dinosam/F_000120_hard_combined.jpg"
+    }
+  ]
+}
