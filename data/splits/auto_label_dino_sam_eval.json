@@ -1,0 +1,167 @@
+{
+  "pipeline": "grounding_dino -> sam -> tight_box -> schema+kinematics",
+  "dino_model": "IDEA-Research/grounding-dino-tiny",
+  "sam_model": "facebook/sam-vit-base",
+  "prompt": "vehicle.",
+  "device": "cpu",
+  "splits": [
+    "eval"
+  ],
+  "role": "eval_proxy_audit",
+  "student_frozen": true,
+  "used_for_training": false,
+  "n_images": 214,
+  "n_boxes_raw": 3519,
+  "n_boxes_final": 2542,
+  "n_sam_refined": 2269,
+  "sam_refine_rate": 0.8926,
+  "n_truck_merges": 372,
+  "agreement_vs_reference": {
+    "reference_dir": "data/labels/eval",
+    "iou_thr": 0.4,
+    "recall_vs_reference": 0.8311,
+    "extra_boxes": 1725,
+    "extra_per_frame": 8.06,
+    "median_matched_iou": 0.8413,
+    "median_area_ratio": 0.9769,
+    "per_clip": {
+      "E": {
+        "reference_boxes": 379,
+        "auto_boxes": 791,
+        "matched": 374,
+        "recall_vs_reference": 0.9868,
+        "extra_boxes": 417
+      },
+      "F": {
+        "reference_boxes": 604,
+        "auto_boxes": 1751,
+        "matched": 443,
+        "recall_vs_reference": 0.7334,
+        "extra_boxes": 1308
+      }
+    }
+  },
+  "student_fp_audit": {
+    "source": "data/splits/error_taxonomy.json",
+    "iou_thr": 0.4,
+    "note": "share of sampled student FPs that overlap an independent DINO+SAM box",
+    "buckets": {
+      "gt_omission": {
+        "sampled_fps": 60,
+        "confirmed_vehicle": 36,
+        "confirmed_pct": 60.0
+      },
+      "fractured_truck": {
+        "sampled_fps": 2,
+        "confirmed_vehicle": 2,
+        "confirmed_pct": 100.0
+      },
+      "unclassified": {
+        "sampled_fps": 60,
+        "confirmed_vehicle": 23,
+        "confirmed_pct": 38.3
+      },
+      "suspected_motorcycle": {
+        "sampled_fps": 4,
+        "confirmed_vehicle": 2,
+        "confirmed_pct": 50.0
+      }
+    }
+  },
+  "drops_by_reason": {
+    "max_dim": 499,
+    "suspected_motorcycle": 65,
+    "max_aspect": 11,
+    "min_side": 1,
+    "static_track": 29
+  },
+  "track_stats": {
+    "E": {
+      "tracks": 310,
+      "static_tracks": 0,
+      "short_tracks": 0,
+      "move_budget_px": 10.8,
+      "static_min_frames": 12
+    },
+    "F": {
+      "tracks": 726,
+      "static_tracks": 2,
+      "short_tracks": 0,
+      "move_budget_px": 19.2,
+      "static_min_frames": 12
+    }
+  },
+  "per_clip": {
+    "E": {
+      "images": 153,
+      "boxes": 791,
+      "empty": 0,
+      "sam_refined_boxes": 683,
+      "raw_boxes": 1408
+    },
+    "F": {
+      "images": 61,
+      "boxes": 1751,
+      "empty": 0,
+      "sam_refined_boxes": 1586,
+      "raw_boxes": 2111
+    }
+  },
+  "timing": {
+    "n_cached": 214,
+    "n_computed": 0,
+    "inference_s": 0.0
+  },
+  "labels_dir": "data/labels/eval_dino_sam",
+  "config": {
+    "dino": {
+      "model_id": "IDEA-Research/grounding-dino-tiny",
+      "prompt": "vehicle.",
+      "box_threshold": 0.15,
+      "text_threshold": 0.2,
+      "batch_size": 2
+    },
+    "tiling": {
+      "rows": 2,
+      "cols": 2,
+      "overlap": 0.15,
+      "full_frame_pass": true,
+      "merge_iou": 0.55
+    },
+    "sam": {
+      "model_id": "facebook/sam-vit-base",
+      "box_pad_frac": 0.25,
+      "min_area_frac": 0.05,
+      "max_area_frac": 3.0,
+      "min_iou": 0.25,
+      "boxes_per_chunk": 16,
+      "contour_eps_frac": 0.01
+    },
+    "schema": {
+      "min_side_px": 8,
+      "max_dim_frac": 0.35,
+      "max_aspect": 6.0,
+      "motorcycle_aspect": 3.0,
+      "motorcycle_max_side_px": 28,
+      "merge_iou": 0.35,
+      "merge_containment": 0.6,
+      "merge_max_aspect": 6.0,
+      "merge_max_growth": 1.6,
+      "merge_min_aspect": 1.8,
+      "merge_min_side_px": 24
+    },
+    "kinematics": {
+      "static_move_frac": 0.005,
+      "static_min_frames": 12,
+      "min_track_hits": 1,
+      "tracker": {
+        "high_conf": 0.35,
+        "iou_high": 0.3,
+        "iou_low": 0.2,
+        "max_age": 2
+      }
+    }
+  },
+  "eval_frames_skipped": 214,
+  "subsampled_run": false
+}

@@ -107,6 +107,13 @@ auto_label_dino_sam:
   preview_dir: results/auto_label_dino_sam
   cache_dir: runs/cache/dino_sam   # gitignored; lets rules be re-tuned without re-inference
   preview_per_clip: 2
+  # Hold-out audit only, behind --allow-eval. A second opinion on the teacher's
+  # proxy GT; never training data, and it does not overwrite data/labels/eval.
+  eval:
+    labels_dir: data/labels/eval_dino_sam
+    summary_path: data/splits/auto_label_dino_sam_eval.json
+    preview_dir: results/auto_label_dino_sam_eval
+    reference_dir: data/labels/eval   # QA'd proxy GT that scored the student
   dino:
     model_id: IDEA-Research/grounding-dino-tiny
     prompt: "vehicle."      # HF grounding expects lowercase, period-terminated

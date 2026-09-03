@@ -8,13 +8,16 @@
     "train",
     "val"
   ],
+  "role": "train_pool_labels",
+  "student_frozen": null,
+  "used_for_training": true,
   "n_images": 185,
   "n_boxes_raw": 7016,
   "n_boxes_final": 5886,
   "n_sam_refined": 5450,
   "sam_refine_rate": 0.9259,
   "n_truck_merges": 796,
-  "agreement_vs_clean": {
+  "agreement_vs_reference": {
     "reference_dir": "data/labels/clean",
     "iou_thr": 0.4,
     "recall_vs_reference": 0.7802,

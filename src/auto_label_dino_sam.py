@@ -12,6 +12,9 @@ Stage 2 (rules, cheap to re-run):
   modes the hold-out taxonomy found in the YOLO-World labels.
 
 Train/val clips only; the eval hold-out is refused (see assert_train_pool_only).
+With --allow-eval --splits eval the hold-out is labeled into a separate directory
+as an audit of the teacher's proxy GT: it never overwrites data/labels/eval and
+never reaches training (train.py builds from train.txt/val.txt and rejects eval).
 """
 
 from __future__ import annotations
@@ -76,6 +79,13 @@ def tile_windows(
     if full_frame or not windows:
         windows.append((0, 0, width, height))
     return windows
+
+
+def rel_to_repo(path: Path) -> Path:
+    try:
+        return path.resolve().relative_to(REPO_ROOT)
+    except ValueError:
+        return path
 
 
 def box_aspect(box) -> float:
@@ -862,7 +872,7 @@ def compare_to_reference(rules: dict, reference_dir: Path, iou_thr: float) -> di
     total_match = sum(v["matched"] for v in per_clip.values())
     total_auto = sum(v["auto_boxes"] for v in per_clip.values())
     return {
-        "reference_dir": str(reference_dir.relative_to(REPO_ROOT)),
+        "reference_dir": str(rel_to_repo(reference_dir)),
         "iou_thr": iou_thr,
         "recall_vs_reference": round(total_match / total_ref, 4) if total_ref else None,
         "extra_boxes": total_auto - total_match,
@@ -876,10 +886,74 @@ def compare_to_reference(rules: dict, reference_dir: Path, iou_thr: float) -> di
     }
 
 
+def audit_student_fps(rules: dict, taxonomy_path: Path, iou_thr: float) -> dict | None:
+    """Second opinion on the student's hold-out FPs.
+
+    error_analysis.py flagged FPs as `gt_omission` (confident, no proxy GT) on the
+    assumption they are labeling debt rather than model error. An independent
+    labeler can test that: an FP overlapping a DINO+SAM box is a vehicle the proxy
+    GT missed, so the student was right and the metric was wrong.
+    """
+    if not taxonomy_path.exists():
+        return None
+    taxonomy = json.loads(taxonomy_path.read_text())
+    instances = taxonomy.get("fp_instances") or []
+    if not instances:
+        return None
+
+    auto_by_path: dict[str, np.ndarray] = {}
+    for frames in rules["by_clip"].values():
+        for frame in frames:
+            auto_by_path[frame["path"]] = np.array(
+                [d["xyxy"] for d in frame["dets"]], dtype=np.float32
+            ).reshape(-1, 4)
+
+    buckets: dict[str, dict] = defaultdict(lambda: {"n": 0, "confirmed": 0, "no_frame": 0})
+    for inst in instances:
+        bucket = buckets[inst["error_type"]]
+        auto = auto_by_path.get(inst["path"])
+        if auto is None:
+            bucket["no_frame"] += 1
+            continue
+        bucket["n"] += 1
+        if len(auto) == 0:
+            continue
+        box = np.asarray(inst["xyxy"], dtype=np.float32).reshape(1, 4)
+        if float(ev.iou_matrix(box, auto).max()) >= iou_thr:
+            bucket["confirmed"] += 1
+
+    out = {}
+    for name, stats in buckets.items():
+        if not stats["n"]:
+            continue
+        out[name] = {
+            "sampled_fps": stats["n"],
+            "confirmed_vehicle": stats["confirmed"],
+            "confirmed_pct": round(100.0 * stats["confirmed"] / stats["n"], 1),
+        }
+    return {
+        "source": str(rel_to_repo(taxonomy_path)),
+        "iou_thr": iou_thr,
+        # error_analysis.py stores a capped sample of instances, not every FP.
+        "note": "share of sampled student FPs that overlap an independent DINO+SAM box",
+        "buckets": out,
+    }
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--config", type=Path, default=REPO_ROOT / "configs" / "data.yaml")
-    parser.add_argument("--splits", nargs="+", default=["train", "val"])
+    parser.add_argument(
+        "--splits",
+        nargs="+",
+        default=None,
+        help="Default: train val. With --allow-eval: eval.",
+    )
+    parser.add_argument(
+        "--allow-eval",
+        action="store_true",
+        help="Audit the frozen hold-out. Writes eval.labels_dir; never training data.",
+    )
     parser.add_argument("--clips", nargs="+", default=None, help="Restrict to these clip ids")
     parser.add_argument("--limit", type=int, default=None, help="First N frames (smoke runs)")
     parser.add_argument("--stride", type=int, default=1, help="Take every Nth frame")
@@ -896,7 +970,7 @@ def main() -> int:
         "--compare-iou",
         type=float,
         default=0.4,
-        help="IoU for agreement scoring against the cleaned teacher labels",
+        help="IoU for agreement scoring against the reference labels",
     )
     args = parser.parse_args()
 
@@ -907,32 +981,50 @@ def main() -> int:
     eval_paths = al.read_split_list(splits_dir / "eval.txt")
     eval_clip_ids = {c["id"] for c in data_cfg["clips"]["eval"]}
 
-    if "eval" in args.splits:
-        raise RuntimeError("Refusing to auto-label the hold-out. Train/val clips only.")
     clip_ids = set(args.clips) if args.clips else None
-    if clip_ids and clip_ids & eval_clip_ids:
-        raise RuntimeError(f"Refusing eval clip ids: {sorted(clip_ids & eval_clip_ids)}")
+    splits = args.splits or (["eval"] if args.allow_eval else ["train", "val"])
+
+    if args.allow_eval:
+        if splits != ["eval"]:
+            raise RuntimeError("--allow-eval only accepts --splits eval")
+        if clip_ids and clip_ids - eval_clip_ids:
+            raise RuntimeError(f"--allow-eval --clips must be eval ids; got {sorted(clip_ids)}")
+        out_cfg = cfg["eval"]
+        reference_dir = REPO_ROOT / out_cfg["reference_dir"]
+    else:
+        if "eval" in splits:
+            raise RuntimeError(
+                "Refusing to auto-label the hold-out. Use --allow-eval --splits eval to audit it."
+            )
+        if clip_ids and clip_ids & eval_clip_ids:
+            raise RuntimeError(f"Refusing eval clip ids: {sorted(clip_ids & eval_clip_ids)}")
+        out_cfg = cfg
+        reference_dir = REPO_ROOT / data_cfg["cleanup"]["clean_dir"]
 
     image_rels: list[str] = []
-    for split in args.splits:
+    for split in splits:
         image_rels.extend(al.read_split_list(splits_dir / f"{split}.txt"))
     image_rels = sorted(dict.fromkeys(image_rels))
     image_rels = al.filter_image_rels(image_rels, clip_ids)
-    al.assert_train_pool_only(image_rels, eval_paths, eval_clip_ids)
+    if args.allow_eval:
+        al.assert_eval_only(image_rels, eval_paths, eval_clip_ids)
+    else:
+        al.assert_train_pool_only(image_rels, eval_paths, eval_clip_ids)
     if args.stride > 1:
         image_rels = image_rels[:: args.stride]
     if args.limit:
         image_rels = image_rels[: args.limit]
 
-    labels_dir = args.labels_dir or REPO_ROOT / cfg["labels_dir"]
+    labels_dir = args.labels_dir or REPO_ROOT / out_cfg["labels_dir"]
     if not Path(labels_dir).is_absolute():
         labels_dir = REPO_ROOT / labels_dir
     cache_dir = REPO_ROOT / cfg["cache_dir"]
     device = pick_torch_device(args.device)
 
+    pool = "hold-out audit" if args.allow_eval else "train pool"
     print(
-        f"DINO+SAM auto-label: {len(image_rels)} frames splits={args.splits} "
-        f"clips={sorted(clip_ids) if clip_ids else 'all train pool'} device={device}"
+        f"DINO+SAM auto-label: {len(image_rels)} frames splits={splits} "
+        f"clips={sorted(clip_ids) if clip_ids else f'all {pool}'} device={device}"
     )
     subsampled = args.stride > 1 or args.limit is not None
     if subsampled:
@@ -953,15 +1045,21 @@ def main() -> int:
         rules,
         cfg,
         labels_dir=Path(labels_dir),
-        preview_dir=REPO_ROOT / cfg["preview_dir"],
+        preview_dir=REPO_ROOT / out_cfg["preview_dir"],
         preview_per_clip=int(cfg["preview_per_clip"]),
         replace_clip_ids=clip_ids,
     )
 
-    reference_dir = REPO_ROOT / data_cfg["cleanup"]["clean_dir"]
     agreement = (
         compare_to_reference(rules, reference_dir, args.compare_iou)
         if reference_dir.exists()
+        else None
+    )
+    fp_audit = (
+        audit_student_fps(
+            rules, REPO_ROOT / data_cfg["diagnostics"]["report_path"], args.compare_iou
+        )
+        if args.allow_eval
         else None
     )
 
@@ -974,14 +1072,18 @@ def main() -> int:
         "sam_model": cfg["sam"]["model_id"],
         "prompt": cfg["dino"]["prompt"],
         "device": device,
-        "splits": args.splits,
+        "splits": splits,
+        "role": "eval_proxy_audit" if args.allow_eval else "train_pool_labels",
+        "student_frozen": True if args.allow_eval else None,
+        "used_for_training": not args.allow_eval,
         "n_images": len(frames),
         "n_boxes_raw": n_raw,
         "n_boxes_final": n_final,
         "n_sam_refined": n_sam,
         "sam_refine_rate": round(n_sam / n_final, 4) if n_final else 0.0,
         "n_truck_merges": rules["n_merges"],
-        "agreement_vs_clean": agreement,
+        "agreement_vs_reference": agreement,
+        "student_fp_audit": fp_audit,
         "drops_by_reason": rules["drop_counts"],
         "track_stats": rules["track_stats"],
         "per_clip": per_clip,
@@ -991,7 +1093,7 @@ def main() -> int:
         "eval_frames_skipped": len(eval_paths),
         "subsampled_run": subsampled,
     }
-    summary_path = REPO_ROOT / cfg["summary_path"]
+    summary_path = REPO_ROOT / out_cfg["summary_path"]
     summary_path.parent.mkdir(parents=True, exist_ok=True)
     summary_path.write_text(json.dumps(summary, indent=2) + "\n")
 
@@ -1005,14 +1107,24 @@ def main() -> int:
     print(f"  drops: {rules['drop_counts']}")
     if agreement:
         print(
-            f"  vs cleaned teacher labels: recall={agreement['recall_vs_reference']} "
+            f"  vs {agreement['reference_dir']}: recall={agreement['recall_vs_reference']} "
             f"extra/frame={agreement['extra_per_frame']} "
             f"median IoU={agreement['median_matched_iou']} "
             f"median area ratio={agreement['median_area_ratio']}"
         )
+    if fp_audit:
+        print("  student FP audit (sampled, IoU >= %.1f):" % args.compare_iou)
+        for name, stats in sorted(fp_audit["buckets"].items()):
+            print(
+                f"    {name}: {stats['confirmed_vehicle']}/{stats['sampled_fps']} "
+                f"({stats['confirmed_pct']}%) confirmed as vehicles"
+            )
     print(f"Wrote {Path(labels_dir).relative_to(REPO_ROOT)}")
     print(f"Wrote {summary_path.relative_to(REPO_ROOT)}")
-    print(f"OK: eval not labeled ({len(eval_paths)} frames skipped)")
+    if args.allow_eval:
+        print("OK: hold-out audit only — proxy GT untouched, labels never enter training")
+    else:
+        print(f"OK: eval not labeled ({len(eval_paths)} frames skipped)")
     return 0
 
 

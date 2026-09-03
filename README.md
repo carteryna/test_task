@@ -305,6 +305,40 @@ python src/auto_label_dino_sam.py --refresh                # ignore the inferenc
 python src/train.py --labels-dir data/labels/auto_generated --run-suffix _dinosam
 ```
 
+### Hold-out audit: is `gt_omission` really labeling debt?
+
+The taxonomy claimed 93 FPs (24.5%) were `gt_omission` — confident student boxes with no proxy GT — on the argument that they are labeling debt, not model error. That is a hypothesis one labeler cannot test on itself. Running the factory over the frozen hold-out gives an **independent second opinion**: if a student FP overlaps a DINO+SAM box, two unrelated models agree a vehicle is there and the proxy GT is what's missing.
+
+This is leakage-sensitive, so it sits behind `--allow-eval --splits eval` (the same gate `auto_label.py` uses) and writes to a **separate** tree — `data/labels/eval_dino_sam/`, not `data/labels/eval/`. The proxy GT that scored the student is untouched, every metric above still stands, and the summary is tagged `role: eval_proxy_audit`, `used_for_training: false`. `train.py` builds only from `train.txt`/`val.txt` and rejects eval paths, so these labels cannot reach training. Four guards are enforced: eval without the flag, an eval clip id without the flag, `--allow-eval` with a non-eval split, and `--allow-eval` with a train clip.
+
+Sampled student FPs from `error_taxonomy.json`, scored against the DINO+SAM labels at IoU 0.4:
+
+| Student FP bucket | Confirmed as vehicle | Reading |
+|---|---:|---|
+| `gt_omission` | **36 / 60 (60%)** | the debt hypothesis holds for most, but not all, of the bucket |
+| `unclassified` | **23 / 60 (38%)** | a third of the biggest bucket is also proxy-GT debt |
+| `fractured_truck` | 2 / 2 | both confirmed |
+| `suspected_motorcycle` | 2 / 4 | ambiguous — motorcycles are out of the ontology by design |
+
+Extrapolating those rates across all 379 hold-out FPs puts **~167 (44%)** on a box a second model calls a vehicle. As an upper bound, overall precision would read **0.59 → 0.77** if every one were true. Treat that as a ceiling, not a correction: the factory has its own false positives (8.1 extra boxes/frame here), so agreement between two models is evidence, not ground truth. The honest conclusion is narrower and still useful — a large share of what the metrics call false alarms is the proxy GT's debt, so the reported precision understates the student, and the far-band recall gap (0.063) remains the real problem.
+
+Run: 214 frames in ~4.5 h, **3519 raw → 2542 final** boxes, 89.3% from a mask, median matched IoU **0.841**, median area ratio **0.977**.
+
+| Clip | Proxy GT | Auto | Recall vs proxy | Extra |
+|---|---:|---:|---:|---:|
+| E (portrait, near) | 379 | 791 | **0.987** | 417 |
+| F (high aerial, far) | 604 | 1751 | 0.733 | 1308 |
+
+E is near-total agreement: the factory independently reproduces 374 of 379 manually QA'd boxes, which is the strongest evidence in this repo that the pipeline is sound. F is the harder clip and matches the train-pool pattern — high-altitude vehicles are where `grounding-dino-tiny` and the student both struggle.
+
+Two rule notes. `max_dim` dropped **499** boxes, nearly all on E, where DINO repeatedly proposes the whole roadway as one object in the portrait framing — a pathology the size guard catches cleanly. And Rule 4 fired on F (2 static tracks, 29 boxes) where it never fired strictly during the student diagnostics, because 5 fps eval sampling packs 12 consecutive frames into 2.4 s of drone drift.
+
+```bash
+python src/auto_label_dino_sam.py --allow-eval                    # E+F audit, ~4.5 h CPU
+python src/auto_label_dino_sam.py --allow-eval --clips F          # one hold-out clip
+python src/auto_label_dino_sam.py --allow-eval --stage rules      # re-audit from cache (~5 s)
+```
+
 ## Student training
 
 `configs/train.yaml` + `src/train.py`: build `data/yolo/` from train/val splits and `data/labels/clean` (symlinks; eval refused), then fine-tune from COCO with **`freeze=10`**, `imgsz=1280`, `batch=4`. Dataset scan: **147 train / 38 val** images, **1740 / 467** boxes, **0** empty frames. YOLOv8n is wired but not trained on this CPU.
@@ -367,6 +401,7 @@ python src/evaluate_custom.py --tune-val --score-eval
 python src/evaluate_custom.py --export-examples
 python src/error_analysis.py
 python src/auto_label_dino_sam.py                              # DINO+SAM factory (~3.6 h CPU)
+python src/auto_label_dino_sam.py --allow-eval                  # hold-out proxy-GT audit (~4.5 h)
 ```
 
 ## Submission checklist
@@ -381,6 +416,7 @@ What the brief asks for, mapped to this repo:
 | Example predictions with GT overlaid | `outputs/examples/*_side_by_side.jpg` and `*_combined.jpg` |
 | Failure analysis | `data/splits/error_taxonomy.json`, `outputs/diagnostics/`, `data/hard_negatives/` |
 | Automated labeling pipeline | `src/auto_label_dino_sam.py`, `data/labels/auto_generated/`, `data/splits/auto_label_dino_sam.json`, `results/auto_label_dino_sam/` |
+| Hold-out proxy-GT audit | `data/labels/eval_dino_sam/`, `data/splits/auto_label_dino_sam_eval.json`, `results/auto_label_dino_sam_eval/` |
 | Trained weights or a link | `runs/train/yolo11n/weights/best.pt` is gitignored (`*.pt`); upload to Drive/S3/HF and put the URL in the README or repo description |
 
 Ship a **public** GitHub repo, or private with reviewer access. Do **not** commit raw videos, `data/frames/`, or `.pt` blobs if the host is picky about size — keep cleaned eval labels (`data/labels/eval/`), splits/metrics JSON, and `outputs/examples/`.
@@ -392,6 +428,8 @@ Ship a **public** GitHub repo, or private with reviewer access. Do **not** commi
 Distance from box size will mis-bin trucks, occluded cars, and oblique views. Far-band recall will likely be the weak number: 4K boxes become a few pixels after 1280 letterbox.
 
 Train is landscape 1080p/4K; hold-out mixes E (portrait, near) and F (higher altitude, far). F is where Det and FA/min break. Teacher boxes on B include a few non-vehicles at `conf=0.15`; that noise goes into the students unless cleanup removes it.
+
+The hold-out audit says ~44% of the student's FPs land on a box a second model calls a vehicle, so reported precision (0.605 near-band) understates the model. I did not restate the metrics on that basis: the audit samples 126 of 379 FPs and the auditor has its own error rate, so it bounds the bias rather than removing it.
 
 The DINO+SAM factory trades recall for geometry on this checkpoint: tighter boxes and rule-enforced schema, but 66% agreement on Clip C's low-contrast mid-range cars. Its 22.5 extra boxes/frame are unaudited — part real vehicles the teacher missed, part new FPs — so swapping the student onto those labels needs the hold-out A/B before anyone believes it.
 
