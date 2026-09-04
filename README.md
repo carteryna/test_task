@@ -187,6 +187,27 @@ An independent audit backs the label story: running the factory over the frozen 
 
 ---
 
+## Beyond the sprint — R&D and how the team should work
+
+P0/P1 is what to ship next. This is how the work should scale: architecture research, a data flywheel, and named partners on hardware and DataOps — not another isolated weight dump.
+
+**Model architecture and edge R&D**
+
+- **Cross-architecture benchmark.** YOLO11n is the sprint baseline, not the last word. The next research pass should put it against a transformer-style edge detector (RT-DETR or equivalent) on the *same* frozen hold-out. The question is whether self-attention recovers far-band targets that currently collapse to one P3 cell, or whether the ~31 px floor is physics no head can invent pixels for.
+- **Tracking that takes IMU as a state, not a hope.** Visual IoU association failed under pitch/yaw because the camera, not the car, moved. Evaluate a lightweight edge tracker (ByteTrack / BoT-SORT class) whose motion model accepts Pi 5 VIO / IMU telemetry as an explicit input — physical state estimation, not another appearance embedding.
+
+**Data flywheel and MLOps**
+
+- **Collect on the payload, not on Pexels.** Public clips got the pipeline honest and leak-proof. Production data has to come from the actual drone camera: locked focal length, declared altitude envelope, fixed mounting pitch. That retires the synthetic 40° FOV prior and the E-vs-F domain split in one collection spec.
+- **DINO+SAM as the offline referee.** The edge box should not wait for a labeling campaign. Low-confidence or high-drift frames get cropped and sent to the cloud; the existing factory writes masks for the next epoch. Humans audit the residual, not the whole flight.
+
+**Who has to sit in the same room**
+
+- **Hardware / firmware.** The 9 kinematic-drift events are unsolvable in software until IMU timestamps are synced to the video buffer. ML owns the association math; robotics owns the VIO stream. Neither side can close Task 3 alone.
+- **DataOps, before the next labeling round.** Articulated trucks are 16% of Clip F near-band misses because a single-class `vehicle` box cannot describe cab+trailer. Schema for multi-part vehicles has to be co-designed with DataOps *before* the next campaign, or the factory will keep fracturing trucks and the student will keep learning the fracture.
+
+---
+
 ## Key submission artifacts
 
 | Artifact | Path |
