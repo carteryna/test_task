@@ -6,7 +6,7 @@ End-to-end vehicle detection pipeline trained on pseudo-labeled aerial footage, 
 
 I scoped this to one teacher, two nano students, one class (`vehicle`), and an 8-hour wall. The score is secondary; the labeling/eval path has to be repeatable and not leak.
 
-Four Pexels clips (A–D) are the train pool. Hold-out eval is Clip E (`13722965`, portrait 2160×3840) plus Clip F (`14693572`, landscape 4K) added for far-band coverage after E audited at only one 200–400 m box. The brief named eval as `32179597`; the file I have for E is `13722965`. I did not use E or F for training, thresholding, or model selection.
+Four Pexels clips (A–D) are the train pool. Hold-out eval is Clip E (`13722965`, portrait 2160×3840) plus Clip F (landscape 4K) added for far-band coverage after E audited at only one 200–400 m box. I chose F from [Pexels 34665019](https://www.pexels.com/video/aerial-view-of-european-highway-interchange-34665019/) (aerial European highway interchange); the local file is tagged `14693572`. The brief named eval as `32179597`; the file I have for E is `13722965`. I did not use E or F for training, thresholding, or model selection.
 
 I sample train frames at 2 fps (147 train / 38 val) and eval at 5 fps (**153 E + 61 F = 214** frames). Val is the last 20% of each train clip, time-ordered. Random 80/20 on frames would copy-paste near-duplicates across the split. Frames stay native resolution on disk; the student letterboxes to 1280 at train/infer.
 
@@ -27,7 +27,7 @@ I am not training on VisDrone, AU-AIR, or UAVDT. Pseudo-labels come from a gener
 | C `8457857` | top-down highway, 4K | 27 | 7 | — |
 | D `3405804` | urban intersection, 4K | 39 | 10 | — |
 | E `13722965` | city highway, portrait | — | — | 153 |
-| F `14693572` | high aerial highway, 4K | — | — | 61 |
+| F [`34665019`](https://www.pexels.com/video/aerial-view-of-european-highway-interchange-34665019/) (`14693572` on disk) | high aerial highway interchange, 4K | — | — | 61 |
 
 > **Key takeaway:** The foundation of a reliable edge ML pipeline is aggressive data hygiene. By structurally enforcing a programmatic leak wall at frame extraction and respecting the temporal nature of video data, all downstream metrics—no matter how raw they look on a CPU-bound run—can be trusted as mathematically honest representations of the model's true generalization.
 
